@@ -30,6 +30,7 @@ body:
         - "@cberko"
         - "@oguzkagnici"
         - "@onurcerli"
+        - "@thefugod1"
       default: 0
     validations:
       required: true
