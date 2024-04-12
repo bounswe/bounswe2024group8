@@ -13,7 +13,7 @@ body:
     id: issue_due
     attributes:
       label: Issue Due Date
-      placeholder: DD/MM/YYYY 
+      placeholder: DD/MM/YYYY, hh:mm
     validations:
       required: true
   - type: dropdown
@@ -38,7 +38,7 @@ body:
     id: revision_due
     attributes:
       label: Revision Due Date
-      placeholder: DD/MM/YYYY
+      placeholder: DD/MM/YYYY, hh:mm
     validations:
       required: true
    
