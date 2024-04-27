@@ -4,7 +4,7 @@
     "slug": "mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./App/assets/icon.png",
+    "icon": "./App/assets/icon.jpeg",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./App/assets/splash.png",
@@ -24,7 +24,7 @@
       }
     },
     "web": {
-      "favicon": "./App/assets/favicon.png"
+      "favicon": "./App/assets/favicon.jpeg"
     }
   }
 }
