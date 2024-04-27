@@ -1,16 +1,28 @@
-/* Navbar.css */
 .navbar {
-  background: #ffffff;
-  padding: 10px 20px;
+  position: fixed;
+  top: 0; 
+  left: 0;
+  width: 100%;  
+  z-index: 100;
+  background: #EEEEEE;
+  padding: 5px 0px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+}
+
+.logo {
+  margin-left: 20px;
 }
 
 .navbar-ul {
   list-style-type: none;
-  margin: 0;
+  margin: 0 20px;
   padding: 0;
   display: flex;
   justify-content: flex-end;
+  flex-grow: 1;
 }
 
 .navbar-li {
@@ -24,4 +36,13 @@
 
 .navbar-a:hover {
   color: #007BFF;
+}
+
+.manrope-logo {
+  font-size: larger;
+  font-family: "Manrope", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  font-style: normal;
+  margin: 0;
 }
