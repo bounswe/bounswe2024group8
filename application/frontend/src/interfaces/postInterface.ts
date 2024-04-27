@@ -2,15 +2,17 @@ export interface PostData {
   id: number;
   profilePic: string;
   username: string;
+  community: string;
+  communityLink: string;
   text: string;
-  imageUrl?: string; // Optional field for image URL
+  imageUrl?: string;
   likes: number;
   dislikes: number;
   commentsCount: number;
 }
 
 export interface FeedProps {
-  posts: PostData[]; // This is an array of PostData objects
+  posts: PostData[];
 }
 
 export interface PostProps extends PostData {

@@ -1,15 +1,25 @@
-/* Post.css */
+
 .post {
     border: 1px solid #ccc;
-    margin: 10px 0;
+    margin: 10px 0 20px 0;
     padding: 15px;
     border-radius: 8px;
-    background-color: #f9f9f9;
+    background-color: #EEEEEE;
+  }
+
+  .post-content{
+    width: 100%;
+    margin: auto;
   }
   
   .post-header {
     display: flex;
     align-items: center;
+  }
+
+  .communityspan{
+    margin-left: 10px;
+    color: #474a49;
   }
   
   .profile-pic {
@@ -27,6 +37,9 @@
     margin-top: 10px;
     height: 200px; /* Placeholder height */
     background-color: #e0e0e0; /* Placeholder color */
+    border: 40px;
+    border-radius: 10px;
+    border-color: black;
   }
   
   .post-actions {
