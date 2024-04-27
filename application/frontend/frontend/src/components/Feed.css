@@ -1,0 +1,11 @@
+/* Feed.css */
+.feed {
+    width: 60%; /* Good practice for readability on larger screens */
+    max-width: 800px; /* Ensures it doesn't get too wide on very large screens */
+    margin: 20px auto; /* Centers the feed in the middle of the page and adds vertical spacing */
+    padding: 20px;
+    background-color: #fff; /* Optional: makes it stand out against a potentially non-white background */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: adds some subtle shadow for depth */
+    border-radius: 10px; /* Optional: rounds the corners */
+  }
+  
