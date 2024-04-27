@@ -1,0 +1,41 @@
+/* Post.css */
+.post {
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  .post-header {
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .post-text {
+    margin-top: 10px;
+  }
+  
+  .post-image {
+    margin-top: 10px;
+    height: 200px; /* Placeholder height */
+    background-color: #e0e0e0; /* Placeholder color */
+  }
+  
+  .post-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .post-actions button {
+    cursor: pointer;
+  }
+  
