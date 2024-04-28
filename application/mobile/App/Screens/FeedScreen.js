@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   },
   flatList: {
     width: "90%",
-    marginVertical: "5%",
+    marginTop: "5%",
   },
   modalContainer: {
     flex: 1,
