@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
-
+import { useState } from "react";
 export default function Post(props) {
   const viewProfile = () => {
     console.log(props.username);
@@ -12,6 +12,52 @@ export default function Post(props) {
     image1: require("../assets/dummy_pics/image1.png"),
     image2: require("../assets/dummy_pics/image2.png"),
   };
+  const [postLiked, changeLike] = useState(false);
+  const [postDisliked, changeDislike] = useState(false);
+  const getLikeCount = () =>{
+    return 5;
+  };
+  const getDislikeCount = () =>{
+    return 5;
+  };
+  const[likeCount, setLikeCount] = useState(getLikeCount());
+  const[dislikeCount, setDislikeCount] = useState(getDislikeCount());
+  const changeLikeCount = (change) =>{
+    setLikeCount(likeCount + change);
+  }
+  const changeDislikeCount = (change) =>{
+    setDislikeCount(dislikeCount + change);
+  }
+  
+  const likeClicked = () =>{
+    if(postLiked){
+      changeLikeCount(-1);
+      changeLike(false);
+      return;
+    }
+    if(postDisliked){
+      changeDislikeCount(-1);
+      changeDislike(false);
+    }
+    changeLikeCount(1);
+    changeLike(true);
+
+  }
+  const dislikeClicked = () =>{
+    if(postDisliked){
+      changeDislikeCount(-1);
+      changeDislike(false);
+      return;
+    }
+    if(postLiked){
+      changeLikeCount(-1);
+      changeLike(false);
+    }
+    changeDislikeCount(1);
+    changeDislike(true);
+
+  }
+
 
   return (
     <View style={styles.container}>
@@ -27,6 +73,20 @@ export default function Post(props) {
         <Image style={styles.image} source={require("../assets/icon.jpeg")} />
       </View>
       <Text style={styles.text}>{props.text}</Text>
+      <View style={styles.rowContainer}>
+        <TouchableOpacity style={styles.rowContainer} onPress={likeClicked}>
+          <Image style={styles.interactionIcon} source={require("../assets/like.png")}/>
+          <Text style={postLiked && {color : "green"}}>{postLiked ? likeCount: "Like"}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.rowContainer} onPress={dislikeClicked}>
+          <Image style={styles.interactionIcon} source={require("../assets/dislike.png")}/>
+          <Text style={postDisliked && {color : "red"}}>{postDisliked ? dislikeCount: "Dislike"}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.rowContainer}>
+          <Image style={styles.interactionIcon} source={require("../assets/comment.png")}/>
+          <Text>Comment</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -67,5 +127,14 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 15,
+  },
+  rowContainer: {
+    flex : 1,
+    flexDirection : "row",
+    marginRight: 20
+  },
+  interactionIcon:{
+    width: "50%",
+    height: "200%" 
   },
 });

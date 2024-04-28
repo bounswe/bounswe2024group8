@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./App/Screens/LoginScreen";
 import RegisterScreen from "./App/Screens/RegisterScreen";
 import FeedScreen from "./App/Screens/FeedScreen";
+import ProfileScreen from "./App/Screens/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,11 @@ export default function App() {
         <Stack.Screen
           name="Feed"
           component={FeedScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

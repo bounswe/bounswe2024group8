@@ -92,6 +92,7 @@ export default function FeedScreen({ navigation }) {
   };
   const viewProfile = () => {
     console.log("view profile");
+    navigation.navigate("Profile");
   };
   const settings = () => {
     console.log("settings");
