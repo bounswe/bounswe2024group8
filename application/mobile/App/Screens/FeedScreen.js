@@ -8,10 +8,13 @@ import {
   Image,
   FlatList,
   Dimensions,
+  TouchableOpacity,
+  Modal
 } from "react-native";
+import Icon from 'react-native-vector-icons/Entypo';
 import Post from "../components/Post";
 
-export default function FeedScreen() {
+export default function FeedScreen({ navigation }) {
   const getPosts = () => {
     return [
       {
@@ -77,12 +80,61 @@ export default function FeedScreen() {
     ];
   };
 
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+
+  const toggleMenu = () => {
+    console.log("Toggle menu")
+    setIsMenuVisible(!isMenuVisible);
+  };
+
+  const createPost = () => {
+    console.log("create post")
+  };
+  const viewProfile = () => {
+    console.log("view profile")
+  };
+  const settings = () => {
+    console.log("settings")
+  };
+  const logout = () => {
+    console.log("logout")
+    navigation.navigate("Login")
+
+  };
+
   return (
     <View style={styles.backgroundContainer}>
       <View style={styles.headerContainer}>
         <Image source={require("../assets/favicon.jpeg")}></Image>
         <Text style={styles.header}>Fanatic</Text>
+        <TouchableOpacity onPress={toggleMenu}>
+          <Icon name="dots-three-vertical" size={20} style={styles.headerMenuIcon}></Icon>
+        </TouchableOpacity>
       </View>
+      <Modal visible={isMenuVisible} animationType="slide" transparent={true}>
+        <View style={styles.modalContainer}>
+          <TouchableOpacity style={styles.menuItem} onPress={createPost}>
+            <Icon name="edit" style={styles.menuItemIcon} / >
+            <Text style={styles.menuItemText}>Create Post</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={viewProfile}>
+            <Icon name="user" style={styles.menuItemIcon} / >
+            <Text style={styles.menuItemText}>View Profile</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={settings}>
+            <Icon name="cog" style={styles.menuItemIcon} / >
+            <Text style={styles.menuItemText}>Settings</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={logout}>
+            <Icon name="log-out" style={styles.menuItemIcon} / >
+            <Text style={styles.menuItemText}>Logout</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.closeButton} onPress={toggleMenu}>
+            <Icon name="cross" style={styles.menuItemIcon} / >
+            <Text style={styles.menuItemText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
       <View style={styles.searchContainer}>
         <TextInput placeholder="Search" />
       </View>
@@ -122,6 +174,9 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "600",
   },
+  headerMenuIcon: {
+    right: -100,
+  },
   searchContainer: {
     height: "5%",
     width: "90%",
@@ -135,4 +190,37 @@ const styles = StyleSheet.create({
     width: "90%",
     marginVertical: "5%",
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  closeButton: {
+    fontSize: 20,
+    color: '#fff',
+    padding: 10,
+    backgroundColor: 'tomato',
+    borderRadius: 5,
+    flexDirection: "row",
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    backgroundColor: 'white',
+    borderRadius: 5,
+    flexDirection: "row",
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  menuItemText: {
+    fontSize: 16,
+    paddingLeft: 4
+  },
+  menuItemIcon: {
+    paddingHorizontal: 4,
+  }
 });
