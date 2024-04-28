@@ -106,7 +106,7 @@ const Login: React.FC = () => {
             setPassword(e.target.value)
           }
         />
-        <p style={{ marginLeft: "25px", marginTop: "2px", fontSize: "14px" }}>
+        <p style={{ marginLeft: "0px", marginTop: "0px", fontSize: "14px" }}>
           <Link to="/forgot" style={{ textDecoration: "none" }}>
             Forgot my password?
           </Link>

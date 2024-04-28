@@ -32,12 +32,30 @@ export default function SignUpPage() {
           placeHolder="Password"
           onChange={() => {}}
         />
-        <select className="SignUpForm" name="team" id="team">
+        <div >
+        <select className="SignUpForm" name="team"  id="team" >
           <option value="gs">Galatasaray</option>
           <option value="fb">Fenerbahçe</option>
           <option value="bjk">Beşiktaş</option>
           <option value="ts">Trabzonspor</option>
+          <option value="bşk">Başakşehir</option>
+          <option value="riz">Rizespor</option>
+          <option value="las">Kasımpaşa</option>
+          <option value="aln">Alanyaspor</option>
+          <option value="svs">Sivasspor</option>
+          <option value="ant">Antalyaspor</option>
+          <option value="ads">Adana Demirspor</option>
+          <option value="kay">Kayserispor</option>
+          <option value="sam">Samsunspor</option>
+          <option value="ank">Ankaragücü</option>
+          <option value="gfk">Gaziantep FK</option>
+          <option value="kon">Konyaspor</option>
+          <option value="krg">Karagümrük</option>
+          <option value="hty">Hatayspor</option>
+          <option value="pen">Pendikspor</option>
+          <option value="ist">İstanbulspor</option>
         </select>
+        </div>
         <Button
           handleOn={handleOnSignUp}
           text="Sign Up"
