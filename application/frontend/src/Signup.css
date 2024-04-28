@@ -26,7 +26,7 @@
   }
   
   /* Button styles, similar to the login button, with adjustments for the signup context */
-  button {
+  .button-signup {
     width: 100%;
     padding: 10px;
     border: none;
@@ -38,12 +38,12 @@
     transition: background-color 0.3s;
   }
   
-  button:hover {
+  .button-signup:hover {
     background-color: #0056b3; /* Darker blue on hover for better interaction feedback */
   }
   
   /* Error and other messages if any would be styled as follows */
-  p {
+  .p-signup {
     font-size: 14px;
   }
   
