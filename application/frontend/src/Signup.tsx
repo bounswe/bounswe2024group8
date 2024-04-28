@@ -1,3 +1,4 @@
+import "./Signup.css";
 import { Input, Button } from "./LoggedOut.tsx";
 import { useNavigate } from "react-router-dom";
 

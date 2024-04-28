@@ -74,7 +74,7 @@ const Login: React.FC = () => {
   function handleOnLogin() {
     const result = checkUser(email, password);
     if (result === "Correct") {
-      navigate("/feed");
+      navigate("/");
     } else {
       setError(result);
     }

@@ -4,6 +4,7 @@ import LoggedOut from "./LoggedOut";
 import Navbar from "./components/Navbar";
 import Feed from "./components/Feed";
 import SearchBar from "./components/SearchBar";
+import SignUpPage from "./Signup";
 import { PostData } from "./interfaces/postInterface";
 import image1 from "./assets/dummyimages/image1.png";
 import image2 from "./assets/dummyimages/image2.png";
@@ -91,6 +92,7 @@ function App() {
           }
         />
         <Route path="/loggedout" element={<LoggedOut />} />
+        <Route path="/sign-up" element={<SignUpPage />} />
       </Routes>
     </Router>
   );
