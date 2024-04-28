@@ -1,4 +1,4 @@
-import "./Feed.css"; // Make sure to create this CSS file
+import "./Feed.css";
 import Post from "./Post";
 import { FeedProps } from "../interfaces/postInterface";
 
@@ -10,6 +10,8 @@ const Feed: React.FC<FeedProps> = (props) => {
           id={post.id}
           profilePic={post.profilePic}
           username={post.username}
+          community={post.community}
+          communityLink={post.communityLink}
           text={post.text}
           imageUrl={post.imageUrl}
           likes={post.likes}

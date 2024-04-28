@@ -1,8 +1,11 @@
-import "./Navbar.css"; // Import the CSS file
+import "./Navbar.css";
+import logo from "../assets/logo.png";
 
 const Navbar = () => {
   return (
     <nav className="navbar">
+      <img src={logo} alt="Logo" width="50" height="50" className="logo"></img>
+      <p className="manrope-logo">appFanatic.</p>
       <ul className="navbar-ul">
         <li className="navbar-li">
           <a className="navbar-a" href="#profile">
