@@ -8,6 +8,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/posts")
 @RequiredArgsConstructor
@@ -17,15 +19,15 @@ public class PostController {
     final PostService postService;
 
     @GetMapping("/search")
-    public ResponseEntity<Post> searchPost(
+    public ResponseEntity<List<Post>> searchPost(
             @RequestParam String param) {
-        Post post = postService.searchPost(param);
+        List<Post> posts = postService.searchPost(param);
 
-        if (post == null) {
+        if (posts.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(post);
+        return ResponseEntity.ok(posts);
     }
 
 
