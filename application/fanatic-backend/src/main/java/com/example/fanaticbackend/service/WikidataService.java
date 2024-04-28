@@ -26,8 +26,26 @@ public class WikidataService {
     //wikidata search "Galatasaray" , sehri, text
     //Bu textler ile postlar arasinda arama yapilacak
     //Sehir ve Takim.
-    @GetMapping("/search")
-    public String searchTeam(@RequestParam String keyword) {
+
+
+    public String search(String keyword) {
+        String teamSearch = searchTeam(keyword);
+        if (!teamSearch.isEmpty()) {
+            return teamSearch;
+        }
+        String playerSearch = searchPlayer(keyword);
+        if (!playerSearch.isEmpty()) {
+            return playerSearch;
+        }
+
+        return "No results found for keyword: " + keyword;
+    }
+
+
+
+
+
+    public String searchTeam(String keyword) {
         String sparqlQuery = "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n" +
                 "PREFIX wd: <http://www.wikidata.org/entity/>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
@@ -69,8 +87,38 @@ public class WikidataService {
         return result.toString();
     }
 
-    public searchPlayer(String text) {
-        return;
+    public String searchPlayer(String keyword) {
+        String sparqlQuery = "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n" +
+                "PREFIX wd: <http://www.wikidata.org/entity/>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "SELECT DISTINCT ?player ?playerLabel ?position ?team ?teamLabel WHERE {\n" +
+                "    ?player wdt:P31 wd:Q5;\n" +
+                "            wdt:P106 wd:Q937857;\n" +
+                "            rdfs:label ?playerLabel.\n" +
+                "    OPTIONAL { ?player wdt:P413 ?position. }\n" +
+                "    OPTIONAL { ?player wdt:P54 ?team.\n" +
+                "               ?team rdfs:label ?teamLabel.\n" +
+                "               FILTER(lang(?teamLabel) = \"en\") }\n" +
+                "    FILTER(lang(?playerLabel) = \"en\" && contains(lcase(?playerLabel), \"" + keyword.toLowerCase() + "\"))\n" +
+                "}";
+
+        // Execute SPARQL query
+        QueryExecution queryExec = QueryExecutionFactory.sparqlService("https://query.wikidata.org/sparql", sparqlQuery);
+        ResultSet resultSet = queryExec.execSelect();
+
+        // Process results
+        StringBuilder result = new StringBuilder();
+        while (resultSet.hasNext()) {
+            QuerySolution solution = resultSet.nextSolution();
+            result.append("Player: ").append(solution.get("playerLabel")).append("\n");
+            result.append("Position: ").append(solution.get("position")).append("\n");
+            result.append("Team: ").append(solution.get("teamLabel")).append("\n\n");
+        }
+
+        // Close query execution
+        queryExec.close();
+
+        return result.toString();
     }
 
 
