@@ -9,9 +9,9 @@ import {
   FlatList,
   Dimensions,
   TouchableOpacity,
-  Modal
+  Modal,
 } from "react-native";
-import Icon from 'react-native-vector-icons/Entypo';
+import Icon from "react-native-vector-icons/Entypo";
 import Post from "../components/Post";
 
 export default function FeedScreen({ navigation }) {
@@ -43,7 +43,7 @@ export default function FeedScreen({ navigation }) {
       },
       {
         id: 3,
-        profilePic: "https://example.com/profilepic2.jpg",
+        profilePic: "image1",
         username: "jane_doe",
         community: "Fenerbahçe",
         communityLink: "fenerbahcelink",
@@ -55,7 +55,7 @@ export default function FeedScreen({ navigation }) {
       },
       {
         id: 4,
-        profilePic: "https://example.com/profilepic2.jpg",
+        profilePic: "image2",
         username: "jane_doe",
         community: "Fenerbahçe",
         communityLink: "fenerbahcelink",
@@ -67,7 +67,7 @@ export default function FeedScreen({ navigation }) {
       },
       {
         id: 5,
-        profilePic: "https://example.com/profilepic2.jpg",
+        profilePic: "pp1",
         username: "jane_doe",
         community: "Fenerbahçe",
         communityLink: "fenerbahcelink",
@@ -83,23 +83,22 @@ export default function FeedScreen({ navigation }) {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   const toggleMenu = () => {
-    console.log("Toggle menu")
+    console.log("Toggle menu");
     setIsMenuVisible(!isMenuVisible);
   };
 
   const createPost = () => {
-    console.log("create post")
+    console.log("create post");
   };
   const viewProfile = () => {
-    console.log("view profile")
+    console.log("view profile");
   };
   const settings = () => {
-    console.log("settings")
+    console.log("settings");
   };
   const logout = () => {
-    console.log("logout")
-    navigation.navigate("Login")
-
+    console.log("logout");
+    navigation.navigate("Login");
   };
 
   return (
@@ -108,29 +107,33 @@ export default function FeedScreen({ navigation }) {
         <Image source={require("../assets/favicon.jpeg")}></Image>
         <Text style={styles.header}>Fanatic</Text>
         <TouchableOpacity onPress={toggleMenu}>
-          <Icon name="dots-three-vertical" size={20} style={styles.headerMenuIcon}></Icon>
+          <Icon
+            name="dots-three-vertical"
+            size={20}
+            style={styles.headerMenuIcon}
+          ></Icon>
         </TouchableOpacity>
       </View>
       <Modal visible={isMenuVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
           <TouchableOpacity style={styles.menuItem} onPress={createPost}>
-            <Icon name="edit" style={styles.menuItemIcon} / >
+            <Icon name="edit" style={styles.menuItemIcon} />
             <Text style={styles.menuItemText}>Create Post</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={viewProfile}>
-            <Icon name="user" style={styles.menuItemIcon} / >
+            <Icon name="user" style={styles.menuItemIcon} />
             <Text style={styles.menuItemText}>View Profile</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={settings}>
-            <Icon name="cog" style={styles.menuItemIcon} / >
+            <Icon name="cog" style={styles.menuItemIcon} />
             <Text style={styles.menuItemText}>Settings</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={logout}>
-            <Icon name="log-out" style={styles.menuItemIcon} / >
+            <Icon name="log-out" style={styles.menuItemIcon} />
             <Text style={styles.menuItemText}>Logout</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.closeButton} onPress={toggleMenu}>
-            <Icon name="cross" style={styles.menuItemIcon} / >
+            <Icon name="cross" style={styles.menuItemIcon} />
             <Text style={styles.menuItemText}>Close</Text>
           </TouchableOpacity>
         </View>
@@ -192,35 +195,35 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   closeButton: {
     fontSize: 20,
-    color: '#fff',
+    color: "#fff",
     padding: 10,
-    backgroundColor: 'tomato',
+    backgroundColor: "tomato",
     borderRadius: 5,
     flexDirection: "row",
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   menuItem: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    backgroundColor: 'white',
+    borderBottomColor: "#ccc",
+    backgroundColor: "white",
     borderRadius: 5,
     flexDirection: "row",
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   menuItemText: {
     fontSize: 16,
-    paddingLeft: 4
+    paddingLeft: 4,
   },
   menuItemIcon: {
     paddingHorizontal: 4,
-  }
+  },
 });
