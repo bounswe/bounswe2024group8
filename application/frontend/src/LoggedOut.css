@@ -1,5 +1,11 @@
+body,
+html {
+  height: 100%;
+  margin: 0;
+}
 /* Overall container style */
 .container {
+    background-image: url("https://wallpapercave.com/wp/wp2022774.jpg");
     display: flex;
     justify-content: center;
     align-items: center;
@@ -18,7 +24,7 @@
   
   /* Input field styling */
   .LoginForm {
-    width: 100%;
+    width: 93.3%;
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ccc; /* Light grey border */

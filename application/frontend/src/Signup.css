@@ -1,10 +1,16 @@
-/* Container centers the content and provides a full height view */
+body,
+html {
+  height: 100%;
+  margin: 0;
+}
+/* Overall container style */
 .container {
+    background-image: url("https://wallpapercave.com/wp/wp2022774.jpg");
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #f7f7f7;
+    height: 100vh; /* This makes the container take full viewport height */
+    background-color: #f7f7f7; /* Light grey background for the whole page */
   }
   
   /* loginDiv also serves as the signup box, centralizing the form */
@@ -19,6 +25,7 @@
   /* Common input style for text inputs and select element */
   .SignUpForm {
     width: 100%;
+    box-sizing:border-box;
     padding: 10px;
     margin-bottom: 12px;
     border: 1px solid #ccc;
@@ -27,6 +34,7 @@
   
   /* Button styles, similar to the login button, with adjustments for the signup context */
   .button-signup {
+    box-sizing:border-box;
     width: 100%;
     padding: 10px;
     border: none;
