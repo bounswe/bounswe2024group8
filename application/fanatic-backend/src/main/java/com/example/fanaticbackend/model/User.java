@@ -15,6 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -31,8 +32,19 @@ public class User implements UserDetails {
     @Column(nullable = false)
     String password;
 
+    @Column(nullable = false)
+    String firstName;
+
+    @Column(nullable = false)
+    String lastName;
+
     @Enumerated(EnumType.STRING)
     Role role;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -53,10 +65,7 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-    
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
-    }
+
+
 
 }
