@@ -25,8 +25,11 @@
     border-radius: 4px; /* Slightly rounded corners for the input fields */
   }
   
-  /* Button styling */
-  button {
+  
+  /* Specific button styles */
+  .LoginButton {
+    background-color: #4CAF50; /* Green background for login */
+    color: white; /* White text color */
     width: 100%;
     padding: 10px;
     border: none;
@@ -36,12 +39,6 @@
     transition: background-color 0.3s; /* Smooth transition for background color */
   }
   
-  /* Specific button styles */
-  .LoginButton {
-    background-color: #4CAF50; /* Green background for login */
-    color: white; /* White text color */
-  }
-  
   .LoginButton:disabled {
     background-color: #ccc; /* Light grey background for disabled state */
   }
@@ -49,6 +46,13 @@
   .SignUpButton {
     background-color: #555; /* Darker grey background for sign up */
     color: white; /* White text color */
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    margin-top: 10px;
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition for background color */
   }
   
   .SignUpButton:hover {
