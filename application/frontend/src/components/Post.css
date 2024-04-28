@@ -44,11 +44,30 @@
   
   .post-actions {
     margin-top: 10px;
+    align-items: center;
     display: flex;
     justify-content: space-around;
   }
   
   .post-actions button {
     cursor: pointer;
+  }
+
+  .post-action{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  button{
+    border: 0;
+  }
+
+  .like{
+    font-size: 25px;
+  }
+
+  .action-number{
+    min-width: 20px;
   }
   

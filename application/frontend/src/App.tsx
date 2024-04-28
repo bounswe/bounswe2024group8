@@ -1,4 +1,6 @@
 import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoggedOut from "./LoggedOut";
 import Navbar from "./components/Navbar";
 import Feed from "./components/Feed";
 import SearchBar from "./components/SearchBar";
@@ -35,7 +37,7 @@ function App() {
       commentsCount: 87,
     },
     {
-      id: 2,
+      id: 3,
       profilePic: "https://example.com/profilepic2.jpg",
       username: "jane_doe",
       community: "Fenerbahçe",
@@ -47,7 +49,7 @@ function App() {
       commentsCount: 8,
     },
     {
-      id: 2,
+      id: 4,
       profilePic: "https://example.com/profilepic2.jpg",
       username: "jane_doe",
       community: "Fenerbahçe",
@@ -59,7 +61,7 @@ function App() {
       commentsCount: 8,
     },
     {
-      id: 2,
+      id: 5,
       profilePic: "https://example.com/profilepic2.jpg",
       username: "jane_doe",
       community: "Fenerbahçe",
@@ -73,14 +75,24 @@ function App() {
   ];
 
   return (
-    <div className="App">
-      <Navbar></Navbar>
-      <div className="dummydiv">
-        <SearchBar />
-      </div>
-      <Feed posts={postsData}></Feed>
-      <div className="dummydiv"></div>
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div className="homepage">
+              <Navbar></Navbar>
+              <div className="dummydiv">
+                <SearchBar />
+              </div>
+              <Feed posts={postsData}></Feed>
+              <div className="dummydiv"></div>
+            </div>
+          }
+        />
+        <Route path="/loggedout" element={<LoggedOut />} />
+      </Routes>
+    </Router>
   );
 }
 
