@@ -15,18 +15,21 @@ export default function SignUpPage() {
           type="text"
           id="email"
           placeHolder="E-Mail"
+          onChange={() => {}}
         />
         <Input
           className="SignUpForm"
           type="text"
           id="username"
           placeHolder="Username"
+          onChange={() => {}}
         />
         <Input
           className="SignUpForm"
           type="password"
           id="password"
           placeHolder="Password"
+          onChange={() => {}}
         />
         <select className="SignUpForm" name="team" id="team">
           <option value="gs">Galatasaray</option>
