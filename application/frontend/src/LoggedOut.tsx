@@ -8,11 +8,6 @@ interface User {
   password: string;
 }
 
-export const users: User[] = [
-  { email: "erselcanakcili@gmail.com", password: "ersel123" },
-  { email: "daghanerdonmez@gmail.com", password: "daghan123" },
-];
-
 interface ButtonProps {
   text: string;
   className: string;
