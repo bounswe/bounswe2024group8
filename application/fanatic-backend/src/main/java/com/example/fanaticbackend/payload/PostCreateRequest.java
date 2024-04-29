@@ -9,10 +9,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthenticationRequest {
-
-    String email;
-
-    String password;
-
+public class PostCreateRequest {
+    Long userId;
+    String title;
+    String text;
+    String teamName;
 }

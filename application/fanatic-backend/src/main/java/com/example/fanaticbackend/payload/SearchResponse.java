@@ -1,18 +1,21 @@
 package com.example.fanaticbackend.payload;
 
+import com.example.fanaticbackend.dto.WikidataTeamDto;
+import com.example.fanaticbackend.model.Post;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Builder
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthenticationRequest {
+public class SearchResponse {
 
-    String email;
+    WikidataTeamDto team;
 
-    String password;
+    List<Post> posts;
 
 }
