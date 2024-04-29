@@ -19,7 +19,7 @@ export default function LoginScreen({ navigation }) {
 
   const onLoginClick = () => {
     const userParams = {
-      userName: email,
+      email: email,
       password: password,
     };
 
@@ -31,8 +31,8 @@ export default function LoginScreen({ navigation }) {
       })
       .catch((error) => {
         setError("Incorrect e-mail or password!");
-        console.log(error);
-        navigation.navigate("Feed");
+        console.log(error.response.data);
+        console.log(error.response.status);
       });
   };
 
