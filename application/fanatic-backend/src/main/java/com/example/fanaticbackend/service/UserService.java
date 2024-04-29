@@ -30,4 +30,12 @@ public class UserService {
         return user;
 
     }
+
+    public User getUserById(Long id) {
+        User user = userRepository.findUserById(id);
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+        return user;
+    }
 }
