@@ -37,7 +37,7 @@
 }
 
 /* Additional styles for form elements */
-input[type="text"],
+.overlay input[type="text"],
 textarea,
 button {
     width: 100%;
@@ -49,12 +49,12 @@ button {
     font-size: 1rem;
 }
 
-input[type="file"] {
+.overlay input[type="file"] {
     margin-top: 8px;
     margin-bottom: 16px;
 }
 
-button {
+.overlay button {
     background-color: #0056b3;
     color: white;
     border: none;
@@ -62,12 +62,12 @@ button {
     transition: background-color 0.2s;
 }
 
-button:hover {
+.overlay button:hover {
     background-color: #004494;
 }
 
 /* Styles for labels */
-label {
+.overlay label {
     align-self: flex-start;
     margin-left: 10px;
     margin-bottom: -8px;
