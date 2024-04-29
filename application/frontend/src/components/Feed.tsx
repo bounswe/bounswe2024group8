@@ -7,7 +7,6 @@ const Feed: React.FC<FeedProps> = (props) => {
     <div className="feed">
       {props.posts.map((post) => (
         <Post
-          key={post.id}
           id={post.id}
           profilePic={post.profilePic}
           username={post.username}
@@ -21,7 +20,7 @@ const Feed: React.FC<FeedProps> = (props) => {
           onLike={() => console.log("Liked", post.id)}
           onDislike={() => console.log("Disliked", post.id)}
           onComment={() => console.log("Comments", post.id)}
-          onBookmark={() => console.log("Share", post.id)}
+          onShare={() => console.log("Share", post.id)}
         />
       ))}
     </div>
