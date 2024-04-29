@@ -1,11 +1,43 @@
 import "./Signup.css";
+import { useState,ChangeEvent} from "react";
 import { Input, Button } from "./LoggedOut.tsx";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 export default function SignUpPage() {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   function handleOnSignUp() {
-    navigate("/feed");
+    const checkUser = {
+      userName: email,
+    };
+    const registerUser = {
+      firstName:username,
+      lastName:"",
+      userName: email,
+      password: password
+    };
+    
+  
+      axios.post('http://localhost:8080/api/v1/auth/register', registerUser)
+      .then(response => {
+        // Başarılı kayıt durumunda yapılacak işlemler
+        console.log(response.data);
+        navigate("/");
+      })
+      .catch(error => {
+        // Hata durumunda yapılacak işlemler
+        setError("Email already exist");
+        console.error('Hata:', error);
+      });
+
+
+    
+
+
   }
   return (
     <div className="container">
@@ -16,21 +48,27 @@ export default function SignUpPage() {
           type="text"
           id="email"
           placeHolder="E-Mail"
-          onChange={() => {}}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
         />
         <Input
           className="SignUpForm"
           type="text"
           id="username"
           placeHolder="Username"
-          onChange={() => {}}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setUsername(e.target.value)
+          }
         />
         <Input
           className="SignUpForm"
           type="password"
           id="password"
           placeHolder="Password"
-          onChange={() => {}}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
         />
         <div >
         <select className="SignUpForm" name="team"  id="team" >
@@ -57,10 +95,12 @@ export default function SignUpPage() {
         </select>
         </div>
         <Button
+          disabled={email === "" || password === ""||username===""}
           handleOn={handleOnSignUp}
           text="Sign Up"
           className="SignUpButton"
         />
+        {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
       </div>
     </div>
   );

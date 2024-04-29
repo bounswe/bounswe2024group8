@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./LoggedOut.css";
+import axios from 'axios';
 
 interface User {
   email: string;
@@ -72,12 +73,23 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
 
   function handleOnLogin() {
-    const result = checkUser(email, password);
-    if (result === "Correct") {
-      navigate("/");
-    } else {
-      setError(result);
-    }
+    const data = {
+      userName: email,
+      password: password
+    };
+
+    axios.post('http://localhost:8080/api/v1/auth/authenticate', data)
+      .then(response => {
+        // Başarılı giriş durumunda yapılacak işlemler
+        console.log(response.data);
+        navigate("/");
+      })
+      .catch(error => {
+        // Hata durumunda yapılacak işlemler
+        setError("Yanlış şifre");
+        console.error('Hata:', error);
+      });
+
   }
 
   function handleOnSignUp() {
