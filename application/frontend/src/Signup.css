@@ -1,0 +1,64 @@
+body,
+html {
+  height: 100%;
+  margin: 0;
+}
+/* Overall container style */
+.container {
+    background-image: url("https://wallpapercave.com/wp/wp2022774.jpg");
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* This makes the container take full viewport height */
+    background-color: #f7f7f7; /* Light grey background for the whole page */
+  }
+  
+  /* loginDiv also serves as the signup box, centralizing the form */
+  .loginDiv {
+    width: 340px;  /* Increased width to accommodate longer input fields */
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  /* Common input style for text inputs and select element */
+  .SignUpForm {
+    width: 100%;
+    box-sizing:border-box;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Button styles, similar to the login button, with adjustments for the signup context */
+  .button-signup {
+    box-sizing:border-box;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    margin-top: 10px;
+    cursor: pointer;
+    background-color: #007BFF; /* Using a blue color to differentiate from login */
+    color: white;
+    transition: background-color 0.3s;
+  }
+  
+  .button-signup:hover {
+    background-color: #0056b3; /* Darker blue on hover for better interaction feedback */
+  }
+  
+  /* Error and other messages if any would be styled as follows */
+  .p-signup {
+    font-size: 14px;
+  }
+  
+  /* Bold red for error messages, can add as necessary */
+  .error {
+    color: red;
+    text-align: center;
+    font-weight: bold;
+  }
+  
