@@ -23,3 +23,9 @@ body {
   min-height: 100vh; 
   align-items: flex-start; 
 }
+
+.searchResultPage{
+  display: flex; 
+  min-height: 100vh; 
+  align-items: flex-start; 
+}
