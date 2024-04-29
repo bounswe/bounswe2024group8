@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import Feed from "./components/Feed";
 import SearchBar from "./components/SearchBar";
 import SignUpPage from "./Signup";
+import SearchResult from "./components/SearchResult.tsx";
 import { PostData } from "./interfaces/postInterface";
 import image1 from "./assets/dummyimages/image1.png";
 import image2 from "./assets/dummyimages/image2.png";
@@ -15,8 +16,10 @@ import pp2 from "./assets/dummyimages/pp2.png";
 import pp3 from "./assets/dummyimages/pp3.png";
 import pp4 from "./assets/dummyimages/pp4.png";
 import pp5 from "./assets/dummyimages/pp5.png";
-import {useState} from "react";
+import { useState } from "react";
 import CreatePostOverlay from "./components/CreatePostOverlay.tsx";
+import "./storage/storage.ts";
+import { searchResult } from "./storage/storage.ts";
 
 function App() {
   const [showCreatePostOverlay, setShowCreatePostOverlay] = useState(false);
@@ -96,7 +99,30 @@ function App() {
               </div>
               <Feed posts={postsData}></Feed>
               <div className="dummydiv"></div>
-              <CreatePostOverlay show={showCreatePostOverlay} onClose={() => setShowCreatePostOverlay(false)} />
+              <CreatePostOverlay
+                show={showCreatePostOverlay}
+                onClose={() => setShowCreatePostOverlay(false)}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="/searchResult"
+          element={
+            <div className="searchResultPage">
+              <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
+              <div className="dummydiv">
+                <SearchBar />
+              </div>
+              <SearchResult
+                team={searchResult.team}
+                feedProps={searchResult.feedProps}
+              />
+              <div className="dummydiv"></div>
+              <CreatePostOverlay
+                show={showCreatePostOverlay}
+                onClose={() => setShowCreatePostOverlay(false)}
+              />
             </div>
           }
         />

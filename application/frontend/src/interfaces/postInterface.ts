@@ -21,3 +21,16 @@ export interface PostProps extends PostData {
   onComment: () => void;
   onBookmark: () => void;
 }
+
+export interface TeamProps {
+  teamName: string;
+  description: string;
+  logoUrl: string;
+  year: number;
+  coachName: string;
+}
+
+export interface SearchResultProps {
+  team: TeamProps;
+  feedProps: FeedProps;
+}

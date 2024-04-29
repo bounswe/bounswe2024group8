@@ -64,7 +64,9 @@ const Login: React.FC = () => {
       .post("http://localhost:8080/api/v1/auth/authenticate", data)
       .then((response) => {
         // Başarılı giriş durumunda yapılacak işlemler
-        console.log(response.data);
+        console.log(response.data.accessToken);
+        localStorage.setItem("authToken", response.data.accessToken);
+        localStorage.setItem("email", email);
         navigate("/");
       })
       .catch((error) => {
