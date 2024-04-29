@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
+import axios from "axios";
 
 interface PostData {
   title: string;
@@ -34,8 +35,37 @@ const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert('Post submitted! Check the console for details.');
-    onClose();
+    const postCreateRequest = {   
+        userId: "",
+        title: postData.title,
+        text: postData.content,
+        teamName: "GALATASARAY"    
+    }
+    const config = {
+      headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
+    };
+    const bodyParams = {
+      email:localStorage.getItem("email")
+    };
+    axios
+      .get("http://localhost:8080/api/v1/users?email="+localStorage.getItem("email"),config)
+      .then((response) => {
+        postCreateRequest.userId=response.data.id;
+
+        axios
+        .post("http://localhost:8080/api/v1/posts", postCreateRequest,config)
+        .then((response) => {
+          onClose();
+        })
+        .catch((error) => {
+          alert("Authentication error");
+        });
+
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    
   };
 
   return (
