@@ -33,9 +33,9 @@ public class WikidataService {
     public WikidataTeamDto search(String keyword) {
         HashMap<String, String> teamSearch = searchTeam(keyword);
         if (!teamSearch.isEmpty()) {
-            return WikidataTeamDto.builder().teamName(teamSearch.get("teamLabel"))
+            return WikidataTeamDto.builder().teamName(teamSearch.get("teamLabel").replace("@en", ""))
                     .year(Integer.parseInt(teamSearch.get("yearFounded").substring(0, 4)))
-                    .coachName(teamSearch.get("coachLabel"))
+                    .coachName(teamSearch.get("coachLabel").replace("@en", ""))
                     .logoUrl(teamSearch.get("logo"))
                     .build();
         }

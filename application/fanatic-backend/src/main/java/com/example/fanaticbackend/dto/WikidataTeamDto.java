@@ -13,8 +13,6 @@ public class WikidataTeamDto {
 
     String teamName;
 
-    String description;
-
     String logoUrl;
 
     Integer year;
