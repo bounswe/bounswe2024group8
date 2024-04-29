@@ -9,6 +9,7 @@ import {
   Dimensions,
   Alert,
 } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 import axios from "axios";
 
 export default function RegisterScreen({ navigation }) {
@@ -17,6 +18,31 @@ export default function RegisterScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [team, setTeam] = useState("");
   const [error, setError] = useState("");
+
+  const [teamDropdownOpen, teamDropdownSetOpen] = useState(false);
+  const [teamDropdownValue, teamDropdownSetValue] = useState(null);
+  const [teamDropdownItems, teamDropdownSetItems] = useState([
+    {label: 'Adana Demirspor', value: 'Adana Demirspor'},
+    {label: 'Alanyaspor', value: 'Alanyaspor'},
+    {label: 'Ankaragucu', value: 'Ankaragucu'},
+    {label: 'Antalyaspor', value: 'Antalyaspor'},
+    {label: 'Basaksehir', value: 'Basaksehir'},
+    {label: 'Besiktas', value: 'Besiktas'},
+    {label: 'Fatih Karagumruk', value: 'Fatih Karagumruk'},
+    {label: 'Fenerbahce', value: 'Fenerbahce'},
+    {label: 'Galatasaray', value: 'Galatasaray'},
+    {label: 'Gaziantep', value: 'Gaziantep'},
+    {label: 'Hatayspor', value: 'Hatayspor'},
+    {label: 'Istanbulspor', value: 'Istanbulspor'},
+    {label: 'Kasimpasa', value: 'Kasimpasa'},
+    {label: 'Kayserispor', value: 'Kayserispor'},
+    {label: 'Konyaspor', value: 'Konyaspor'},
+    {label: 'Pendikspor', value: 'Pendikspor'},
+    {label: 'Rizespor', value: 'Rizespor'},
+    {label: 'Samsunspor', value: 'Samsunspor'},
+    {label: 'Sivasspor', value: 'Sivasspor'},
+    {label: 'Trabzonspor', value: 'Trabzonspor'}
+  ]);
 
   let email_reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
   let username_password_reg = /^[A-Zığüçşa-z0-9]+$/;
@@ -99,12 +125,14 @@ export default function RegisterScreen({ navigation }) {
             onSubmitEditing={() => ref_team.current.focus()}
             blurOnSubmit={false}
           />
-          <TextInput
-            style={styles.inputText}
-            onChangeText={setTeam}
+          <DropDownPicker
+            open={teamDropdownOpen}
+            value={teamDropdownValue}
+            items={teamDropdownItems}
+            setOpen={teamDropdownSetOpen}
+            setValue={teamDropdownSetValue}
+            setItems={teamDropdownSetItems}
             placeholder="Team"
-            value={team}
-            ref={ref_team}
           />
         </View>
         {error && <Text style={styles.errorText}>{error}</Text>}
