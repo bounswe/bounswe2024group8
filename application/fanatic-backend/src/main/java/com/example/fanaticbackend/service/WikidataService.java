@@ -84,13 +84,21 @@ public class WikidataService {
         while (resultSet.hasNext()) {
             QuerySolution solution = resultSet.nextSolution();
             //result.append("Team: ").append(solution.get("teamLabel")).append("\n");
-            result.put("teamLabel", solution.get("teamLabel").toString());
+            if (solution.contains("teamLabel")) {
+                result.put("teamLabel", solution.get("teamLabel").toString());
+            }
             //result.append("Year Founded: ").append(solution.get("yearFounded")).append("\n");
-            result.put("yearFounded", solution.get("yearFounded").toString());
+            if (solution.contains("yearFounded")) {
+                result.put("yearFounded", solution.get("yearFounded").toString());
+            }
             //result.append("Coach: ").append(solution.get("coachLabel")).append("\n");
-            result.put("coachLabel", solution.get("coachLabel").toString());
+            if (solution.contains("coachLabel")) {
+                result.put("coachLabel", solution.get("coachLabel").toString());
+            }
             //result.append("Logo: ").append(solution.get("logo")).append("\n\n");
-            result.put("logo", solution.get("logo").toString());
+            if (solution.contains("logo")) {
+                result.put("logo", solution.get("logo").toString());
+            }
         }
 
         // Close query execution
