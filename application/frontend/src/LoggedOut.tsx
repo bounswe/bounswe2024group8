@@ -1,12 +1,8 @@
 import React, { useState, ChangeEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./LoggedOut.css";
-import axios from 'axios';
+import axios from "axios";
 
-interface User {
-  email: string;
-  password: string;
-}
 
 interface ButtonProps {
   text: string;
@@ -61,21 +57,21 @@ const Login: React.FC = () => {
   function handleOnLogin() {
     const data = {
       userName: email,
-      password: password
+      password: password,
     };
 
-    axios.post('http://localhost:8080/api/v1/auth/authenticate', data)
-      .then(response => {
+    axios
+      .post("http://localhost:8080/api/v1/auth/authenticate", data)
+      .then((response) => {
         // Başarılı giriş durumunda yapılacak işlemler
         console.log(response.data);
         navigate("/");
       })
-      .catch(error => {
+      .catch((error) => {
         // Hata durumunda yapılacak işlemler
         setError("Yanlış şifre");
-        console.error('Hata:', error);
+        console.error("Hata:", error);
       });
-
   }
 
   function handleOnSignUp() {
@@ -84,8 +80,14 @@ const Login: React.FC = () => {
 
   return (
     <div className="container">
+      <div className="logodiv">
+        <h2>appFanatic</h2>
+      </div>
       <div className="loginDiv">
-        <h2 style={{ textAlign: "center" }}>Turkish Football Forum</h2>
+        <h2 style={{ textAlign: "center" }}>Welcome Back!</h2>
+        <p className="enter-credentials-text" style={{ textAlign: "center" }}>
+          Enter your credentials to login{" "}
+        </p>
         <Input
           className="LoginForm"
           type="text"

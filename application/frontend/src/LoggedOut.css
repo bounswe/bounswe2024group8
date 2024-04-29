@@ -5,8 +5,8 @@ html {
 }
 /* Overall container style */
 .container {
-    background-image: url("https://wallpapercave.com/wp/wp2022774.jpg");
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh; /* This makes the container take full viewport height */
@@ -83,4 +83,14 @@ html {
   p[style*="color: red"] {
     font-weight: bold; /* Bold font for errors */
   }
+
+  .enter-credentials-text{
+    margin-bottom: 50px;
+  }
+
+  .logodiv{
+    background-color: #4CAF50;
+    border-radius: 5px;
+  }
+
   
