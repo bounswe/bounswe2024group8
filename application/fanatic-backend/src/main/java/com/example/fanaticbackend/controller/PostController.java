@@ -35,7 +35,7 @@ public class PostController {
 
         var result = postService.searchPost(param);
 
-        if (result.getPosts().isEmpty() || result.getTeam() == null) {
+        if (result.getPosts().isEmpty() && result.getTeam() == null) {
             return ResponseEntity.notFound().build();
         }
 

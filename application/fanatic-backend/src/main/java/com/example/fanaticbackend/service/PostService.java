@@ -11,6 +11,7 @@ import com.example.fanaticbackend.repository.PostRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class PostService {
 //        results.add(post);
         //TODO: @oguz WikidataService should return type: WikidataTeamDto
 
-        WikidataTeamDto team = new WikidataTeamDto();
+        WikidataTeamDto team = wikidataService.search(param);
 
         List<Post> posts = postRepository.findByTextLikeIgnoreCase(param);
         results.addAll(posts);
