@@ -30,14 +30,13 @@
   }
   
   .post-text {
-    margin-top: 15px;
-    font-size: medium;
+    margin-top: 10px;
   }
   
   .post-image {
     margin-top: 10px;
-    height: 200px; 
-    background-color: #e0e0e0; 
+    height: 200px; /* Placeholder height */
+    background-color: #e0e0e0; /* Placeholder color */
     border: 40px;
     border-radius: 10px;
     border-color: black;
@@ -45,30 +44,11 @@
   
   .post-actions {
     margin-top: 10px;
-    align-items: center;
     display: flex;
     justify-content: space-around;
   }
   
   .post-actions button {
     cursor: pointer;
-  }
-
-  .post-action{
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  button{
-    border: 0;
-  }
-
-  .like{
-    font-size: 25px;
-  }
-
-  .action-number{
-    min-width: 20px;
   }
   

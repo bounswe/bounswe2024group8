@@ -17,6 +17,7 @@ export default function LoginScreen({ navigation }) {
 
   const onLoginClick = () => {
     console.log(email + " logged in with password " + password);
+    navigation.navigate("Feed");
   };
 
   const onSignupClick = () => {
