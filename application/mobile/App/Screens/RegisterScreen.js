@@ -84,6 +84,7 @@ export default function RegisterScreen({ navigation }) {
         })
         .catch((error) => {
           setError("Duplicate entry");
+          console.log(error);
         });
     }
   };
