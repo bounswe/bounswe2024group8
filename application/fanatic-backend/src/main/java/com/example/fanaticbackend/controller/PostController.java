@@ -1,6 +1,7 @@
 package com.example.fanaticbackend.controller;
 
 import com.example.fanaticbackend.model.Post;
+import com.example.fanaticbackend.payload.PostCreateRequest;
 import com.example.fanaticbackend.service.PostService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,10 @@ public class PostController {
 
     final PostService postService;
 
-    @GetMapping("/create")
+    @PostMapping("/")
     public ResponseEntity<Post> createPost(
-            @RequestBody Post post) {
-        Post savedPost = postService.savePost(post);
+            @RequestBody PostCreateRequest request) {
+        Post savedPost = postService.create(request);
         return ResponseEntity.ok(savedPost);
     }
 

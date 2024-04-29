@@ -1,6 +1,8 @@
 package com.example.fanaticbackend.service;
 
 import com.example.fanaticbackend.model.Post;
+import com.example.fanaticbackend.model.enums.Team;
+import com.example.fanaticbackend.payload.PostCreateRequest;
 import com.example.fanaticbackend.repository.PostRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ public class PostService {
 
     final WikidataService wikidataService;
     final PostRepository postRepository;
+    final UserService userService;
 
     public List<Post> searchPost(String param) {
         List<Post> results = new ArrayList<>();
@@ -32,7 +35,13 @@ public class PostService {
 
     }
 
-    public Post savePost(Post post) {
+    public Post create(PostCreateRequest request) {
+        Post post = Post.builder()
+                .title(request.getTitle())
+                .text(request.getText())
+                .teamName(Team.valueOf(request.getTeamName()))
+                .user(userService.getUserById(request.getUserId()))
+                .build();
         return postRepository.save(post);
     }
 

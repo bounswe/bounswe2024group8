@@ -32,7 +32,7 @@ public class Post {
     @Column(name = "title", nullable = false)
     String title;
 
-    @Column(name = "likes", nullable = false)
-    int likes;
+    @Column(name = "likes", columnDefinition = "int default 0")
+    Integer likes;
 
 }

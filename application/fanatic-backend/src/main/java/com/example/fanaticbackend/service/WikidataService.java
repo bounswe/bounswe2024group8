@@ -49,12 +49,12 @@ public class WikidataService {
         String sparqlQuery = "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n" +
                 "PREFIX wd: <http://www.wikidata.org/entity/>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "SELECT DISTINCT ?team ?teamLabel ?teamDesc ?locationLabel ?yearFounded ?coachLabel ?logo WHERE {\n" +
+                "SELECT DISTINCT ?team ?teamLabel ?locationLabel ?yearFounded ?coachLabel ?logo WHERE {\n" +
                 "    ?team wdt:P31 wd:Q476028;\n" +
                 "          wdt:P118 wd:Q485568;\n" +
-                "          schema:description ?teamDesc.\n" +
-                "          FILTER(lang(?teamDesc) = \"en\")\n" +
-                "    ?team rdfs:label ?teamLabel.\n" +
+                //"          schema:description ?teamDesc.\n" +
+                //"          FILTER(lang(?teamDesc) = \"en\")\n" +
+                "          rdfs:label ?teamLabel.\n" +
                 "    OPTIONAL { ?team wdt:P154 ?logo.}\n" +
                 "    OPTIONAL { ?team wdt:P571 ?yearFounded. }\n" +
                 "    OPTIONAL { ?team wdt:P286 ?coach.\n" +
