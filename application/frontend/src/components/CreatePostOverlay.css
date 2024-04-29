@@ -38,8 +38,8 @@
 
 /* Additional styles for form elements */
 .overlay input[type="text"],
-textarea,
-button {
+.overlay textarea,
+.overlay button {
     width: 100%;
     padding: 10px;
     margin-top: 8px;
