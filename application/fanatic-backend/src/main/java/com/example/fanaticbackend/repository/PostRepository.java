@@ -17,8 +17,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p WHERE LOWER(p.text) LIKE LOWER(CONCAT('%',:param,'%')) OR LOWER(p.title) LIKE LOWER(CONCAT('%',:param,'%'))")
     List<Post> findByTextLikeIgnoreCase(String param);
 
-    // Write if present method
-    //Post findByTextLikeIgnoreCase(String text);
+    List<Post> findAllByOrderByIdDesc();
 
 
 }

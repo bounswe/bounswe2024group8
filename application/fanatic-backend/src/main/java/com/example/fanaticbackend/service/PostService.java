@@ -16,19 +16,27 @@ import java.util.List;
 public class PostService {
 
     final WikidataService wikidataService;
-    final PostRepository PostRepository;
+    final PostRepository postRepository;
 
-    public ArrayList<Post> searchPost(String param) {
-        ArrayList<Post> results = new ArrayList<>();
+    public List<Post> searchPost(String param) {
+        List<Post> results = new ArrayList<>();
         var post = Post.builder().text(wikidataService.search(param))
                 .title("Wikidata Results")
                 .build();
         results.add(post);
 
-        List<Post> posts = PostRepository.findByTextLikeIgnoreCase(param);
+        List<Post> posts = postRepository.findByTextLikeIgnoreCase(param);
         results.addAll(posts);
 
         return results;
 
+    }
+
+    public Post savePost(Post post) {
+        return postRepository.save(post);
+    }
+
+    public List<Post> getFeed() {
+        return postRepository.findAllByOrderByIdDesc();
     }
 }

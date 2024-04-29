@@ -33,10 +33,10 @@ public class WikidataService {
         if (!teamSearch.isEmpty()) {
             return teamSearch;
         }
-        String playerSearch = searchPlayer(keyword);
-        if (!playerSearch.isEmpty()) {
-            return playerSearch;
-        }
+        //String playerSearch = searchPlayer(keyword);
+        //if (!playerSearch.isEmpty()) {
+        //    return playerSearch;
+        //}
 
         return "No results found for keyword: " + keyword;
     }
