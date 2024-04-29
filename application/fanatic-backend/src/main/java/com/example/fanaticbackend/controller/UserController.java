@@ -18,20 +18,12 @@ public class UserController {
 
     final UserService userService;
 
-//    @PostMapping("/signup")
-//    public ResponseEntity<User> createUser(@RequestBody User user) {
-//        User savedUser = userService.saveUser(user);
-//        return ResponseEntity.ok(savedUser);
-//    }
 
     @GetMapping("")
     public ResponseEntity<User> getUserByEmail(
             @RequestParam String email) {
-        User user = userService.getUserByEmail(email);
 
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
+        User user = userService.getUserByEmail(email);
 
         return ResponseEntity.ok(user);
     }

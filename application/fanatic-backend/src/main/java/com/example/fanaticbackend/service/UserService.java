@@ -1,6 +1,7 @@
 package com.example.fanaticbackend.service;
 
 
+import com.example.fanaticbackend.exception.custom.FanaticDatabaseException;
 import com.example.fanaticbackend.model.User;
 import com.example.fanaticbackend.repository.UserRepository;
 import lombok.AccessLevel;
@@ -25,19 +26,18 @@ public class UserService {
 
         User user = userRepository.findByEmail(email);
 
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
+        if (user == null) throw new FanaticDatabaseException("User not found with email: " + email);
 
         return user;
-
     }
 
     public User getUserById(Long id) {
         User user = userRepository.findUserById(id);
+
         if (user == null) {
-            throw new RuntimeException("User not found");
+            throw new FanaticDatabaseException("User not found with id: " + id);
         }
+
         return user;
     }
 }

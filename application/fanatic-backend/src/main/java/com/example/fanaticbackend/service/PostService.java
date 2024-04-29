@@ -1,7 +1,9 @@
 package com.example.fanaticbackend.service;
 
 import com.example.fanaticbackend.dto.WikidataTeamDto;
+import com.example.fanaticbackend.exception.custom.FanaticDatabaseException;
 import com.example.fanaticbackend.model.Post;
+import com.example.fanaticbackend.model.User;
 import com.example.fanaticbackend.model.enums.Team;
 import com.example.fanaticbackend.payload.PostCreateRequest;
 import com.example.fanaticbackend.payload.SearchResponse;
@@ -45,19 +47,30 @@ public class PostService {
     }
 
     public Post create(PostCreateRequest request) {
+
+        User user = userService.getUserById(request.getUserId());
+
         Post post = Post.builder()
                 .title(request.getTitle())
                 .text(request.getText())
                 .teamName(Team.valueOf(request.getTeamName()))
-                .user(userService.getUserById(request.getUserId()))
+                .user(user)
                 .likes(0)
                 .dislikes(0)
                 .comments(0)
                 .build();
-        return postRepository.save(post);
+
+        try {
+            postRepository.save(post);
+        } catch (Exception e) {
+            throw new FanaticDatabaseException("Post could not be saved");
+        }
+
+        return post;
     }
 
     public List<Post> getFeed() {
+
         return postRepository.findAllByOrderByIdDesc();
     }
 }

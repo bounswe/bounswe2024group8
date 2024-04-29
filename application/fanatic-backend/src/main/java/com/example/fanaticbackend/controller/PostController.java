@@ -23,7 +23,9 @@ public class PostController {
     @PostMapping("")
     public ResponseEntity<Post> create(
             @RequestBody PostCreateRequest request) {
+
         Post savedPost = postService.create(request);
+
         return ResponseEntity.ok(savedPost);
     }
 
@@ -42,6 +44,7 @@ public class PostController {
 
     @GetMapping("/feed")
     public ResponseEntity<List<Post>> getFeed() {
+
         List<Post> posts = postService.getFeed();
 
         if (posts.isEmpty()) {

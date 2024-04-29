@@ -1,6 +1,7 @@
 package com.example.fanaticbackend.service;
 
 import com.example.fanaticbackend.config.JwtService;
+import com.example.fanaticbackend.exception.custom.FanaticDatabaseException;
 import com.example.fanaticbackend.model.User;
 import com.example.fanaticbackend.model.enums.Role;
 import com.example.fanaticbackend.payload.AuthenticationRequest;
@@ -30,7 +31,13 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
 
-        var user = User.builder()
+        User user = userRepository.findByEmail(request.getEmail());
+
+        if (user != null) {
+            throw new FanaticDatabaseException("User already exists with email: " + request.getEmail());
+        }
+
+        user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
@@ -38,10 +45,10 @@ public class AuthenticationService {
                 .role(Role.USER)
                 .build();
 
-        var savedUser = userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+        String jwtToken = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
 //        saveUserToken(savedUser, jwtToken);
         return AuthenticationResponse.builder()
