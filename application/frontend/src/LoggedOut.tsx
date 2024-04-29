@@ -13,15 +13,6 @@ export const users: User[] = [
   { email: "daghanerdonmez@gmail.com", password: "daghan123" },
 ];
 
-function checkUser(email: string, password: string): string {
-  for (let user of users) {
-    if (user.email === email) {
-      return user.password === password ? "Correct" : "Incorrect password";
-    }
-  }
-  return "Incorrect email";
-}
-
 interface ButtonProps {
   text: string;
   className: string;
