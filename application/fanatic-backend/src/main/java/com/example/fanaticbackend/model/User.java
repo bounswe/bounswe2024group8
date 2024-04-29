@@ -27,7 +27,7 @@ public class User implements UserDetails {
     Long id;
 
     @Column(nullable = false, unique = true)
-    String username;
+    String email;
 
     @Column(nullable = false)
     String password;
@@ -45,6 +45,12 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
 
     @Override
     public boolean isAccountNonExpired() {

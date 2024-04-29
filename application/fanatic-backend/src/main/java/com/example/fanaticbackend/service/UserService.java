@@ -6,7 +6,6 @@ import com.example.fanaticbackend.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,14 +17,17 @@ public class UserService {
     //Dependency Injection
     final UserRepository userRepository;
 
-
     public User saveUser(User user) {
         return userRepository.save(user);
     }
 
-    public User getUserByUsername(String username) {
+    public User getUserByEmail(String email) {
 
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
 
         return user;
 

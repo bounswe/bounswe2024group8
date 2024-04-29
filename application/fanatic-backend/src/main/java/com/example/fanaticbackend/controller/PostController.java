@@ -19,7 +19,7 @@ public class PostController {
 
     final PostService postService;
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<Post> createPost(
             @RequestBody PostCreateRequest request) {
         Post savedPost = postService.create(request);

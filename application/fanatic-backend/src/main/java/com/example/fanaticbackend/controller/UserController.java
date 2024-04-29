@@ -7,7 +7,6 @@ import com.example.fanaticbackend.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,10 +24,10 @@ public class UserController {
 //        return ResponseEntity.ok(savedUser);
 //    }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<User> getUserByUsername(
-            @PathVariable String username) {
-        User user = userService.getUserByUsername(username);
+    @GetMapping("")
+    public ResponseEntity<User> getUserByEmail(
+            @RequestParam String email) {
+        User user = userService.getUserByEmail(email);
 
         if (user == null) {
             return ResponseEntity.notFound().build();
