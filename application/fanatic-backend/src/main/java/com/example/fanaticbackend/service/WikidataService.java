@@ -1,5 +1,6 @@
 package com.example.fanaticbackend.service;
 
+import com.example.fanaticbackend.dto.WikidataTeamDto;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriUtils;
 
+import java.util.HashMap;
+
 
 @Service
 @RequiredArgsConstructor
@@ -28,24 +31,30 @@ public class WikidataService {
     //Sehir ve Takim.
 
 
-    public String search(String keyword) {
-        String teamSearch = searchTeam(keyword);
+    public WikidataTeamDto search(String keyword) {
+        HashMap<String, String> teamSearch = searchTeam(keyword);
         if (!teamSearch.isEmpty()) {
-            return teamSearch;
+            return WikidataTeamDto.builder().teamName(teamSearch.get("teamLabel"))
+                    .year(Integer.parseInt(teamSearch.get("yearFounded").substring(0, 4)))
+                    .coachName(teamSearch.get("coachLabel"))
+                    .logoUrl(teamSearch.get("logo"))
+                    .build();
         }
         //String playerSearch = searchPlayer(keyword);
         //if (!playerSearch.isEmpty()) {
         //    return playerSearch;
         //}
 
-        return "No results found for keyword: " + keyword;
+
+        //return "No results found for keyword: " + keyword;
+        return null;
     }
 
 
 
 
 
-    public String searchTeam(String keyword) {
+    public HashMap<String, String> searchTeam(String keyword) {
         String sparqlQuery = "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n" +
                 "PREFIX wd: <http://www.wikidata.org/entity/>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
@@ -71,20 +80,24 @@ public class WikidataService {
         ResultSet resultSet = queryExec.execSelect();
 
         // Process results
-        StringBuilder result = new StringBuilder();
+        //StringBuilder result = new StringBuilder();
+        HashMap<String, String> result = new HashMap<>();
         while (resultSet.hasNext()) {
             QuerySolution solution = resultSet.nextSolution();
-            result.append("Team: ").append(solution.get("teamLabel")).append("\n");
-            result.append("Description: ").append(solution.get("teamDesc")).append("\n");
-            result.append("Year Founded: ").append(solution.get("yearFounded")).append("\n");
-            result.append("Coach: ").append(solution.get("coachLabel")).append("\n");
-            result.append("Logo: ").append(solution.get("logo")).append("\n\n");
+            //result.append("Team: ").append(solution.get("teamLabel")).append("\n");
+            result.put("teamLabel", solution.get("teamLabel").toString());
+            //result.append("Year Founded: ").append(solution.get("yearFounded")).append("\n");
+            result.put("yearFounded", solution.get("yearFounded").toString());
+            //result.append("Coach: ").append(solution.get("coachLabel")).append("\n");
+            result.put("coachLabel", solution.get("coachLabel").toString());
+            //result.append("Logo: ").append(solution.get("logo")).append("\n\n");
+            result.put("logo", solution.get("logo").toString());
         }
 
         // Close query execution
         queryExec.close();
 
-        return result.toString();
+        return result;
     }
 
     public String searchPlayer(String keyword) {
