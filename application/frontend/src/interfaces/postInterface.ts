@@ -19,5 +19,5 @@ export interface PostProps extends PostData {
   onLike: () => void;
   onDislike: () => void;
   onComment: () => void;
-  onShare: () => void;
+  onBookmark: () => void;
 }
