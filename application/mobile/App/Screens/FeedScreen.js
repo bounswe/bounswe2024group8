@@ -107,15 +107,16 @@ export default function FeedScreen({ navigation }) {
   return (
     <View style={styles.backgroundContainer}>
       <View style={styles.headerContainer}>
-        <Image source={require("../assets/favicon.jpeg")}></Image>
-        <Text style={styles.header}>appFanatic.</Text>
-        <TouchableOpacity onPress={toggleMenu}>
-          <Icon
-            name="dots-three-vertical"
-            size={40}
-            style={styles.headerMenuIcon}
-          ></Icon>
-        </TouchableOpacity>
+        <View style={{ height: 25, width: 25 }}></View>
+        <View style={styles.logoContainer}>
+          <Image source={require("../assets/favicon.jpeg")} />
+          <Text style={styles.header}>appFanatic.</Text>
+        </View>
+        <View style={styles.menuButtonContainer}>
+          <TouchableOpacity onPress={toggleMenu}>
+            <Icon name="dots-three-vertical" size={25}></Icon>
+          </TouchableOpacity>
+        </View>
       </View>
       <Modal visible={isMenuVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
@@ -172,17 +173,23 @@ const styles = StyleSheet.create({
   headerContainer: {
     marginTop: "5%",
     flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    width: "90%",
+  },
+  logoContainer: {
+    height: "100%",
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    marginHorizontal: "15%",
   },
   header: {
     color: "blue",
     fontSize: 25,
     fontWeight: "600",
   },
-  headerMenuIcon: {
-   
-  },
+  menuButtonContainer: {},
   searchContainer: {
     height: "5%",
     width: "90%",
