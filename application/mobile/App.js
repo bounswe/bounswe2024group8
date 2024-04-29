@@ -4,6 +4,7 @@ import LoginScreen from "./App/Screens/LoginScreen";
 import RegisterScreen from "./App/Screens/RegisterScreen";
 import FeedScreen from "./App/Screens/FeedScreen";
 import ProfileScreen from "./App/Screens/ProfileScreen";
+import PostCreationScreen from "./App/Screens/PostCreationScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,11 @@ export default function App() {
         <Stack.Screen
           name="Profile"
           component={ProfileScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Post"
+          component={PostCreationScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
