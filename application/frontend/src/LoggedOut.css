@@ -9,8 +9,9 @@ html {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* This makes the container take full viewport height */
-    background-color: #f7f7f7; /* Light grey background for the whole page */
+    background: linear-gradient(90deg, #0062ff, #da61ff);
+    height: 100vh;
+    width: 100vw;
   }
   
   /* Login box styling */
@@ -89,8 +90,15 @@ html {
   }
 
   .logodiv{
-    background-color: #4CAF50;
+    background-color: #ffffff;
     border-radius: 5px;
+    margin-bottom: 50px;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
   }
 
+  .logotext{
+    margin-right: 20px;
+  }
   

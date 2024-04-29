@@ -15,8 +15,12 @@ import pp2 from "./assets/dummyimages/pp2.png";
 import pp3 from "./assets/dummyimages/pp3.png";
 import pp4 from "./assets/dummyimages/pp4.png";
 import pp5 from "./assets/dummyimages/pp5.png";
+import {useState} from "react";
+import CreatePostOverlay from "./components/CreatePostOverlay.tsx";
 
 function App() {
+  const [showCreatePostOverlay, setShowCreatePostOverlay] = useState(false);
+
   const postsData: PostData[] = [
     {
       id: 1,
@@ -86,12 +90,13 @@ function App() {
           path="/"
           element={
             <div className="homepage">
-              <Navbar></Navbar>
+              <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
               <div className="dummydiv">
                 <SearchBar />
               </div>
               <Feed posts={postsData}></Feed>
               <div className="dummydiv"></div>
+              <CreatePostOverlay show={showCreatePostOverlay} onClose={() => setShowCreatePostOverlay(false)} />
             </div>
           }
         />
