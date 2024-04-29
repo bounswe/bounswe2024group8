@@ -50,6 +50,9 @@ public class PostService {
                 .text(request.getText())
                 .teamName(Team.valueOf(request.getTeamName()))
                 .user(userService.getUserById(request.getUserId()))
+                .likes(0)
+                .dislikes(0)
+                .comments(0)
                 .build();
         return postRepository.save(post);
     }

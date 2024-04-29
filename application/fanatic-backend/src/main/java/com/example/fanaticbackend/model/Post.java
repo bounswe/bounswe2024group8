@@ -35,4 +35,10 @@ public class Post {
     @Column(name = "likes", columnDefinition = "int default 0")
     Integer likes;
 
+    @Column(name = "dislikes", columnDefinition = "int default 0")
+    Integer dislikes;
+
+    @Column(name = "comments", columnDefinition = "int default 0")
+    Integer comments;
+
 }
