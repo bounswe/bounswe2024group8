@@ -15,6 +15,7 @@ html {
   
   /* loginDiv also serves as the signup box, centralizing the form */
   .loginDiv {
+    margin-top:-20px;
     width: 340px;  /* Increased width to accommodate longer input fields */
     padding: 20px;
     background-color: #fff;
