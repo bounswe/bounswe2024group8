@@ -1,8 +1,10 @@
 package com.example.fanaticbackend.service;
 
+import com.example.fanaticbackend.dto.WikidataTeamDto;
 import com.example.fanaticbackend.model.Post;
 import com.example.fanaticbackend.model.enums.Team;
 import com.example.fanaticbackend.payload.PostCreateRequest;
+import com.example.fanaticbackend.payload.SearchResponse;
 import com.example.fanaticbackend.repository.PostRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,17 +23,24 @@ public class PostService {
     final PostRepository postRepository;
     final UserService userService;
 
-    public List<Post> searchPost(String param) {
+    public SearchResponse searchPost(String param) {
         List<Post> results = new ArrayList<>();
-        var post = Post.builder().text(wikidataService.search(param))
-                .title("Wikidata Results")
-                .build();
-        results.add(post);
+//        var post = Post.builder().text(wikidataService.search(param))
+//                .title("Wikidata Results")
+//                .build();
+//        results.add(post);
+        //TODO: @oguz WikidataService should return type: WikidataTeamDto
+
+        WikidataTeamDto team = new WikidataTeamDto();
 
         List<Post> posts = postRepository.findByTextLikeIgnoreCase(param);
         results.addAll(posts);
 
-        return results;
+        SearchResponse result = new SearchResponse();
+        result.setPosts(results);
+        result.setTeam(team);
+
+        return result;
 
     }
 

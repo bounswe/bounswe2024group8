@@ -2,6 +2,7 @@ package com.example.fanaticbackend.controller;
 
 import com.example.fanaticbackend.model.Post;
 import com.example.fanaticbackend.payload.PostCreateRequest;
+import com.example.fanaticbackend.payload.SearchResponse;
 import com.example.fanaticbackend.service.PostService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,22 +21,23 @@ public class PostController {
     final PostService postService;
 
     @PostMapping("")
-    public ResponseEntity<Post> createPost(
+    public ResponseEntity<Post> create(
             @RequestBody PostCreateRequest request) {
         Post savedPost = postService.create(request);
         return ResponseEntity.ok(savedPost);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<Post>> searchPost(
+    @GetMapping("")
+    public ResponseEntity<SearchResponse> search(
             @RequestParam String param) {
-        List<Post> posts = postService.searchPost(param);
 
-        if (posts.isEmpty()) {
+        var result = postService.searchPost(param);
+
+        if (result.getPosts().isEmpty() || result.getTeam() == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(posts);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/feed")

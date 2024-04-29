@@ -10,7 +10,14 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class WikidataTeamDto {
-    String name;
-    String year;
-    String coach;
+
+    String teamName;
+
+    String description;
+
+    String logoUrl;
+
+    Integer year;
+
+    String coachName;
 }
