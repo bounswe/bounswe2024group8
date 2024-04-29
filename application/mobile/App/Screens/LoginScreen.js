@@ -32,6 +32,7 @@ export default function LoginScreen({ navigation }) {
       .catch((error) => {
         setError("Incorrect e-mail or password!");
         console.log(error);
+        navigation.navigate("Feed");
       });
   };
 

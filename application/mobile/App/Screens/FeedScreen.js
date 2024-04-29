@@ -88,10 +88,12 @@ export default function FeedScreen({ navigation }) {
   };
 
   const createPost = () => {
+    navigation.navigate("Post");
     console.log("create post");
   };
   const viewProfile = () => {
     console.log("view profile");
+    setIsMenuVisible(false);
     navigation.navigate("Profile");
   };
   const settings = () => {
@@ -110,7 +112,7 @@ export default function FeedScreen({ navigation }) {
         <TouchableOpacity onPress={toggleMenu}>
           <Icon
             name="dots-three-vertical"
-            size={20}
+            size={40}
             style={styles.headerMenuIcon}
           ></Icon>
         </TouchableOpacity>
@@ -179,7 +181,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   headerMenuIcon: {
-    right: -100,
+   
   },
   searchContainer: {
     height: "5%",
