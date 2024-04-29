@@ -88,10 +88,12 @@ export default function FeedScreen({ navigation }) {
   };
 
   const createPost = () => {
+    navigation.navigate("Post");
     console.log("create post");
   };
   const viewProfile = () => {
     console.log("view profile");
+    setIsMenuVisible(false);
     navigation.navigate("Profile");
   };
   const settings = () => {
@@ -106,11 +108,11 @@ export default function FeedScreen({ navigation }) {
     <View style={styles.backgroundContainer}>
       <View style={styles.headerContainer}>
         <Image source={require("../assets/favicon.jpeg")}></Image>
-        <Text style={styles.header}>Fanatic</Text>
+        <Text style={styles.header}>appFanatic.</Text>
         <TouchableOpacity onPress={toggleMenu}>
           <Icon
             name="dots-three-vertical"
-            size={20}
+            size={40}
             style={styles.headerMenuIcon}
           ></Icon>
         </TouchableOpacity>
@@ -179,7 +181,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   headerMenuIcon: {
-    right: -100,
+   
   },
   searchContainer: {
     height: "5%",
