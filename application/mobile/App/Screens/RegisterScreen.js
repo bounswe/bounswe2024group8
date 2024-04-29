@@ -22,26 +22,26 @@ export default function RegisterScreen({ navigation }) {
   const [teamDropdownOpen, teamDropdownSetOpen] = useState(false);
   const [teamDropdownValue, teamDropdownSetValue] = useState(null);
   const [teamDropdownItems, teamDropdownSetItems] = useState([
-    {label: 'Adana Demirspor', value: 'Adana Demirspor'},
-    {label: 'Alanyaspor', value: 'Alanyaspor'},
-    {label: 'Ankaragucu', value: 'Ankaragucu'},
-    {label: 'Antalyaspor', value: 'Antalyaspor'},
-    {label: 'Basaksehir', value: 'Basaksehir'},
-    {label: 'Besiktas', value: 'Besiktas'},
-    {label: 'Fatih Karagumruk', value: 'Fatih Karagumruk'},
-    {label: 'Fenerbahce', value: 'Fenerbahce'},
-    {label: 'Galatasaray', value: 'Galatasaray'},
-    {label: 'Gaziantep', value: 'Gaziantep'},
-    {label: 'Hatayspor', value: 'Hatayspor'},
-    {label: 'Istanbulspor', value: 'Istanbulspor'},
-    {label: 'Kasimpasa', value: 'Kasimpasa'},
-    {label: 'Kayserispor', value: 'Kayserispor'},
-    {label: 'Konyaspor', value: 'Konyaspor'},
-    {label: 'Pendikspor', value: 'Pendikspor'},
-    {label: 'Rizespor', value: 'Rizespor'},
-    {label: 'Samsunspor', value: 'Samsunspor'},
-    {label: 'Sivasspor', value: 'Sivasspor'},
-    {label: 'Trabzonspor', value: 'Trabzonspor'}
+    { label: "Adana Demirspor", value: "Adana Demirspor" },
+    { label: "Alanyaspor", value: "Alanyaspor" },
+    { label: "Ankaragucu", value: "Ankaragucu" },
+    { label: "Antalyaspor", value: "Antalyaspor" },
+    { label: "Basaksehir", value: "Basaksehir" },
+    { label: "Besiktas", value: "Besiktas" },
+    { label: "Fatih Karagumruk", value: "Fatih Karagumruk" },
+    { label: "Fenerbahce", value: "Fenerbahce" },
+    { label: "Galatasaray", value: "Galatasaray" },
+    { label: "Gaziantep", value: "Gaziantep" },
+    { label: "Hatayspor", value: "Hatayspor" },
+    { label: "Istanbulspor", value: "Istanbulspor" },
+    { label: "Kasimpasa", value: "Kasimpasa" },
+    { label: "Kayserispor", value: "Kayserispor" },
+    { label: "Konyaspor", value: "Konyaspor" },
+    { label: "Pendikspor", value: "Pendikspor" },
+    { label: "Rizespor", value: "Rizespor" },
+    { label: "Samsunspor", value: "Samsunspor" },
+    { label: "Sivasspor", value: "Sivasspor" },
+    { label: "Trabzonspor", value: "Trabzonspor" },
   ]);
 
   let email_reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
@@ -70,7 +70,7 @@ export default function RegisterScreen({ navigation }) {
       const userParams = {
         firstName: username,
         lastName: "",
-        userName: email,
+        email: email,
         password: password,
       };
 

@@ -19,7 +19,7 @@ export default function LoginScreen({ navigation }) {
 
   const onLoginClick = () => {
     const userParams = {
-      userName: email,
+      email: email,
       password: password,
     };
 
