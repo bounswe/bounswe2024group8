@@ -100,7 +100,7 @@ public class WikidataService {
         return result;
     }
 
-    public HashMap<String, String> searchPlayer(String keyword) {
+    public String searchPlayer(String keyword) {
         String sparqlQuery = "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n" +
                 "PREFIX wd: <http://www.wikidata.org/entity/>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
