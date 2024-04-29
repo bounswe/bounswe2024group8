@@ -11,7 +11,9 @@ export default function SignUpPage() {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   function handleOnSignUp() {
-    
+    const checkUser = {
+      userName: email,
+    };
     const registerUser = {
       firstName:username,
       lastName:"",
