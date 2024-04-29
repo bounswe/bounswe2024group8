@@ -7,21 +7,59 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from "react-native";
+import axios from "axios";
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [team, setTeam] = useState("");
+  const [error, setError] = useState("");
+
+  let email_reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+  let username_password_reg = /^[A-Zığüçşa-z0-9]+$/;
 
   const ref_username = useRef();
   const ref_password = useRef();
   const ref_team = useRef();
 
   const onSignupClick = () => {
-    console.log("sign up");
-    navigation.navigate("Login");
+    if (email === "") {
+      setError("Email can not be left empty.");
+    } else if (email_reg.test(email) === false) {
+      setError("Email format is not valid.");
+    } else if (username === "") {
+      setError("Username can not be left empty.");
+    } else if (username_password_reg.test(username) === false) {
+      setError("Username must consist of only letters and numbers.");
+    } else if (password.length < 8) {
+      setError("Password should be at least 8 characters long.");
+    } else if (username_password_reg.test(password) === false) {
+      setError("Password must consist of only letters and numbers.");
+    } /*else if (team === "") {
+      setError("Team can not be left empty.");
+    }*/ else {
+      const userParams = {
+        firstName: username,
+        lastName: "",
+        userName: email,
+        password: password,
+      };
+
+      axios
+        .post("http://192.168.1.103:8080/api/v1/auth/register", userParams)
+        .then((response) => {
+          console.log(response.data);
+          Alert.alert("", "Account is successfully created.", [
+            { text: "Ok", onPress: () => navigation.navigate("Login") },
+          ]);
+        })
+        .catch((error) => {
+          setError("Duplicate entry");
+        });
+    }
   };
 
   return (
@@ -69,6 +107,7 @@ export default function RegisterScreen({ navigation }) {
             ref={ref_team}
           />
         </View>
+        {error && <Text style={styles.errorText}>{error}</Text>}
         <View style={styles.buttonContainer}>
           <TouchableOpacity onPress={onSignupClick} style={styles.signupButton}>
             <Text style={styles.signupButtonText}>Sign Up</Text>
@@ -118,6 +157,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: "lightgrey",
   },
+  errorText: { color: "red", textAlign: "center" },
   buttonContainer: {
     height: "10%",
     width: "90%",

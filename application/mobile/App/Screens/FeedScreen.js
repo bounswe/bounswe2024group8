@@ -106,7 +106,7 @@ export default function FeedScreen({ navigation }) {
     <View style={styles.backgroundContainer}>
       <View style={styles.headerContainer}>
         <Image source={require("../assets/favicon.jpeg")}></Image>
-        <Text style={styles.header}>Fanatic</Text>
+        <Text style={styles.header}>appFanatic.</Text>
         <TouchableOpacity onPress={toggleMenu}>
           <Icon
             name="dots-three-vertical"
