@@ -8,13 +8,14 @@ import logo from "./assets/logo.png";
 export default function SignUpPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   function handleOnSignUp() {
     const registerUser = {
-      firstName: username,
-      lastName: "",
+      firstName: firstName,
+      lastName: lastName,
       email: email,
       password: password,
     };
@@ -57,10 +58,19 @@ export default function SignUpPage() {
         <Input
           className="SignUpForm"
           type="text"
-          id="username"
-          placeHolder="Username"
+          id="firstName"
+          placeHolder="First Name"
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setUsername(e.target.value)
+            setFirstName(e.target.value)
+          }
+        />
+        <Input
+          className="SignUpForm"
+          type="text"
+          id="lastName"
+          placeHolder="Last Name"
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setLastName(e.target.value)
           }
         />
         <Input
@@ -98,7 +108,7 @@ export default function SignUpPage() {
           </select>
         </div>
         <Button
-          disabled={email === "" || password === "" || username === ""}
+          disabled={email === "" || password === "" || firstName === ""|| lastName === ""}
           handleOn={handleOnSignUp}
           text="Sign Up"
           className="SignUpButton"
