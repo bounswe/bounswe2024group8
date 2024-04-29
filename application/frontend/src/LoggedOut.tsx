@@ -3,14 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import "./LoggedOut.css";
 import axios from 'axios';
 
-interface User {
-  email: string;
-  password: string;
-}
-
-function blank(){
-  return;
-}
 
 interface ButtonProps {
   text: string;

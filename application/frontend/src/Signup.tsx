@@ -11,9 +11,7 @@ export default function SignUpPage() {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   function handleOnSignUp() {
-    const checkUser = {
-      userName: email,
-    };
+    
     const registerUser = {
       firstName:username,
       lastName:"",
@@ -24,14 +22,10 @@ export default function SignUpPage() {
   
       axios.post('http://localhost:8080/api/v1/auth/register', registerUser)
       .then(response => {
-        // Başarılı kayıt durumunda yapılacak işlemler
-        console.log(response.data);
         navigate("/");
       })
       .catch(error => {
-        // Hata durumunda yapılacak işlemler
         setError("Email already exist");
-        console.error('Hata:', error);
       });
 
 

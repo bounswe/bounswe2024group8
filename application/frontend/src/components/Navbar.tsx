@@ -34,7 +34,7 @@ const Navbar = () => {
           </a>
         </li>
         <li className="navbar-li">
-          <a className="navbar-a" href="#logout">
+          <a className="navbar-a" href="loggedOut">
             <IoLogOutOutline className="Icons" />
           </a>
         </li>
