@@ -1,8 +1,8 @@
 import React, { useState, ChangeEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import logo from "./assets/logo.png";
 import "./LoggedOut.css";
 import axios from "axios";
-
 
 interface ButtonProps {
   text: string;
@@ -56,7 +56,7 @@ const Login: React.FC = () => {
 
   function handleOnLogin() {
     const data = {
-      userName: email,
+      email: email,
       password: password,
     };
 
@@ -64,12 +64,14 @@ const Login: React.FC = () => {
       .post("http://localhost:8080/api/v1/auth/authenticate", data)
       .then((response) => {
         // Başarılı giriş durumunda yapılacak işlemler
-        console.log(response.data);
+        console.log(response.data.accessToken);
+        localStorage.setItem("authToken", response.data.accessToken);
+        localStorage.setItem("email", email);
         navigate("/");
       })
       .catch((error) => {
         // Hata durumunda yapılacak işlemler
-        setError("Yanlış şifre");
+        setError("Incorrect e-mail or password.");
         console.error("Hata:", error);
       });
   }
@@ -81,13 +83,21 @@ const Login: React.FC = () => {
   return (
     <div className="container">
       <div className="logodiv">
-        <h2>appFanatic</h2>
+        <img
+          src={logo}
+          alt="Logo"
+          width="50"
+          height="50"
+          className="logo"
+        ></img>
+        <h2 className="logotext">appFanatic.</h2>
       </div>
       <div className="loginDiv">
         <h2 style={{ textAlign: "center" }}>Welcome Back!</h2>
         <p className="enter-credentials-text" style={{ textAlign: "center" }}>
           Enter your credentials to login{" "}
         </p>
+        {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
         <Input
           className="LoginForm"
           type="text"
@@ -106,9 +116,16 @@ const Login: React.FC = () => {
             setPassword(e.target.value)
           }
         />
-        <p style={{ marginLeft: "0px", marginTop: "0px", fontSize: "14px" }}>
+        <p
+          style={{
+            marginLeft: "0px",
+            marginTop: "30px",
+            fontSize: "14px",
+            textAlign: "center",
+          }}
+        >
           <Link to="/forgot" style={{ textDecoration: "none" }}>
-            Forgot my password?
+            Forgot password?
           </Link>
         </p>
         <Button
@@ -122,7 +139,6 @@ const Login: React.FC = () => {
           text="Sign Up"
           className="SignUpButton"
         />
-        {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
       </div>
     </div>
   );

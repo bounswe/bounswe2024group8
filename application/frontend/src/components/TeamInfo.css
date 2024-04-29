@@ -1,0 +1,29 @@
+.TeamInfo {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  
+  .logoContainer img {
+    width: 100px; /* Adjust size as needed */
+    height: auto;
+    margin-right: 20px;
+  }
+  
+  .teamDetails {
+    flex-grow: 1;
+  }
+  
+  .teamDetails h2 {
+    margin-top: 0;
+    margin-bottom: 5px;
+  }
+  
+  .teamDetails p {
+    margin: 5px 0;
+  }
+  

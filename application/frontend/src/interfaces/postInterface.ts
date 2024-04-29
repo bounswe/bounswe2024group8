@@ -4,6 +4,7 @@ export interface PostData {
   username: string;
   community: string;
   communityLink: string;
+  title: string;
   text: string;
   imageUrl?: string;
   likes: number;
@@ -20,4 +21,16 @@ export interface PostProps extends PostData {
   onDislike: () => void;
   onComment: () => void;
   onBookmark: () => void;
+}
+
+export interface SearchResultProps {
+  team: TeamInfoProps;
+  feedProps: FeedProps;
+}
+
+export interface TeamInfoProps {
+  teamName: string;
+  logoUrl: string;
+  year: number;
+  coachName: string;
 }

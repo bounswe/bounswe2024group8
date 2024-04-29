@@ -57,3 +57,8 @@
   font-style: normal;
   margin: 0;
 }
+
+.searchBar{
+  margin-top: 0;
+  flex-grow: 1;
+}

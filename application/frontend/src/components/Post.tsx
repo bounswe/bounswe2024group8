@@ -9,6 +9,7 @@ import {
 } from "react-icons/ai";
 import { FaRegCommentDots } from "react-icons/fa";
 import { IoBookmarkOutline, IoBookmark } from "react-icons/io5";
+import defaultpp from "../assets/defaultpp.png";
 
 const Post: React.FC<PostProps> = (props) => {
   const [liked, setLiked] = useState(false);
@@ -52,14 +53,16 @@ const Post: React.FC<PostProps> = (props) => {
     <div className="post">
       <div className="post-header">
         <img
-          src={props.profilePic}
+          src={props.profilePic || defaultpp}
           alt={`${props.username}'s profile`}
           className="profile-pic"
         />
+
         <span>{props.username}</span>
         <span className="communityspan">{"posted at " + props.community}</span>
       </div>
       <div className="post-content">
+        <h4 className="post-title">{props.title}</h4>
         <p className="post-text">{props.text}</p>
         {props.imageUrl && (
           <img

@@ -5,12 +5,12 @@ html {
 }
 /* Overall container style */
 .container {
-    background-image: url("https://wallpapercave.com/wp/wp2022774.jpg");
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* This makes the container take full viewport height */
-    background-color: #f7f7f7; /* Light grey background for the whole page */
+    background: linear-gradient(90deg, #0062ff, #da61ff);
+    height: 100vh;
+    width: 100vw;
   }
   
   /* loginDiv also serves as the signup box, centralizing the form */
