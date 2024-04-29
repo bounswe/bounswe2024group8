@@ -22,22 +22,11 @@
   padding: 0;
   display: flex;
   justify-content: flex-end;
-  align-items: center;
   flex-grow: 1;
 }
 
 .navbar-li {
   margin: 0 10px;
-  display: inline-block;
-}
-
-.divider {
-  color: #333; 
-  padding: 0 10px; 
-}
-
-.Icons{
-  font-size: 30px;
 }
 
 .navbar-a {
