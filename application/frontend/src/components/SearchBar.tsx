@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { SearchResultProps } from "../interfaces/postInterface.ts";
 import { searchResult } from "../storage/storage.ts";
+import { FaSearch } from "react-icons/fa";
 
 interface InputProps {
   className: string;
@@ -46,19 +47,19 @@ const SearchBar = () => {
 
         const searchResultLoc: SearchResultProps = {
           team: {
-            teamName: response.data.team.name,
-            description: response.data.team.description,
-            logoUrl: response.data.team.logo,
-            year: response.data.team.yearEstablished,
-            coachName: response.data.team.coach,
+            teamName: response.data.team.teamName,
+            logoUrl: response.data.team.logoUrl,
+            year: response.data.team.year,
+            coachName: response.data.team.coachName,
           },
           feedProps: {
             posts: response.data.posts.map((post: any) => ({
               id: post.id,
-              profilePic: "defaultProfilePic", // Assuming a default value; change if different logic is needed
+              profilePic: null, // Assuming a default value; change if different logic is needed
               username: post.user.firstName, // Assuming 'user' is correctly populated
               community: "Global", // Static value; change if different logic is needed
               communityLink: "", // Empty string as placeholder
+              title: post.title,
               text: post.text,
               imageUrl: "", // Provide default or conditional value
               likes: post.likes,
@@ -87,7 +88,19 @@ const SearchBar = () => {
           setKeyword(e.target.value)
         }
       />
-      <button onClick={handleOnSearch}>a</button>
+
+      <button
+        style={{
+          fontSize: "larger",
+          backgroundColor: "gray",
+          padding: "7px",
+          borderRadius: "20%",
+          marginLeft: "5px",
+        }}
+        onClick={handleOnSearch}
+      >
+        Search
+      </button>
     </div>
   );
 };

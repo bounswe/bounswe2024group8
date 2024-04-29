@@ -16,7 +16,7 @@ import pp2 from "./assets/dummyimages/pp2.png";
 import pp3 from "./assets/dummyimages/pp3.png";
 import pp4 from "./assets/dummyimages/pp4.png";
 import pp5 from "./assets/dummyimages/pp5.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CreatePostOverlay from "./components/CreatePostOverlay.tsx";
 import "./storage/storage.ts";
 import { searchResult } from "./storage/storage.ts";
@@ -31,6 +31,7 @@ function App() {
       username: "Can Öztemiz",
       community: "Fenerbahçe",
       communityLink: "fenerbahcelink",
+      title: "Deneme title",
       text: "Sizce Fenerbahçe'nin Trabzonspor karşısındaki hücum hattı nasıl olmalı?",
       imageUrl: image1,
       likes: 278,
@@ -43,6 +44,7 @@ function App() {
       username: "GalaGala123",
       community: "Galatasaray",
       communityLink: "galatasaraylink",
+      title: "Deneme title",
       text: "Icardi'nin bugünkü performansı çok iyi değil miydi?",
       imageUrl: image2,
       likes: 543,
@@ -55,6 +57,7 @@ function App() {
       username: "Tahsin Gözüpek",
       community: "Rizespor",
       communityLink: "rizesporlink",
+      title: "Deneme title",
       text: "Beşiktaş deplasmanı öncesi pazar günü evimizde oynayacağımız Ankaragücü maçı büyük önem taşımaktadır. Avrupa hedefine ulaşabilmek için pazar günü takımımıza büyük destek gerekmektedir. Belediyemizin aynı şekilde  şehirde araç dolaştırıp taraftarı davet etmesi gerekmektedir.",
       likes: 73,
       dislikes: 2,
@@ -66,6 +69,7 @@ function App() {
       username: "çArşı",
       community: "Beşiktaş",
       communityLink: "besiktaslink",
+      title: "Deneme title",
       text: "FENERBAHÇE DEPLASMANINA GELECEK OLAN TARAFTARLARIMIZIN DİKKATİNE; Şanlı Beşiktaş’ımızın 27 Nisan Cumartesi günü (YARIN) oynayacağı Fenerbahçe karşılaşması öncesinde taraftarlarımız bir arada ve organize şekilde hareket etme amacıyla maç günü saat 14.00’da Tüpraş Stadyumu Kuzey Tribünü önünde toplanacaktır. \n15.00’da otobüslerle toplu bir şekilde hareket edecektir. Taraftarlarımızın belirtilen saatlere uyması yaşanacak olumsuzlukların önüne geçecektir.",
       imageUrl: image4,
       likes: 323,
@@ -78,6 +82,7 @@ function App() {
       username: "Kayserispor Fan",
       community: "Kayserispor",
       communityLink: "kayserisporlink",
+      title: "Deneme title",
       text: "Pendik deplasmanı | Kayserispor tribünü 🟡🔴 #KapalıKale",
       imageUrl: image5,
       likes: 32,
@@ -94,9 +99,7 @@ function App() {
           element={
             <div className="homepage">
               <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
-              <div className="dummydiv">
-                <SearchBar />
-              </div>
+              <div className="dummydiv"></div>
               <Feed posts={postsData}></Feed>
               <div className="dummydiv"></div>
               <CreatePostOverlay
@@ -111,9 +114,7 @@ function App() {
           element={
             <div className="searchResultPage">
               <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
-              <div className="dummydiv">
-                <SearchBar />
-              </div>
+              <div className="dummydiv"></div>
               <SearchResult
                 team={searchResult.team}
                 feedProps={searchResult.feedProps}

@@ -1,10 +1,10 @@
-import "./Feed.css";
+import "./SearchResultFeed.css";
 import Post from "./Post";
 import { FeedProps } from "../interfaces/postInterface";
 
 const Feed: React.FC<FeedProps> = (props) => {
   return (
-    <div className="feed">
+    <div className="feedInSearch">
       {props.posts.map((post) => (
         <Post
           key={post.id}

@@ -1,15 +1,19 @@
 import "./SearchResult.css";
-import Feed from "./Feed";
+import SearchResultFeed from "./SearchResultFeed";
+import TeamInfo from "./TeamInfo";
 import { SearchResultProps } from "../interfaces/postInterface";
+import { searchResult } from "../storage/storage";
 
 const SearchResult: React.FC<SearchResultProps> = (props) => {
   return (
     <div className="SearchResult">
-      <div className="TeamInfo">
-        <h1>TEAM INFO</h1>
+      <div className="teamInfo">
+        <TeamInfo team={searchResult.team} />
       </div>
-      <div className="Feed">
-        <Feed posts={props.feedProps.posts}></Feed>
+      <div className="feedInSearchOuter">
+        <SearchResultFeed
+          posts={searchResult.feedProps.posts}
+        ></SearchResultFeed>
       </div>
     </div>
   );
