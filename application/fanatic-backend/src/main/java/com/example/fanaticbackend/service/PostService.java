@@ -34,14 +34,14 @@ public class PostService {
 //        results.add(post);
         //TODO: @oguz WikidataService should return type: WikidataTeamDto
 
-        WikidataTeamDto team = wikidataService.search(param);
+//        WikidataTeamDto team = wikidataService.search(param);
 
         List<Post> posts = postRepository.findByTextLikeIgnoreCase(param);
         results.addAll(posts);
 
         SearchResponse result = new SearchResponse();
         result.setPosts(results);
-        result.setTeam(team);
+//        result.setTeam(team);
 
         return result;
 
