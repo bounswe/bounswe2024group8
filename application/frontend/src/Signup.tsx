@@ -15,7 +15,7 @@ export default function SignUpPage() {
     const registerUser = {
       firstName: username,
       lastName: "",
-      userName: email,
+      email: email,
       password: password,
     };
 

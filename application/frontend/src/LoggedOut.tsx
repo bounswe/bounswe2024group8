@@ -56,7 +56,7 @@ const Login: React.FC = () => {
 
   function handleOnLogin() {
     const data = {
-      userName: email,
+      email: email,
       password: password,
     };
 
