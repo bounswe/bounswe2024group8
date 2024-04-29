@@ -14,7 +14,16 @@ const Navbar = () => {
         </li>
         <li className="navbar-li">
           <a className="navbar-a" href="#settings">
+<<<<<<< HEAD
+            <IoSettingsSharp className="Icons" />
+          </a>
+        </li>
+        <li className="navbar-li">
+          <a className="navbar-a" href="loggedOut">
+            <IoLogOutOutline className="Icons" />
+=======
             Settings
+>>>>>>> main
           </a>
         </li>
       </ul>
