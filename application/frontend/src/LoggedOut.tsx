@@ -8,6 +8,10 @@ interface User {
   password: string;
 }
 
+function blank(){
+  return;
+}
+
 interface ButtonProps {
   text: string;
   className: string;
