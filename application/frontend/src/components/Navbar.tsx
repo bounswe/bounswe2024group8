@@ -35,7 +35,7 @@ const Navbar: React.FC<NavbarProps> = ({ setShowCreatePostOverlay }) => {
             </a>
           </li>
           <li className="navbar-li">
-            <a className="navbar-a" href="/">
+            <a className="navbar-a" href="/home">
               <FaHome className="Icons" />
             </a>
           </li>
@@ -51,7 +51,7 @@ const Navbar: React.FC<NavbarProps> = ({ setShowCreatePostOverlay }) => {
             </a>
           </li>
           <li className="navbar-li">
-            <a className="navbar-a" href="loggedOut">
+            <a className="navbar-a" href="/">
               <IoLogOutOutline className="Icons" />
             </a>
           </li>

@@ -2,6 +2,8 @@ export interface PostData {
   id: number;
   profilePic: string;
   username: string;
+  firstName: string;
+  lastName: string;
   community: string;
   communityLink: string;
   title: string;

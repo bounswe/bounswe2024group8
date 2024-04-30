@@ -1,10 +1,9 @@
 import { useState, ChangeEvent } from "react";
 import "./SearchBar.css";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { SearchResultProps } from "../interfaces/postInterface.ts";
 import { searchResult } from "../storage/storage.ts";
-import { FaSearch } from "react-icons/fa";
 
 interface InputProps {
   className: string;
@@ -45,32 +44,67 @@ const SearchBar = () => {
       .then((response) => {
         console.log(response.data);
 
-        const searchResultLoc: SearchResultProps = {
-          team: {
-            teamName: response.data.team.teamName,
-            logoUrl: response.data.team.logoUrl,
-            year: response.data.team.year,
-            coachName: response.data.team.coachName,
-          },
-          feedProps: {
-            posts: response.data.posts.map((post: any) => ({
-              id: post.id,
-              profilePic: null, // Assuming a default value; change if different logic is needed
-              username: post.user.firstName, // Assuming 'user' is correctly populated
-              community: "Global", // Static value; change if different logic is needed
-              communityLink: "", // Empty string as placeholder
-              title: post.title,
-              text: post.text,
-              imageUrl: "", // Provide default or conditional value
-              likes: post.likes,
-              dislikes: post.dislikes,
-              commentsCount: post.comments,
-            })),
-          },
-        };
+        let searchResultLoc: SearchResultProps;
+        if (response.data.team) {
+          searchResultLoc = {
+            team: {
+              teamName: response.data.team.teamName,
+              logoUrl: response.data.team.logoUrl,
+              year: response.data.team.year,
+              coachName: response.data.team.coachName,
+            },
+            feedProps: {
+              posts: response.data.posts.map((post: any) => ({
+                id: post.id,
+                profilePic: null, // Assuming a default value; change if different logic is needed
+                username: post.user.firstName, // Assuming 'user' is correctly populated
+                firstName: post.user.firstName,
+                lastName: post.user.lastName,
+                community: "Global", // Static value; change if different logic is needed
+                communityLink: "", // Empty string as placeholder
+                title: post.title,
+                text: post.text,
+                imageUrl: "", // Provide default or conditional value
+                likes: post.likes,
+                dislikes: post.dislikes,
+                commentsCount: post.comments,
+              })),
+            },
+          };
+        } else {
+          searchResultLoc = {
+            team: {
+              teamName: "",
+              logoUrl: "",
+              year: 0,
+              coachName: "",
+            },
+            feedProps: {
+              posts: response.data.posts.map((post: any) => ({
+                id: post.id,
+                profilePic: null,
+                username: post.user.firstName,
+                firstName: post.user.firstName,
+                lastName: post.user.lastName,
+                community: "Global",
+                communityLink: "",
+                title: post.title,
+                text: post.text,
+                imageUrl: "",
+                likes: post.likes,
+                dislikes: post.dislikes,
+                commentsCount: post.comments,
+              })),
+            },
+          };
+        }
         searchResult.team = searchResultLoc.team;
         searchResult.feedProps = searchResultLoc.feedProps;
-        navigate("/searchResult");
+        if (location.pathname === `/searchResult`) {
+          navigate(`/searchResultIntermediate`);
+        } else {
+          navigate(`/searchResult`);
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -88,14 +122,15 @@ const SearchBar = () => {
           setKeyword(e.target.value)
         }
       />
-
       <button
         style={{
-          fontSize: "larger",
-          backgroundColor: "gray",
+          fontSize: "small",
+          backgroundColor: "#333",
           padding: "7px",
-          borderRadius: "20%",
+          borderRadius: "10%",
           marginLeft: "5px",
+          cursor: "pointer",
+          color: "#fff", // This sets the text color to white
         }}
         onClick={handleOnSearch}
       >

@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoggedOut from "./LoggedOut";
 import Navbar from "./components/Navbar";
 import Feed from "./components/Feed";
-import SearchBar from "./components/SearchBar";
 import SignUpPage from "./Signup";
 import SearchResult from "./components/SearchResult.tsx";
+import SearchResultIntermediate from "./components/SearchResultIntermediate.tsx";
 import { PostData } from "./interfaces/postInterface";
 import image1 from "./assets/dummyimages/image1.png";
 import image2 from "./assets/dummyimages/image2.png";
@@ -29,9 +29,11 @@ function App() {
       id: 1,
       profilePic: pp1,
       username: "Can Öztemiz",
+      firstName: "Can",
+      lastName: "Öztemiz",
       community: "Fenerbahçe",
       communityLink: "fenerbahcelink",
-      title: "Deneme title",
+      title: "Fenerbahçe - Trabzonspor",
       text: "Sizce Fenerbahçe'nin Trabzonspor karşısındaki hücum hattı nasıl olmalı?",
       imageUrl: image1,
       likes: 278,
@@ -42,9 +44,11 @@ function App() {
       id: 2,
       profilePic: pp2,
       username: "GalaGala123",
+      firstName: "GalaGala123",
+      lastName: "",
       community: "Galatasaray",
       communityLink: "galatasaraylink",
-      title: "Deneme title",
+      title: "Bugünkü maç hakkında",
       text: "Icardi'nin bugünkü performansı çok iyi değil miydi?",
       imageUrl: image2,
       likes: 543,
@@ -55,9 +59,11 @@ function App() {
       id: 3,
       profilePic: pp3,
       username: "Tahsin Gözüpek",
+      firstName: "Tahsin",
+      lastName: "Gözüpek",
       community: "Rizespor",
       communityLink: "rizesporlink",
-      title: "Deneme title",
+      title: "Taraftara duyuru",
       text: "Beşiktaş deplasmanı öncesi pazar günü evimizde oynayacağımız Ankaragücü maçı büyük önem taşımaktadır. Avrupa hedefine ulaşabilmek için pazar günü takımımıza büyük destek gerekmektedir. Belediyemizin aynı şekilde  şehirde araç dolaştırıp taraftarı davet etmesi gerekmektedir.",
       likes: 73,
       dislikes: 2,
@@ -67,9 +73,11 @@ function App() {
       id: 4,
       profilePic: pp4,
       username: "çArşı",
+      firstName: "çArşı",
+      lastName: "",
       community: "Beşiktaş",
       communityLink: "besiktaslink",
-      title: "Deneme title",
+      title: "ÖNEMLİ DUYURU",
       text: "FENERBAHÇE DEPLASMANINA GELECEK OLAN TARAFTARLARIMIZIN DİKKATİNE; Şanlı Beşiktaş’ımızın 27 Nisan Cumartesi günü (YARIN) oynayacağı Fenerbahçe karşılaşması öncesinde taraftarlarımız bir arada ve organize şekilde hareket etme amacıyla maç günü saat 14.00’da Tüpraş Stadyumu Kuzey Tribünü önünde toplanacaktır. \n15.00’da otobüslerle toplu bir şekilde hareket edecektir. Taraftarlarımızın belirtilen saatlere uyması yaşanacak olumsuzlukların önüne geçecektir.",
       imageUrl: image4,
       likes: 323,
@@ -80,9 +88,11 @@ function App() {
       id: 5,
       profilePic: pp5,
       username: "Kayserispor Fan",
+      firstName: "Kayserispor",
+      lastName: "Fan",
       community: "Kayserispor",
       communityLink: "kayserisporlink",
-      title: "Deneme title",
+      title: "Deplasmandayız",
       text: "Pendik deplasmanı | Kayserispor tribünü 🟡🔴 #KapalıKale",
       imageUrl: image5,
       likes: 32,
@@ -95,7 +105,7 @@ function App() {
     <Router>
       <Routes>
         <Route
-          path="/"
+          path="/home"
           element={
             <div className="homepage">
               <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
@@ -127,7 +137,25 @@ function App() {
             </div>
           }
         />
-        <Route path="/loggedout" element={<LoggedOut />} />
+        <Route
+          path="/searchResultIntermediate"
+          element={
+            <div className="searchResultPage">
+              <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
+              <div className="dummydiv"></div>
+              <SearchResultIntermediate
+                team={searchResult.team}
+                feedProps={searchResult.feedProps}
+              />
+              <div className="dummydiv"></div>
+              <CreatePostOverlay
+                show={showCreatePostOverlay}
+                onClose={() => setShowCreatePostOverlay(false)}
+              />
+            </div>
+          }
+        />
+        <Route path="/" element={<LoggedOut />} />
         <Route path="/sign-up" element={<SignUpPage />} />
       </Routes>
     </Router>

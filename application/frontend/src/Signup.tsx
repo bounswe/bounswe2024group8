@@ -25,7 +25,7 @@ export default function SignUpPage() {
       .then((response) => {
         localStorage.setItem("authToken", response.data.accessToken);
         localStorage.setItem("email", email);
-        navigate("/");
+        navigate("/home");
       })
       .catch((error) => {
         setError("Email already exist");
@@ -108,7 +108,12 @@ export default function SignUpPage() {
           </select>
         </div>
         <Button
-          disabled={email === "" || password === "" || firstName === ""|| lastName === ""}
+          disabled={
+            email === "" ||
+            password === "" ||
+            firstName === "" ||
+            lastName === ""
+          }
           handleOn={handleOnSignUp}
           text="Sign Up"
           className="SignUpButton"
@@ -137,7 +142,7 @@ export default function SignUpPage() {
               fontSize: "14px",
             }}
           >
-            <Link to="/loggedOut" style={{ textDecoration: "none" }}>
+            <Link to="/" style={{ textDecoration: "none" }}>
               Login
             </Link>
           </p>

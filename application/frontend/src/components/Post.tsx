@@ -58,7 +58,7 @@ const Post: React.FC<PostProps> = (props) => {
           className="profile-pic"
         />
 
-        <span>{props.username}</span>
+        <span>{props.firstName + " " + props.lastName}</span>
         <span className="communityspan">{"posted at " + props.community}</span>
       </div>
       <div className="post-content">

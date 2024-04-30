@@ -67,7 +67,7 @@ const Login: React.FC = () => {
         console.log(response.data.accessToken);
         localStorage.setItem("authToken", response.data.accessToken);
         localStorage.setItem("email", email);
-        navigate("/");
+        navigate("/home");
       })
       .catch((error) => {
         // Hata durumunda yapılacak işlemler

@@ -11,6 +11,8 @@ const Feed: React.FC<FeedProps> = (props) => {
           id={post.id}
           profilePic={post.profilePic}
           username={post.username}
+          firstName={post.firstName}
+          lastName={post.lastName}
           community={post.community}
           communityLink={post.communityLink}
           title={post.title}
