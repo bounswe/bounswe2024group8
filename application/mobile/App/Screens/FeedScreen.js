@@ -14,7 +14,7 @@ import {
 import Icon from "react-native-vector-icons/Entypo";
 import Post from "../components/Post";
 
-export default function FeedScreen({ navigation }) {
+export default function FeedScreen({ navigation, route }) {
   const getPosts = () => {
     return [
       {
@@ -81,6 +81,8 @@ export default function FeedScreen({ navigation }) {
   };
 
   const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const [text, setText] = useState("");
+  const [error, setError] = useState("");
 
   const toggleMenu = () => {
     console.log("Toggle menu");
@@ -88,10 +90,12 @@ export default function FeedScreen({ navigation }) {
   };
 
   const createPost = () => {
+    navigation.navigate("Post");
     console.log("create post");
   };
   const viewProfile = () => {
     console.log("view profile");
+    setIsMenuVisible(false);
     navigation.navigate("Profile");
   };
   const settings = () => {
@@ -102,18 +106,26 @@ export default function FeedScreen({ navigation }) {
     navigation.navigate("Login");
   };
 
+  const search = () => {
+    navigation.navigate("Search", {
+      param: text,
+      authToken: route.params.accessToken,
+    });
+  };
+
   return (
     <View style={styles.backgroundContainer}>
       <View style={styles.headerContainer}>
-        <Image source={require("../assets/favicon.jpeg")}></Image>
-        <Text style={styles.header}>Fanatic</Text>
-        <TouchableOpacity onPress={toggleMenu}>
-          <Icon
-            name="dots-three-vertical"
-            size={20}
-            style={styles.headerMenuIcon}
-          ></Icon>
-        </TouchableOpacity>
+        <View style={{ height: 25, width: 25 }}></View>
+        <View style={styles.logoContainer}>
+          <Image source={require("../assets/favicon.jpeg")} />
+          <Text style={styles.header}>appFanatic.</Text>
+        </View>
+        <View style={styles.menuButtonContainer}>
+          <TouchableOpacity onPress={toggleMenu}>
+            <Icon name="dots-three-vertical" size={25}></Icon>
+          </TouchableOpacity>
+        </View>
       </View>
       <Modal visible={isMenuVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
@@ -140,7 +152,12 @@ export default function FeedScreen({ navigation }) {
         </View>
       </Modal>
       <View style={styles.searchContainer}>
-        <TextInput placeholder="Search" />
+        <TextInput
+          placeholder="Search"
+          onChangeText={setText}
+          value={text}
+          onSubmitEditing={search}
+        />
       </View>
       <FlatList
         data={getPosts()}
@@ -166,18 +183,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
     minHeight: Math.round(Dimensions.get("window").height),
   },
-
   headerContainer: {
     marginTop: "5%",
     flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    width: "90%",
+  },
+  logoContainer: {
+    height: "100%",
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    marginHorizontal: "15%",
   },
   header: {
     color: "blue",
     fontSize: 25,
     fontWeight: "600",
   },
+  menuButtonContainer: {},
   headerMenuIcon: {
     right: -100,
   },

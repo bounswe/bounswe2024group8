@@ -8,20 +8,39 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
+import {VITE_API_URL} from "@env";
+import axios from "axios";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const ref_password = useRef();
 
   const onLoginClick = () => {
-    console.log(email + " logged in with password " + password);
-    navigation.navigate("Feed");
+    const userParams = {
+      email: email,
+      password: password,
+    };
+
+    axios
+      .post(`${VITE_API_URL}/api/v1/auth/authenticate`, userParams)
+      .then((response) => {
+        console.log(response.data);
+        navigation.navigate("Feed", {
+          email: email,
+          authToken: response.data.accessToken,
+        });
+      })
+      .catch((error) => {
+        setError("Incorrect e-mail or password!");
+        console.log(error.response.data);
+        console.log(error.response.status);
+      });
   };
 
   const onSignupClick = () => {
-    console.log("sign up");
     navigation.navigate("Register");
   };
 
@@ -52,6 +71,7 @@ export default function LoginScreen({ navigation }) {
             ref={ref_password}
           />
         </View>
+        {error && <Text style={styles.errorText}>{error}</Text>}
         <View style={styles.buttonContainer}>
           <TouchableOpacity onPress={onLoginClick} style={styles.loginButton}>
             <Text style={styles.loginButtonText}>Log In</Text>
@@ -107,6 +127,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: "lightgrey",
     fontSize: 15,
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
   },
   buttonContainer: {
     height: "10%",
