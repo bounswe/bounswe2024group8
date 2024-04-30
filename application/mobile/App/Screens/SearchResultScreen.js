@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import Post from "../components/Post";
+import {VITE_API_URL} from "@env";
 
 export default function SearchResultScreen({ navigation, route }) {
   const [error, setError] = useState();
@@ -18,7 +19,7 @@ export default function SearchResultScreen({ navigation, route }) {
     console.log(route.params.param);
     axios
       .get(
-        "http://192.168.64.163:8080/api/v1/posts?param=" + route.params.param,
+        `${VITE_API_URL}/api/v1/posts?param=` + route.params.param,
         {
           headers: { Authorization: `Bearer ${route.params.authToken}` },
         }
