@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from "axios";
+import "./PostForm.css"
 
 interface PostData {
   title: string;
@@ -33,7 +34,7 @@ const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
     setPostData({ ...postData, [name]: value });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const postCreateRequest = {   
         userId: "",
@@ -44,9 +45,7 @@ const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
     const config = {
       headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
     };
-    const bodyParams = {
-      email:localStorage.getItem("email")
-    };
+    
     axios
       .get("http://localhost:8080/api/v1/users?email="+localStorage.getItem("email"),config)
       .then((response) => {
@@ -69,13 +68,13 @@ const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
   };
 
   return (
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="title">Title:</label>
-        <label>
+      <form>
+        <label htmlFor="title">
           Title:
           <input
             type="text"
             name="title"
+            placeholder='Add title..'
             value={postData.title}
             onChange={handleInputChange}
             required
@@ -86,36 +85,29 @@ const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
           Content:
           <textarea
             name="content"
+            placeholder='Share with us..'
             value={postData.content}
+            maxLength={150}
             onChange={handleTextAreaChange}
             required
           />
         </label>
-        <br />
+        <br/>
         <label>
-          Image (optional):
+          Upload Image
           <input
             type="file"
             name="image"
+            className='UploadImageInput'
+            accept='image/*'
             onChange={handleInputChange}
           />
         </label>
-        <br />
-        <label>
-          Tag:
-          <input
-            type="text"
-            name="tag"
-            value={postData.tag}
-            onChange={handleInputChange}
-            required
-          />
-        </label>
-        <br />
-        <button type="submit">
+        <br/>
+        <button type="submit" className="SubmitButton" onClick={handleSubmit}>
           Submit Post
-
         </button>
+        
       </form>
   );
 };
