@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "appFanatic",
+    "slug": "appFanatic",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./App/assets/icon.jpeg",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./App/assets/splash.png",
+      "image": "./App/assets/icon.jpeg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./App/assets/adaptive-icon.png",
+        "foregroundImage": "./App/assets/icon.jpeg",
         "backgroundColor": "#ffffff"
       }
     },
