@@ -130,7 +130,7 @@ export default function SignUpPage() {
         >
           <p
             style={{
-              margin: "30px 5px 30px 0", // Adjusted margin for better spacing
+              margin: "5px 5px 0px 0", // Adjusted margin for better spacing
               fontSize: "14px",
             }}
           >
@@ -138,7 +138,7 @@ export default function SignUpPage() {
           </p>
           <p
             style={{
-              margin: "30px 0", // Uniform vertical margin
+              margin: "5px 0px 0px 0", // Uniform vertical margin
               fontSize: "14px",
             }}
           >
