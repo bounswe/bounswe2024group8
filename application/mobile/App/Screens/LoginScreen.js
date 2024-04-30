@@ -24,7 +24,7 @@ export default function LoginScreen({ navigation }) {
     };
 
     axios
-      .post("http://192.168.64.163:8080/api/v1/auth/authenticate", userParams)
+      .post("https://fanatic-backend-bjbpof6jaq-oa.a.run.app/api/v1/auth/authenticate", userParams)
       .then((response) => {
         console.log(response.data);
         navigation.navigate("Feed", {

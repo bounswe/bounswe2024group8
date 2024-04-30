@@ -75,7 +75,7 @@ export default function RegisterScreen({ navigation }) {
       };
 
       axios
-        .post("http://192.168.64.163:8080/api/v1/auth/register", userParams)
+        .post("https://fanatic-backend-bjbpof6jaq-oa.a.run.app/api/v1/auth/register", userParams)
         .then((response) => {
           console.log(response.data);
           Alert.alert("", "Account is successfully created.", [
