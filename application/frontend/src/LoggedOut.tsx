@@ -28,6 +28,7 @@ interface InputProps {
   id: string;
   placeHolder: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -36,6 +37,7 @@ export const Input: React.FC<InputProps> = ({
   id,
   placeHolder,
   onChange,
+  onKeyDown
 }) => (
   <input
     className={className}
@@ -43,6 +45,7 @@ export const Input: React.FC<InputProps> = ({
     id={id}
     placeholder={placeHolder} // Fixed typo here: 'placeHolder' to 'placeholder'
     onChange={onChange}
+    onKeyDown={onKeyDown}
     required
   />
 );
@@ -79,7 +82,11 @@ const Login: React.FC = () => {
   function handleOnSignUp() {
     navigate("/sign-up");
   }
-
+  function handleOnKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'Enter') {
+      handleOnLogin();
+    }
+  }
   return (
     <div className="container">
       <div className="logodiv">
@@ -106,6 +113,7 @@ const Login: React.FC = () => {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setEmail(e.target.value)
           }
+          onKeyDown={handleOnKeyDown}
         />
         <Input
           className="LoginForm"
@@ -115,6 +123,7 @@ const Login: React.FC = () => {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setPassword(e.target.value)
           }
+          onKeyDown={handleOnKeyDown}
         />
         <p
           style={{
