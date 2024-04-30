@@ -16,7 +16,7 @@ const CreatePostOverlay: React.FC<CreatePostOverlayProps> = ({ show, onClose }) 
     <div className="overlay" onClick={onClose}>
       <div className="overlay-content" onClick={e => e.stopPropagation()}>
       <button className="close-button" onClick={onClose}>×</button>
-      <h2>Create New Post</h2>
+      <h2 >Create Post</h2>
       <PostForm onClose={onClose} />
     </div>
 
