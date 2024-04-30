@@ -3,9 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoggedOut from "./LoggedOut";
 import Navbar from "./components/Navbar";
 import Feed from "./components/Feed";
+import SearchBar from "./components/SearchBar";
 import SignUpPage from "./Signup";
 import SearchResult from "./components/SearchResult.tsx";
-import SearchResultIntermediate from "./components/SearchResultIntermediate.tsx";
 import { PostData } from "./interfaces/postInterface";
 import image1 from "./assets/dummyimages/image1.png";
 import image2 from "./assets/dummyimages/image2.png";
@@ -116,24 +116,6 @@ function App() {
               <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
               <div className="dummydiv"></div>
               <SearchResult
-                team={searchResult.team}
-                feedProps={searchResult.feedProps}
-              />
-              <div className="dummydiv"></div>
-              <CreatePostOverlay
-                show={showCreatePostOverlay}
-                onClose={() => setShowCreatePostOverlay(false)}
-              />
-            </div>
-          }
-        />
-        <Route
-          path="/searchResultIntermediate"
-          element={
-            <div className="searchResultPage">
-              <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
-              <div className="dummydiv"></div>
-              <SearchResultIntermediate
                 team={searchResult.team}
                 feedProps={searchResult.feedProps}
               />
