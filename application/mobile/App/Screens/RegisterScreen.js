@@ -10,6 +10,7 @@ import {
   Alert,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
+import {VITE_API_URL} from "@env";
 import axios from "axios";
 
 export default function RegisterScreen({ navigation }) {
@@ -75,7 +76,7 @@ export default function RegisterScreen({ navigation }) {
       };
 
       axios
-        .post("https://fanatic-backend-bjbpof6jaq-oa.a.run.app/api/v1/auth/register", userParams)
+        .post(`${VITE_API_URL}/api/v1/auth/register`, userParams)
         .then((response) => {
           console.log(response.data);
           Alert.alert("", "Account is successfully created.", [

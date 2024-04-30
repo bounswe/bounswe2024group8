@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
+import {VITE_API_URL} from "@env";
 import axios from "axios";
 
 export default function LoginScreen({ navigation }) {
@@ -24,7 +25,7 @@ export default function LoginScreen({ navigation }) {
     };
 
     axios
-      .post("https://fanatic-backend-bjbpof6jaq-oa.a.run.app/api/v1/auth/authenticate", userParams)
+      .post(`${VITE_API_URL}/api/v1/auth/authenticate`, userParams)
       .then((response) => {
         console.log(response.data);
         navigation.navigate("Feed", {
