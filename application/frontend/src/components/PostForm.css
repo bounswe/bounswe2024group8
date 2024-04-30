@@ -10,6 +10,39 @@
     align-items: center;
     z-index: 1000;
 }
+.SubmitButton{
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.UploadImageButton{
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.UploadImageInput{
+ height: 100%;
+ width: 100%;
+}
+
 
 .postFormContainer {
     background-color: #FFF;
@@ -25,4 +58,3 @@
     border: none;
     font-size: 1.5rem;
 }
-
