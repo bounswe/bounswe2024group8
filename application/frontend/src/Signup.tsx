@@ -31,6 +31,11 @@ export default function SignUpPage() {
         setError("Email already exist");
       });
   }
+  function handleOnKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'Enter') {
+      handleOnSignUp();
+    }
+  }
   return (
     <div className="container">
       <div className="logodiv">
@@ -54,6 +59,7 @@ export default function SignUpPage() {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setEmail(e.target.value)
           }
+          onKeyDown={handleOnKeyDown}
         />
         <Input
           className="SignUpForm"
@@ -63,6 +69,7 @@ export default function SignUpPage() {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setFirstName(e.target.value)
           }
+          onKeyDown={handleOnKeyDown}
         />
         <Input
           className="SignUpForm"
@@ -72,6 +79,8 @@ export default function SignUpPage() {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setLastName(e.target.value)
           }
+          onKeyDown={handleOnKeyDown}
+          
         />
         <Input
           className="SignUpForm"
@@ -81,6 +90,7 @@ export default function SignUpPage() {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setPassword(e.target.value)
           }
+          onKeyDown={handleOnKeyDown}
         />
         <div>
           <h4 style={{ textAlign: "center" }}>Select the team you support!</h4>
