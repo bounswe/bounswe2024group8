@@ -64,7 +64,7 @@ const Login: React.FC = () => {
     };
 
     axios
-      .post("http://localhost:8080/api/v1/auth/authenticate", data)
+      .post("https://fanatic-backend-bjbpof6jaq-oa.a.run.app/api/v1/auth/authenticate", data)
       .then((response) => {
         // Başarılı giriş durumunda yapılacak işlemler
         console.log(response.data.accessToken);

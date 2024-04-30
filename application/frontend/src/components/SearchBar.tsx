@@ -36,7 +36,7 @@ const SearchBar = () => {
 
   function handleOnSearch() {
     axios
-      .get("http://localhost:8080/api/v1/posts?param=" + keyword, {
+      .get("https://fanatic-backend-bjbpof6jaq-oa.a.run.app/api/v1/posts?param=" + keyword, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },

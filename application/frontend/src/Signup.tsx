@@ -21,7 +21,7 @@ export default function SignUpPage() {
     };
 
     axios
-      .post("http://localhost:8080/api/v1/auth/register", registerUser)
+      .post("https://fanatic-backend-bjbpof6jaq-oa.a.run.app/api/v1/auth/register", registerUser)
       .then((response) => {
         localStorage.setItem("authToken", response.data.accessToken);
         localStorage.setItem("email", email);
