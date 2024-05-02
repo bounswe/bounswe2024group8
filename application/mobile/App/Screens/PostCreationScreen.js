@@ -15,6 +15,9 @@ import Icon from "react-native-vector-icons/Entypo";
 import axios from "axios";
 import AutoExpandingTextInput from "../components/AutoExpandingTextInput";
 import * as ImagePicker from 'expo-image-picker/src/ImagePicker';
+import {VITE_API_URL} from "@env";
+
+
 export default function PostCreationScreen({navigation}){
     const profile = {
         profilePhoto: require("../assets/dummy_pics/pp2.png"),
@@ -24,6 +27,7 @@ export default function PostCreationScreen({navigation}){
       };
       const[selectedImage, selectImage] = useState(null);
       const[selectedCommunity, selectCommunity] = useState("");
+      const[postMessage, changePost] = useState("");
     
 
       const [isMenuVisible, setIsMenuVisible] = useState(false);
@@ -66,9 +70,23 @@ export default function PostCreationScreen({navigation}){
       const removeImage = () => {
         selectImage(null);
       }
+      const textChanged = (text) =>{
+        changePost(text);
+      }
       const pickCommunity = (comm) =>{
         selectCommunity(comm);
       }
+      const sendPost = () => {
+        axios.post(`${VITE_API_URL}/api/v1/posts`, {"user_id": 1, 
+        "title": profile.username, "text": postMessage, "teamName": profile.supportedTeam, "user": profile.email}).then( (response) => {
+          alert(response);
+          navigation.navigate("Feed");}
+        ).catch((error) => {
+          alert("Something went wrong");
+        })
+        
+      }
+
     return(
     <View style={styles.backgroundContainer}>
       <View style={styles.headerContainer}>
@@ -86,7 +104,7 @@ export default function PostCreationScreen({navigation}){
         <View style={styles.profilePicContainer} >
         <Image style={styles.profilePic} source={profile.profilePhoto}/>
         </View>
-        <AutoExpandingTextInput/>
+        <AutoExpandingTextInput onChangeText={textChanged}/>
       </View>
       <TouchableOpacity onPress={removeImage}>
         {selectedImage !== null && (
@@ -98,7 +116,7 @@ export default function PostCreationScreen({navigation}){
         <Image source={require("../assets/image.png")} style={styles.interactionIcon}/>
       </TouchableOpacity>
       </View>
-      <Button title="Send Post"/>
+      <Button title="Send Post" onPress={sendPost}/>
     </View>
   );
 }

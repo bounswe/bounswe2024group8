@@ -162,11 +162,15 @@ export default function FeedScreen({ navigation, route }) {
       <FlatList
         data={getPosts()}
         renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => {
+            navigation.navigate("PostScreen", {"item": item});
+          }}>
           <Post
             username={item.username}
             profilePic={item.profilePic}
             text={item.text}
           ></Post>
+          </TouchableOpacity>
         )}
         style={styles.flatList}
       />

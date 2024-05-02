@@ -43,6 +43,8 @@ export default function App() {
           component={SearchResultScreen}
           options={{ headerShown: false }}
         />
+        <Stack.Screen name="PostScreen" component={(props) => <PostScreen {...props} />}
+          options={{ headerShown: false }}></Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );
