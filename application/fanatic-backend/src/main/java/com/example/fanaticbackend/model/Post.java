@@ -4,6 +4,8 @@ import com.example.fanaticbackend.model.enums.Team;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Getter
@@ -40,5 +42,14 @@ public class Post {
 
     @Column(name = "comments", columnDefinition = "int default 0")
     Integer comments;
+
+    @ManyToMany(mappedBy = "likedPosts")
+    Set<User> likedByUsers = new HashSet<>();
+
+    @ManyToMany(mappedBy = "dislikedPosts")
+    Set<User> dislikedByUsers = new HashSet<>();
+
+    @ManyToMany(mappedBy = "bookmarkedPosts")
+    Set<User> bookmarkedByUsers = new HashSet<>();
 
 }

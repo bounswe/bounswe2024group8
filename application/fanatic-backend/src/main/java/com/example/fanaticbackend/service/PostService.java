@@ -74,4 +74,52 @@ public class PostService {
 
         return postRepository.findAllByOrderByIdDesc();
     }
+
+    public void likePost(User user, Post post) {
+        if (user.getDislikedPosts().contains(post)) {
+            user.getDislikedPosts().remove(post);
+            post.getDislikedByUsers().remove(user);
+            post.setDislikes(post.getDislikes() - 1);
+        }
+        if (!user.getLikedPosts().contains(post)) {
+            user.getLikedPosts().add(post);
+            post.getLikedByUsers().add(user);
+            post.setLikes(post.getLikes() + 1);
+        }
+        userService.saveUser(user);
+        postRepository.save(post);
+    }
+
+    public void dislikePost(User user, Post post) {
+        if (user.getLikedPosts().contains(post)) {
+            user.getLikedPosts().remove(post);
+            post.getLikedByUsers().remove(user);
+            post.setLikes(post.getLikes() - 1);
+
+        }
+        if (!user.getDislikedPosts().contains(post)) {
+            user.getDislikedPosts().add(post);
+            post.getDislikedByUsers().add(user);
+            post.setDislikes(post.getDislikes() + 1);
+        }
+        userService.saveUser(user);
+        postRepository.save(post);
+    }
+
+    public void bookmarkPost(User user, Post post) {
+        if (user.getBookmarkedPosts().contains(post)) {
+            user.getBookmarkedPosts().remove(post);
+            post.getBookmarkedByUsers().remove(user);
+        } else {
+            user.getBookmarkedPosts().add(post);
+            post.getBookmarkedByUsers().add(user);
+        }
+        userService.saveUser(user);
+        postRepository.save(post);
+    }
+
+    public Post getPostById(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new FanaticDatabaseException("Post not found with id: " + postId));
+    }
 }
