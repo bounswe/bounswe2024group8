@@ -39,18 +39,19 @@ export default function PostScreen({navigation}){
             profilePic={postInfo.profilePic}
             text={postInfo.text}></Post>
         </View>    
-        <FlatList data={getComments()}
+        <FlatList 
+        data={getComments()}
         renderItem={({item})=>(
             <View style={{flexDirection: "row", marginRight: "50%", marginBottom: "10%"}}>
                 <View style={{borderRadius: 20, overflow: 'hidden', justifyContent: 'center', alignItems: 'center', width: 50, height:50}}>
                 <Image style={{width: "100%", height:"100%"}} source={item.profilePicture} />
                 </View>
-                <Text>{item.username}: {item.comment}</Text>
-                
-            </View>
-        )}/>
+                <Text>{item.username}: {item.comment}</Text>               
+            </View>)}/>
         <View style={{flexDirection: "row", flex:1}}>
-        <TextInput placeholder="Drop a comment" style={styles.commentContainer} value={comment} onChangeText={(text) => commentTyped(text)}/>
+        <TextInput placeholder="Drop a comment" style={styles.commentContainer} value={comment} 
+        onChangeText={(text) => {commentTyped(text)}}
+        />
         <TouchableOpacity style={styles.button} onPress={sendComment}>
             <Text style={styles.buttonText}>Comment</Text>
         </TouchableOpacity>

@@ -6,7 +6,7 @@ import FeedScreen from "./App/Screens/FeedScreen";
 import ProfileScreen from "./App/Screens/ProfileScreen";
 import PostCreationScreen from "./App/Screens/PostCreationScreen";
 import SearchResultScreen from "./App/Screens/SearchResultScreen";
-
+import PostScreen from "./App/Screens/PostScreen";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -43,7 +43,7 @@ export default function App() {
           component={SearchResultScreen}
           options={{ headerShown: false }}
         />
-        <Stack.Screen name="PostScreen" component={(props) => <PostScreen {...props} />}
+        <Stack.Screen name="PostScreen" component={PostScreen}
           options={{ headerShown: false }}></Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

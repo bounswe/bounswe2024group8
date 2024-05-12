@@ -16,7 +16,8 @@ import axios from "axios";
 import AutoExpandingTextInput from "../components/AutoExpandingTextInput";
 import * as ImagePicker from 'expo-image-picker/src/ImagePicker';
 import {VITE_API_URL} from "@env";
-
+import TagModal from "../components/TagModal";
+import Checkbox from "expo-checkbox";
 
 export default function PostCreationScreen({navigation}){
     const profile = {
@@ -26,9 +27,12 @@ export default function PostCreationScreen({navigation}){
         supportedTeam: "Fenerbahçe",
       };
       const[selectedImage, selectImage] = useState(null);
-      const[selectedCommunity, selectCommunity] = useState("");
+      const[globalPost, setGlobal] = useState(false);
       const[postMessage, changePost] = useState("");
-    
+      const[modalVisible, setModalVisible] = useState(false);
+      const[tags, setTags] = useState([]);
+      
+      
 
       const [isMenuVisible, setIsMenuVisible] = useState(false);
 
@@ -73,8 +77,22 @@ export default function PostCreationScreen({navigation}){
       const textChanged = (text) =>{
         changePost(text);
       }
-      const pickCommunity = (comm) =>{
-        selectCommunity(comm);
+      const makeGlobal = () =>{
+        if (globalPost){
+          setGlobal(false);
+        }
+        else{
+          setGlobal(true);
+        }
+      }
+      const closeModal = () =>{
+        setModalVisible(false);
+      }
+      const toggleModal = () => {
+        setModalVisible(!modalVisible);
+      }
+      const handleTags = (selectedTags) => {
+        setTags(selectedTags);
       }
       const sendPost = () => {
         axios.post(`${VITE_API_URL}/api/v1/posts`, {"user_id": 1, 
@@ -112,11 +130,25 @@ export default function PostCreationScreen({navigation}){
         )}
       </TouchableOpacity>
       <View style= {{flexDirection: "row", marginRight: "60%"}}>
-      <TouchableOpacity onPress={pickImage} >
-        <Image source={require("../assets/image.png")} style={styles.interactionIcon}/>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={pickImage} >
+          <Image source={require("../assets/image.png")} style={[styles.interactionIcon, {marginRight: '200%', marginLeft: '50%'}]}/>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={toggleModal}>
+          <Image source={require("../assets/community.png")} style={styles.interactionIcon}/>
+        </TouchableOpacity>
       </View>
-      <Button title="Send Post" onPress={sendPost}/>
+      <TagModal 
+        isVisible = {modalVisible}
+        closeModal = {closeModal}
+        onSelectTags = {handleTags}
+      />
+      <TouchableOpacity style={styles.button} onPress={sendPost}>
+        <Text style={styles.buttonText}>Publish Post</Text>
+      </TouchableOpacity>
+      <View style={{flexDirection:"row"}}>
+          <Text>Publish This As A Global Post</Text>
+          <Checkbox value={globalPost} onValueChange={makeGlobal}/>
+      </View>
     </View>
   );
 }
@@ -213,5 +245,16 @@ const styles = StyleSheet.create({
         width: 300,
         height: 300,
         resizeMode: 'contain',
+      },
+      button: {
+        backgroundColor: 'blue',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginBottom: "5%",
+      },
+      buttonText: {
+        fontSize: 16,
+        color: 'white',
       },
 });
