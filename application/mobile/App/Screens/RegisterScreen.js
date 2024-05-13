@@ -104,6 +104,7 @@ export default function RegisterScreen({ navigation }) {
             style={styles.inputText}
             onChangeText={setEmail}
             placeholder="E-mail"
+            autoCapitalize="none"
             value={email}
             onSubmitEditing={() => ref_username.current.focus()}
             blurOnSubmit={false}
@@ -112,6 +113,7 @@ export default function RegisterScreen({ navigation }) {
             style={styles.inputText}
             onChangeText={setUsername}
             placeholder="Username"
+            autoCapitalize="none"
             value={username}
             ref={ref_username}
             onSubmitEditing={() => ref_password.current.focus()}
@@ -121,6 +123,7 @@ export default function RegisterScreen({ navigation }) {
             style={styles.inputText}
             onChangeText={setPassword}
             placeholder="Password"
+            autoCapitalize="none"
             secureTextEntry
             value={password}
             ref={ref_password}

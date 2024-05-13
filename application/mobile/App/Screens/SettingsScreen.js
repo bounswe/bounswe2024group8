@@ -10,9 +10,11 @@ import {
   TouchableOpacity,
   Modal,
   Button,
+  ImageBackground,
 } from "react-native";
+import * as ImagePicker from 'expo-image-picker/src/ImagePicker';
 import Icon from "react-native-vector-icons/Entypo";
-export default function ProfileScreen({ navigation }) {
+export default function SettingsScreen({ navigation }) {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const profile = {
     profilePhoto: require("../assets/dummy_pics/pp2.png"),
@@ -23,6 +25,8 @@ export default function ProfileScreen({ navigation }) {
   const [newUsername, changeUsername] = useState(profile.username);
   const [newMail, changeMail] = useState(profile.email);
   const [newTeam, changeTeam] = useState(profile.supportedTeam);
+  const [newPhoto, changePhoto] = useState(profile.profilePhoto);
+  const [pUri, setUri] = useState(null);
 
   const onUsernameChange = (value) => {
     changeUsername(value);
@@ -41,13 +45,16 @@ export default function ProfileScreen({ navigation }) {
 
   const createPost = () => {
     console.log("create post");
+    navigation.navigate("Post");
   };
   const viewProfile = () => {
     console.log("view profile");
-    navigation.navigate("Profile");
+    
   };
   const settings = () => {
     console.log("settings");
+    setIsMenuVisible(false);
+    navigation.navigate("Settings");
   };
   const logout = () => {
     console.log("logout");
@@ -66,18 +73,35 @@ export default function ProfileScreen({ navigation }) {
     );
     navigation.navigate("Feed");
   };
+
+  const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permissionResult.granted === false) {
+    alert("Permission to access camera roll is required!");
+    return;
+    }
+    const pickerResult = await ImagePicker.launchImageLibraryAsync();
+    if (pickerResult.cancelled === true) {
+    return;
+    }
+    console.log(pickerResult.assets[0].uri);
+
+    setUri({ localUri: pickerResult.assets[0].uri });
+  }
+
   return (
     <View style={styles.backgroundContainer}>
       <View style={styles.headerContainer}>
-        <Image source={require("../assets/favicon.jpeg")}></Image>
-        <Text style={styles.header}>Fanatic</Text>
-        <TouchableOpacity onPress={toggleMenu}>
-          <Icon
-            name="dots-three-vertical"
-            size={20}
-            style={styles.headerMenuIcon}
-          ></Icon>
-        </TouchableOpacity>
+      <View style={{ height: 25, width: 25 }}></View>
+        <View style={styles.logoContainer}>
+          <Image source={require("../assets/favicon.jpeg")} />
+          <Text style={styles.header}>appFanatic.</Text>
+        </View>
+        <View>
+          <TouchableOpacity onPress={toggleMenu}>
+            <Icon name="dots-three-vertical" size={25}></Icon>
+          </TouchableOpacity>
+        </View>
       </View>
       <Modal visible={isMenuVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
@@ -103,12 +127,23 @@ export default function ProfileScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       </Modal>
-      <Text style={{ marginTop: "10%", fontSize: 30 }}>Profile Details</Text>
+      <Text style={{ marginTop: "10%", fontSize: 30 }}>Profile Settings</Text>
+      <TouchableOpacity onPress={pickImage}>
       <View
         style={{ borderRadius: 100, overflow: "hidden", marginBottom: "5%" }}
       >
-        <Image source={profile.profilePhoto} />
+        <ImageBackground style={{opacity: 1}} source={require("../assets/pencil.png")}  >
+            {
+              pUri ? (
+                <Image source={{uri: pUri.localUri}} style={[styles.imageSelect, {opacity: 0.75}]}  />):
+              (<Image style={{opacity: 0.75}} source={profile.profilePhoto} />)
+            }
+            
+        </ImageBackground>
+        
       </View>
+      </TouchableOpacity>
+      
       <Text style={{ fontWeight: "bold", marginRight: "65%", fontSize: 18 }}>
         Username
       </Text>
@@ -122,7 +157,7 @@ export default function ProfileScreen({ navigation }) {
       </Text>
       <TextInput
         value={newMail}
-        onChangeText={onMailChange}
+        editable={false}
         style={styles.textInContainer}
       />
       <Text style={{ fontWeight: "bold", marginRight: "50%", fontSize: 18 }}>
@@ -130,22 +165,29 @@ export default function ProfileScreen({ navigation }) {
       </Text>
       <TextInput
         value={newTeam}
-        onChangeText={onTeamChange}
+        editable={false}
         style={styles.textInContainer}
       />
       <View style={{ flexDirection: "row" }}>
-        <Button
-          title="Save Changes"
-          onPress={saveChanges}
-          style={{ marginRight: 100 }}
-        />
-        <Button title="Change Password" style={{ marginRight: "65%" }} />
+        <TouchableOpacity style={[styles.button, {marginRight: '10%'}]}>
+          <Text style={{color:"white"}}>Save Changes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={{color:"white"}}>Change Password</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  button: {
+    backgroundColor: 'blue',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: "5%",
+  },
   backgroundContainer: {
     flex: 1,
     backgroundColor: "white",
@@ -153,6 +195,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     minHeight: Math.round(Dimensions.get("window").height),
+  },
+  imageSelect: {
+    width: 300,
+    height: 300,
+    resizeMode: 'stretch',
   },
 
   headerContainer: {
@@ -199,6 +246,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+  },
+  logoContainer: {
+    height: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: "15%",
   },
   menuItem: {
     padding: 10,

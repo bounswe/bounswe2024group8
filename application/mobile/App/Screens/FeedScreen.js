@@ -95,11 +95,13 @@ export default function FeedScreen({ navigation, route }) {
   };
   const viewProfile = () => {
     console.log("view profile");
-    setIsMenuVisible(false);
-    navigation.navigate("Profile");
+    
   };
   const settings = () => {
     console.log("settings");
+    setIsMenuVisible(false);
+    navigation.navigate("Settings");
+    
   };
   const logout = () => {
     console.log("logout");

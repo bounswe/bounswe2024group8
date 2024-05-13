@@ -47,11 +47,12 @@ export default function PostCreationScreen({navigation}){
       };
       const viewProfile = () => {
         console.log("view profile");
-        setIsMenuVisible(false);
-        navigation.navigate("Profile");
+        
       };
       const settings = () => {
         console.log("settings");
+        setIsMenuVisible(false);
+        navigation.navigate("Settings");
       };
       const logout = () => {
         console.log("logout");
@@ -78,12 +79,9 @@ export default function PostCreationScreen({navigation}){
         changePost(text);
       }
       const makeGlobal = () =>{
-        if (globalPost){
-          setGlobal(false);
-        }
-        else{
-          setGlobal(true);
-        }
+       
+        setGlobal(!globalPost);
+
       }
       const closeModal = () =>{
         setModalVisible(false);
@@ -108,15 +106,16 @@ export default function PostCreationScreen({navigation}){
     return(
     <View style={styles.backgroundContainer}>
       <View style={styles.headerContainer}>
-        <Image source={require("../assets/favicon.jpeg")}></Image>
-        <Text style={styles.header}>Fanatic</Text>
-        <TouchableOpacity onPress={toggleMenu}>
-            <Icon
-            name="dots-three-vertical"
-            size={20}
-            style={styles.headerMenuIcon}
-            ></Icon>
-        </TouchableOpacity>
+        <View style={{ height: 25, width: 25 }}></View>
+        <View style={styles.logoContainer}>
+          <Image source={require("../assets/favicon.jpeg")} />
+          <Text style={styles.header}>appFanatic.</Text>
+        </View>
+        <View>
+          <TouchableOpacity onPress={toggleMenu}>
+            <Icon name="dots-three-vertical" size={25}></Icon>
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={{flexDirection:"row"}}>
         <View style={styles.profilePicContainer} >
@@ -252,6 +251,13 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         marginBottom: "5%",
+      },
+      logoContainer: {
+        height: "100%",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        marginHorizontal: "15%",
       },
       buttonText: {
         fontSize: 16,

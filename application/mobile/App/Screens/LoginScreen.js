@@ -58,6 +58,7 @@ export default function LoginScreen({ navigation }) {
             style={styles.inputText}
             onChangeText={setEmail}
             placeholder="E-mail"
+            autoCapitalize="none"
             value={email}
             onSubmitEditing={() => ref_password.current.focus()}
             blurOnSubmit={false}
@@ -66,6 +67,7 @@ export default function LoginScreen({ navigation }) {
             style={styles.inputText}
             onChangeText={setPassword}
             placeholder="Password"
+            autoCapitalize="none"
             secureTextEntry
             value={password}
             ref={ref_password}
