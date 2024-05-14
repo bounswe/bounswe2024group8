@@ -21,4 +21,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Post findPostById(Long id);
 
+    List<Post> findByTeam(Team team);
+
 }

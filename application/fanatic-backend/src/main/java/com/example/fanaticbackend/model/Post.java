@@ -52,4 +52,7 @@ public class Post {
     @ManyToMany(mappedBy = "bookmarkedPosts")
     Set<User> bookmarkedByUsers = new HashSet<>();
 
+    @Column(name = "team", nullable = false)
+    Team team;
+
 }
