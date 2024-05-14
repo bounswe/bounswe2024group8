@@ -4,5 +4,5 @@ public enum ReactionType {
 
     LIKE,
     DISLIKE,
-    BOOKMARK;
+    NONE;
 }

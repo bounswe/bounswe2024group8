@@ -5,7 +5,9 @@ public enum Team {
     GALATASARAY,
     FENERBAHCE,
     BESIKTAS,
-    TRABZONSPOR;
+    TRABZONSPOR,
+
+    ;
 
 
 }

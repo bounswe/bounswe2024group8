@@ -22,6 +22,9 @@ public class Reaction {
     @Column(name = "reaction_type",nullable = false)
     ReactionType reactionType;
 
+    @Column(name = "bookmark",nullable = false)
+    Boolean bookmark;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     User user;

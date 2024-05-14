@@ -65,32 +65,6 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
-    @PostMapping("/{postId}/like")
-    public ResponseEntity<Void> likePost(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable Long postId) {
-        User user = (User) userDetails;
-
-        postService.likePost(user, post);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/{postId}/dislike")
-    public ResponseEntity<Void> dislikePost(@PathVariable Long postId, @RequestParam Long userId) {
-        Post post = postService.getPostByIdElseThrow(postId);
-        User user = userService.getUserById(userId);
-        postService.dislikePost(user, post);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/{postId}/bookmark")
-    public ResponseEntity<Void> bookmarkPost(@PathVariable Long postId, @RequestParam Long userId) {
-        Post post = postService.getPostByIdElseThrow(postId);
-        User user = userService.getUserById(userId);
-        postService.bookmarkPost(user, post);
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/react")
     public ResponseEntity<Boolean> reactPostOrComment(
             @AuthenticationPrincipal UserDetails userDetails,

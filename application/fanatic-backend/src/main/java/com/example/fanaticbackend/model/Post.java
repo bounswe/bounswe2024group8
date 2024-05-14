@@ -43,13 +43,4 @@ public class Post {
     @Column(name = "comments", columnDefinition = "int default 0")
     Integer comments;
 
-    @ManyToMany(mappedBy = "likedPosts")
-    Set<User> likedByUsers = new HashSet<>();
-
-    @ManyToMany(mappedBy = "dislikedPosts")
-    Set<User> dislikedByUsers = new HashSet<>();
-
-    @ManyToMany(mappedBy = "bookmarkedPosts")
-    Set<User> bookmarkedByUsers = new HashSet<>();
-
 }

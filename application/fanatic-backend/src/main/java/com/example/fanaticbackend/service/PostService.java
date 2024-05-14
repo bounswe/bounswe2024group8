@@ -3,12 +3,15 @@ package com.example.fanaticbackend.service;
 import com.example.fanaticbackend.dto.WikidataTeamDto;
 import com.example.fanaticbackend.exception.custom.FanaticDatabaseException;
 import com.example.fanaticbackend.model.Post;
+import com.example.fanaticbackend.model.Reaction;
 import com.example.fanaticbackend.model.User;
+import com.example.fanaticbackend.model.enums.ReactionType;
 import com.example.fanaticbackend.model.enums.Team;
 import com.example.fanaticbackend.payload.PostCreateRequest;
 import com.example.fanaticbackend.payload.ReactionRequest;
 import com.example.fanaticbackend.payload.SearchResponse;
 import com.example.fanaticbackend.repository.PostRepository;
+import com.example.fanaticbackend.repository.ReactionRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,6 +29,7 @@ public class PostService {
     final PostRepository postRepository;
     final UserService userService;
     final CommentService commentService;
+    final ReactionRepository reactionRepository;
 
 
     public SearchResponse searchPost(String param) {
@@ -40,6 +44,9 @@ public class PostService {
 
         List<Post> posts = postRepository.findByTextLikeIgnoreCase(param);
         results.addAll(posts);
+
+        List<Post> postsWithLocation = postRepository.findByTextLikeIgnoreCase(team.getLocation());
+        results.addAll(postsWithLocation);
 
         SearchResponse result = new SearchResponse();
         result.setPosts(results);
@@ -77,52 +84,7 @@ public class PostService {
         return postRepository.findAllByOrderByIdDesc();
     }
 
-    public void likePost(User user, Long postId) {
 
-        Post post = getPostByIdElseThrow(postId);
-
-
-        if (user.getDislikedPosts().contains(post)) {
-            user.getDislikedPosts().remove(post);
-            post.getDislikedByUsers().remove(user);
-            post.setDislikes(post.getDislikes() - 1);
-        }
-        if (!user.getLikedPosts().contains(post)) {
-            user.getLikedPosts().add(post);
-            post.getLikedByUsers().add(user);
-            post.setLikes(post.getLikes() + 1);
-        }
-        userService.saveUser(user);
-        postRepository.save(post);
-    }
-
-    public void dislikePost(User user, Post post) {
-        if (user.getLikedPosts().contains(post)) {
-            user.getLikedPosts().remove(post);
-            post.getLikedByUsers().remove(user);
-            post.setLikes(post.getLikes() - 1);
-
-        }
-        if (!user.getDislikedPosts().contains(post)) {
-            user.getDislikedPosts().add(post);
-            post.getDislikedByUsers().add(user);
-            post.setDislikes(post.getDislikes() + 1);
-        }
-        userService.saveUser(user);
-        postRepository.save(post);
-    }
-
-    public void bookmarkPost(User user, Post post) {
-        if (user.getBookmarkedPosts().contains(post)) {
-            user.getBookmarkedPosts().remove(post);
-            post.getBookmarkedByUsers().remove(user);
-        } else {
-            user.getBookmarkedPosts().add(post);
-            post.getBookmarkedByUsers().add(user);
-        }
-        userService.saveUser(user);
-        postRepository.save(post);
-    }
 
     public Post getPostByIdElseThrow(Long postId) {
         Post post = postRepository.findPostById(postId);
@@ -133,8 +95,43 @@ public class PostService {
         return post;
     }
 
-    public Boolean reactPostOrComment(User userDetails, ReactionRequest request) {
+    public Boolean reactPostOrComment(User user, ReactionRequest request) {
 
-        return null;
+        Long postId = request.getPostId();
+        Long commentId = request.getCommentId();
+        ReactionType reactionType = request.getReactionType();
+        Long userId = user.getId();
+
+        if (postId != null && commentId != null) {
+            throw new FanaticDatabaseException("You can only react to a post or a comment, not both");
+        }
+
+        if (postId != null) {
+            return reactToPost(userId, postId, reactionType);
+        } else if (commentId != null) {
+            return reactToComment(user, commentId);
+        }
+
+        return false;
+    }
+
+    public Boolean reactToPost(Long userId, Long postId, ReactionType reactionType) {
+
+        Reaction reaction = reactionRepository.findByPostIdAndUserId(userId, postId);
+
+        if (reaction != null) {
+            if (!reaction.getReactionType().equals(reactionType)) {
+                reaction.setReactionType(reactionType);
+                return true;
+            } else {
+                reaction.setReactionType(ReactionType.NONE);
+                return true;
+            }
+            //reactionRepository.save(reaction);
+        } else {
+            reactionRepository.save(user, post);
+            return true;
+        }
+
     }
 }

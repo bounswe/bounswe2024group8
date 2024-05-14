@@ -37,6 +37,7 @@ public class WikidataService {
                     .year(Integer.parseInt(teamSearch.get("yearFounded").substring(0, 4)))
                     .coachName(teamSearch.get("coachLabel").replace("@en", ""))
                     .logoUrl(teamSearch.get("logo"))
+                    .location(teamSearch.get("locationLabel").replace("@en", ""))
                     .build();
         }
         //String playerSearch = searchPlayer(keyword);
@@ -98,6 +99,10 @@ public class WikidataService {
             //result.append("Logo: ").append(solution.get("logo")).append("\n\n");
             if (solution.contains("logo")) {
                 result.put("logo", solution.get("logo").toString());
+            }
+
+            if (solution.contains("locationLabel")) {
+                result.put("locationLabel", solution.get("locationLabel").toString());
             }
         }
 

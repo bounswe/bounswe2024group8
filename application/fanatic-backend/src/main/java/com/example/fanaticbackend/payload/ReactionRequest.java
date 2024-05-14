@@ -18,4 +18,7 @@ public class ReactionRequest {
 
     @NotNull(message = "Reaction type is required")
     ReactionType reactionType;
+
+    @NotNull(message = "Bookmark is required")
+    Boolean bookmark;
 }
