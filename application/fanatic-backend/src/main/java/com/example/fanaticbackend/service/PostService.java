@@ -6,12 +6,12 @@ import com.example.fanaticbackend.model.Post;
 import com.example.fanaticbackend.model.User;
 import com.example.fanaticbackend.model.enums.Team;
 import com.example.fanaticbackend.payload.PostCreateRequest;
+import com.example.fanaticbackend.payload.ReactionRequest;
 import com.example.fanaticbackend.payload.SearchResponse;
 import com.example.fanaticbackend.repository.PostRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,6 +25,8 @@ public class PostService {
     final WikidataService wikidataService;
     final PostRepository postRepository;
     final UserService userService;
+    final CommentService commentService;
+
 
     public SearchResponse searchPost(String param) {
         List<Post> results = new ArrayList<>();
@@ -75,7 +77,11 @@ public class PostService {
         return postRepository.findAllByOrderByIdDesc();
     }
 
-    public void likePost(User user, Post post) {
+    public void likePost(User user, Long postId) {
+
+        Post post = getPostByIdElseThrow(postId);
+
+
         if (user.getDislikedPosts().contains(post)) {
             user.getDislikedPosts().remove(post);
             post.getDislikedByUsers().remove(user);
@@ -118,8 +124,17 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public Post getPostById(Long postId) {
-        return postRepository.findById(postId)
-                .orElseThrow(() -> new FanaticDatabaseException("Post not found with id: " + postId));
+    public Post getPostByIdElseThrow(Long postId) {
+        Post post = postRepository.findPostById(postId);
+
+        if (post == null)
+            throw new FanaticDatabaseException("Post not found with id: " + postId);
+
+        return post;
+    }
+
+    public Boolean reactPostOrComment(User userDetails, ReactionRequest request) {
+
+        return null;
     }
 }
