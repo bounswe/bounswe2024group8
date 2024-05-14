@@ -27,7 +27,7 @@ export default function PostCreationScreen({navigation}){
         supportedTeam: "Fenerbahçe",
       };
       const[selectedImage, selectImage] = useState(null);
-      const[globalPost, setGlobal] = useState(false);
+      const[communityPost, setCommunity] = useState(false);
       const[postMessage, changePost] = useState("");
       const[modalVisible, setModalVisible] = useState(false);
       const[tags, setTags] = useState([]);
@@ -36,12 +36,17 @@ export default function PostCreationScreen({navigation}){
 
       const [isMenuVisible, setIsMenuVisible] = useState(false);
 
+      const backButton = () => {
+        console.log("nav");
+        navigation.goBack();
+      }
       const toggleMenu = () => {
         console.log("Toggle menu");
         setIsMenuVisible(!isMenuVisible);
       };
     
       const createPost = () => {
+        setIsMenuVisible(false);
         navigation.navigate("Post");
         console.log("create post");
       };
@@ -78,9 +83,9 @@ export default function PostCreationScreen({navigation}){
       const textChanged = (text) =>{
         changePost(text);
       }
-      const makeGlobal = () =>{
+      const makeCommunity = () =>{
        
-        setGlobal(!globalPost);
+        setCommunity(!communityPost);
 
       }
       const closeModal = () =>{
@@ -93,6 +98,8 @@ export default function PostCreationScreen({navigation}){
         setTags(selectedTags);
       }
       const sendPost = () => {
+        navigation.navigate("Feed");
+        return;
         axios.post(`${VITE_API_URL}/api/v1/posts`, {"user_id": 1, 
         "title": profile.username, "text": postMessage, "teamName": profile.supportedTeam, "user": profile.email}).then( (response) => {
           alert(response);
@@ -106,7 +113,11 @@ export default function PostCreationScreen({navigation}){
     return(
     <View style={styles.backgroundContainer}>
       <View style={styles.headerContainer}>
-        <View style={{ height: 25, width: 25 }}></View>
+        
+        <View style={{ height: 25, width: 20 }}></View>
+        <TouchableOpacity onPress={backButton}>
+          <Image style={styles.backIcon} source={require("../assets/back.png")}/>
+        </TouchableOpacity>
         <View style={styles.logoContainer}>
           <Image source={require("../assets/favicon.jpeg")} />
           <Text style={styles.header}>appFanatic.</Text>
@@ -145,8 +156,8 @@ export default function PostCreationScreen({navigation}){
         <Text style={styles.buttonText}>Publish Post</Text>
       </TouchableOpacity>
       <View style={{flexDirection:"row"}}>
-          <Text>Publish This As A Global Post</Text>
-          <Checkbox value={globalPost} onValueChange={makeGlobal}/>
+          <Text style={{marginRight: "5%"}}>Publish This As A Community Post</Text>
+          <Checkbox value={communityPost} onValueChange={makeCommunity}/>
       </View>
     </View>
   );
@@ -179,6 +190,11 @@ const styles = StyleSheet.create({
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
+    },
+    backIcon: {
+      width: 40,
+      height: 50,
+      resizeMode:"stretch",
     },
     header: {
       color: "blue",

@@ -11,6 +11,7 @@ import {
   Modal,
   Button,
   ImageBackground,
+  ScrollView,
 } from "react-native";
 import * as ImagePicker from 'expo-image-picker/src/ImagePicker';
 import Icon from "react-native-vector-icons/Entypo";
@@ -31,6 +32,9 @@ export default function SettingsScreen({ navigation }) {
   const onUsernameChange = (value) => {
     changeUsername(value);
   };
+  const backButton = () => {
+    navigation.goBack();
+  }
   const onMailChange = (value) => {
     changeMail(value);
   };
@@ -44,6 +48,7 @@ export default function SettingsScreen({ navigation }) {
   };
 
   const createPost = () => {
+    setIsMenuVisible(false);
     console.log("create post");
     navigation.navigate("Post");
   };
@@ -92,7 +97,11 @@ export default function SettingsScreen({ navigation }) {
   return (
     <View style={styles.backgroundContainer}>
       <View style={styles.headerContainer}>
-      <View style={{ height: 25, width: 25 }}></View>
+      
+      <View style={{ height: 25, width: 20 }}></View>
+        <TouchableOpacity onPress={backButton}>
+          <Image style={styles.backIcon} source={require("../assets/back.png")}/>
+        </TouchableOpacity>
         <View style={styles.logoContainer}>
           <Image source={require("../assets/favicon.jpeg")} />
           <Text style={styles.header}>appFanatic.</Text>
@@ -144,6 +153,7 @@ export default function SettingsScreen({ navigation }) {
       </View>
       </TouchableOpacity>
       
+      
       <Text style={{ fontWeight: "bold", marginRight: "65%", fontSize: 18 }}>
         Username
       </Text>
@@ -168,14 +178,21 @@ export default function SettingsScreen({ navigation }) {
         editable={false}
         style={styles.textInContainer}
       />
+      <ScrollView style={{width: "100%"}}>
       <View style={{ flexDirection: "row" }}>
-        <TouchableOpacity style={[styles.button, {marginRight: '10%'}]}>
+        <TouchableOpacity style={[styles.button, {marginRight: '10%', marginLeft: "10%"}]}>
           <Text style={{color:"white"}}>Save Changes</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity onPress={() => {navigation.navigate("ChangePassword")}} style={styles.button}>
           <Text style={{color:"white"}}>Change Password</Text>
         </TouchableOpacity>
       </View>
+      <View>
+        <TouchableOpacity onPress={() => {navigation.navigate("DeleteAccount")}} style={styles.button}>
+          <Text style={{color:"white"}}>Delete Account</Text>
+        </TouchableOpacity>
+      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -215,6 +232,11 @@ const styles = StyleSheet.create({
   },
   headerMenuIcon: {
     right: -100,
+  },
+  backIcon: {
+    width: 40,
+    height: 50,
+    resizeMode:"stretch",
   },
   textInContainer: {
     height: "5%",

@@ -7,6 +7,8 @@ import SettingsScreen from "./App/Screens/SettingsScreen";
 import PostCreationScreen from "./App/Screens/PostCreationScreen";
 import SearchResultScreen from "./App/Screens/SearchResultScreen";
 import PostScreen from "./App/Screens/PostScreen";
+import ChangePassword from "./App/Screens/ChangePassword";
+import DeleteAccount from "./App/Screens/DeleteAccount";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -41,6 +43,16 @@ export default function App() {
         <Stack.Screen
           name="Search"
           component={SearchResultScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ChangePassword"
+          component={ChangePassword}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="DeleteAccount"
+          component={DeleteAccount}
           options={{ headerShown: false }}
         />
         <Stack.Screen name="PostScreen" component={PostScreen}

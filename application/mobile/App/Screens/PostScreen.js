@@ -28,11 +28,19 @@ export default function PostScreen({navigation}){
     const sendComment = () => {
         return;
     }
+    const backButton = () => {
+      console.log("nav");
+      navigation.goBack();
+    }
     return(
     <View style={styles.backgroundContainer}>
       <View style={styles.headerContainer}>
-        <Image source={require("../assets/favicon.jpeg")}></Image>
-        <Text style={styles.header}>Fanatic</Text>
+        <TouchableOpacity onPress={backButton}>
+          <Image style={styles.backIcon} source={require("../assets/back.png")}/>
+        </TouchableOpacity>
+        <Image style={{marginLeft: "12%"}} source={require("../assets/favicon.jpeg")}></Image>
+        <Text style={styles.header}>appFanatic.</Text>
+        <View style={{marginLeft: "20%"}}></View>
       </View>
         <View style={{width: "90%"}}>
         <Post username={postInfo.username}
@@ -90,6 +98,11 @@ const styles = StyleSheet.create({
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
+    },
+    backIcon: {
+      width: 40,
+      height: 50,
+      resizeMode:"stretch",
     },
     header: {
       color: "blue",

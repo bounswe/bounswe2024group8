@@ -90,6 +90,7 @@ export default function FeedScreen({ navigation, route }) {
   };
 
   const createPost = () => {
+    setIsMenuVisible(false);
     navigation.navigate("Post");
     console.log("create post");
   };
