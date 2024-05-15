@@ -43,6 +43,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     Role role;
 
+    @ManyToOne
+    @JoinColumn(name = "community_id", nullable = false)
+    Community community;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
