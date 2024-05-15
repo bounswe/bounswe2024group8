@@ -1,5 +1,6 @@
 package com.example.fanaticbackend.service;
 
+import com.example.fanaticbackend.payload.ReactionRequest;
 import com.example.fanaticbackend.repository.CommentRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -13,5 +14,9 @@ public class CommentService {
 
     CommentRepository commentRepository;
 
-    //
+    public Boolean reactToComment(Long commentId, Long userId, ReactionRequest request) {
+        return false;
+    }
+
+
 }

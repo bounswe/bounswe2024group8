@@ -99,7 +99,6 @@ public class PostService {
 
         Long postId = request.getPostId();
         Long commentId = request.getCommentId();
-        ReactionType reactionType = request.getReactionType();
         Long userId = user.getId();
 
         if (postId != null && commentId != null) {
@@ -107,15 +106,16 @@ public class PostService {
         }
 
         if (postId != null) {
-            return reactToPost(userId, postId, reactionType);
+            return reactToPost(userId, postId, request);
         } else if (commentId != null) {
-            return reactToComment(user, commentId);
+            return commentService.reactToComment(userId, commentId, request) ;
         }
 
         return false;
     }
 
-    public Boolean reactToPost(Long userId, Long postId, ReactionType reactionType) {
+
+    public Boolean reactToPost(Long userId, Long postId, ReactionRequest request) {
 
         Reaction reaction = reactionRepository.findByPostIdAndUserId(userId, postId);
 
