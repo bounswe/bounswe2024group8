@@ -9,6 +9,7 @@ import SearchResultScreen from "./App/Screens/SearchResultScreen";
 import PostScreen from "./App/Screens/PostScreen";
 import ChangePassword from "./App/Screens/ChangePassword";
 import DeleteAccount from "./App/Screens/DeleteAccount";
+import ProfileScreen from "./App/Screens/ProfileScreen";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -28,6 +29,11 @@ export default function App() {
         <Stack.Screen
           name="Feed"
           component={FeedScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ProfileScreen"
+          component={ProfileScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

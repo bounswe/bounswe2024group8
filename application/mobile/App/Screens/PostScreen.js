@@ -29,7 +29,6 @@ export default function PostScreen({navigation}){
         return;
     }
     const backButton = () => {
-      console.log("nav");
       navigation.goBack();
     }
     return(
@@ -54,7 +53,7 @@ export default function PostScreen({navigation}){
                 <View style={{borderRadius: 20, overflow: 'hidden', justifyContent: 'center', alignItems: 'center', width: 50, height:50}}>
                 <Image style={{width: "100%", height:"100%"}} source={item.profilePicture} />
                 </View>
-                <Text>{item.username}: {item.comment}</Text>               
+                <Text>{item.username}: {item.comment}</Text>        
             </View>)}/>
         <View style={{flexDirection: "row", flex:1}}>
         <TextInput placeholder="Drop a comment" style={styles.commentContainer} value={comment} 

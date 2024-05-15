@@ -95,6 +95,8 @@ export default function FeedScreen({ navigation, route }) {
     console.log("create post");
   };
   const viewProfile = () => {
+    setIsMenuVisible(false);
+    navigation.navigate("ProfileScreen", {"profile": {"username": "Jeffrey J.", "profilePhoto": "pp2"}, "selfP": true});
     console.log("view profile");
     
   };
@@ -115,6 +117,9 @@ export default function FeedScreen({ navigation, route }) {
       authToken: route.params.accessToken,
     });
   };
+  const goToProfile = (attrs) =>{
+    navigation.navigate("ProfileScreen", {"profile": attrs});
+  }
 
   return (
     <View style={styles.backgroundContainer}>
@@ -172,6 +177,9 @@ export default function FeedScreen({ navigation, route }) {
             username={item.username}
             profilePic={item.profilePic}
             text={item.text}
+            likes = {item.likes}
+            dislikes = {item.dislikes}
+            profileFunction = {goToProfile}
           ></Post>
           </TouchableOpacity>
         )}
