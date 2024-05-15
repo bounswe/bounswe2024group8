@@ -10,6 +10,7 @@ import com.example.fanaticbackend.payload.CommentCreateRequest;
 import com.example.fanaticbackend.payload.CommentReactionResponse;
 import com.example.fanaticbackend.payload.ReactionRequest;
 import com.example.fanaticbackend.repository.CommentRepository;
+import com.example.fanaticbackend.repository.PostRepository;
 import com.example.fanaticbackend.repository.ReactionRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ public class CommentService {
 
     final CommentRepository commentRepository;
     final ReactionRepository reactionRepository;
-    final PostService postService;
+    final PostRepository postRepository;
 
     public CommentReactionResponse reactToComment(User user, ReactionType reactionType, Long commentId) {
         Long userId = user.getId();
@@ -34,7 +35,7 @@ public class CommentService {
         Team commentTeam = commentPost.getPostedAt();
 
 
-        if (!userTeam.equals(commentTeam)) {
+        if (!userTeam.equals(commentTeam) && !commentTeam.equals(Team.GLOBAL)) {
             throw new RuntimeException("User is not allowed to react to this comment");
         }
 
@@ -92,10 +93,10 @@ public class CommentService {
 
     public Comment createComment(User user, CommentCreateRequest request) {
 
-        Post post = postService.getPostByIdElseThrow(request.getPostId());
+        Post post = postRepository.findPostById(request.getPostId());
 
         //TODO Allow global post reaction
-        if (!post.getPostedAt().equals(user.getCommunity().getTeam())) {
+        if (!post.getPostedAt().equals(user.getCommunity().getTeam()) && !post.getPostedAt().equals(Team.GLOBAL)) {
             throw new RuntimeException("User is not allowed to comment on this post");
         }
 

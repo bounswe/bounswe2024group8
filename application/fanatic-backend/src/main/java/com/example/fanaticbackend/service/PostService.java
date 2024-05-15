@@ -115,7 +115,7 @@ public class PostService {
         Team userTeam = user.getCommunity().getTeam();
         Team postTeam = post.getPostedAt();
 
-        if (!userTeam.equals(postTeam)) {
+        if (!userTeam.equals(postTeam) && !postTeam.equals(Team.GLOBAL)) {
             throw new FanaticDatabaseException("User and post teams do not match");
         }
 
