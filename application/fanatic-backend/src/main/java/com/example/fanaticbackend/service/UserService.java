@@ -92,8 +92,5 @@ public class UserService {
 
     }
 
-    public List<PostResponse> getHistory(User user) {
-        return postRepository.findAllPostsAndUserReactionsByUser(user);
-    }
 
 }

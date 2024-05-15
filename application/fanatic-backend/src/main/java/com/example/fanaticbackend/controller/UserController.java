@@ -58,20 +58,7 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/history")
-    public ResponseEntity<List<PostResponse>> getFeed(
-            @AuthenticationPrincipal UserDetails userDetails
-    ) {
 
-
-        List<PostResponse> history = userService.getHistory((User) userDetails);
-
-        if (history.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(history);
-    }
 
 
 }
