@@ -3,6 +3,7 @@ package com.example.fanaticbackend.controller;
 
 
 import com.example.fanaticbackend.model.User;
+import com.example.fanaticbackend.payload.PostResponse;
 import com.example.fanaticbackend.payload.UpdateProfilePictureRequest;
 import com.example.fanaticbackend.service.UserService;
 import jakarta.validation.Valid;
@@ -12,7 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -52,6 +56,21 @@ public class UserController {
         Boolean result = userService.updatePassword(user, userId, password);
 
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<PostResponse>> getFeed(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+
+
+        List<PostResponse> history = userService.getHistory((User) userDetails);
+
+        if (history.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(history);
     }
 
 

@@ -45,8 +45,16 @@ public class PostService {
 
         WikidataTeamDto team = wikidataService.search(param);
 
-        List<Post> posts = postRepository.findByTextLikeIgnoreCaseParams(param, team.getLocation());
-        results.addAll(posts);
+        if (team != null) {
+            List<Post> posts = postRepository.findByTextLikeIgnoreCaseParams(param, team.getLocation());
+            results.addAll(posts);
+
+        }
+        else {
+            List<Post> posts = postRepository.findByTextLikeIgnoreCase(param);
+            results.addAll(posts);
+
+        }
 
 
         SearchResponse result = new SearchResponse();

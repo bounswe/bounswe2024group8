@@ -3,6 +3,8 @@ package com.example.fanaticbackend.service;
 
 import com.example.fanaticbackend.exception.custom.FanaticDatabaseException;
 import com.example.fanaticbackend.model.User;
+import com.example.fanaticbackend.payload.PostResponse;
+import com.example.fanaticbackend.repository.PostRepository;
 import com.example.fanaticbackend.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +25,7 @@ public class UserService {
 
     //Dependency Injection
     final UserRepository userRepository;
-
+    final PostRepository postRepository;
     final PasswordEncoder passwordEncoder;
 
 
@@ -88,4 +91,9 @@ public class UserService {
         return true;
 
     }
+
+    public List<PostResponse> getHistory(User user) {
+        return postRepository.findAllPostsAndUserReactionsByUser(user);
+    }
+
 }
