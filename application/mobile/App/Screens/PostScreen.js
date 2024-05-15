@@ -16,13 +16,13 @@ import {
 import Icon from "react-native-vector-icons/Entypo";
 import Post from "../components/Post";
 import { useRoute } from "@react-navigation/native";
-
+import Comment from "../components/Comment";
 export default function PostScreen({navigation}){
     const route = useRoute();
     const postInfo = route.params?.item;
     const getComments = () =>{
-        return [{"username": "Cem", "comment": "Lukaku is trash", "profilePicture": require("../assets/dummy_pics/image2.png")},
-        {"username": "Rob", "comment": "I agree!", "profilePicture": require("../assets/dummy_pics/image1.png")}]
+        return [{"username": "Cem", "comment": "Lukaku is trash", "profilePicture": require("../assets/dummy_pics/image2.png"), "likeCount": 124, "dislikeCount": 2},
+        {"username": "Rob", "comment": "I agree!", "profilePicture": require("../assets/dummy_pics/image1.png"), "likeCount": 88, "dislikeCount": 2}]
     }
     const [comment, commentTyped] = useState("");
     const sendComment = () => {
@@ -49,12 +49,16 @@ export default function PostScreen({navigation}){
         <FlatList 
         data={getComments()}
         renderItem={({item})=>(
-            <View style={{flexDirection: "row", marginRight: "50%", marginBottom: "10%"}}>
-                <View style={{borderRadius: 20, overflow: 'hidden', justifyContent: 'center', alignItems: 'center', width: 50, height:50}}>
-                <Image style={{width: "100%", height:"100%"}} source={item.profilePicture} />
-                </View>
-                <Text>{item.username}: {item.comment}</Text>        
-            </View>)}/>
+            <View style={{marginBottom: "10%"}}>
+            <View style={{flexDirection: "row", marginRight: "50%"}}>
+                
+                <Comment profilePicture= {item.profilePicture}
+                username={item.username} comment= {item.comment}
+                likeCount= {item.likeCount} dislikeCount = {item.dislikeCount}/>
+                    
+            </View>            
+            </View>
+          )}/>
         <View style={{flexDirection: "row", flex:1}}>
         <TextInput placeholder="Drop a comment" style={styles.commentContainer} value={comment} 
         onChangeText={(text) => {commentTyped(text)}}
@@ -157,4 +161,12 @@ const styles = StyleSheet.create({
     menuItemIcon: {
       paddingHorizontal: 4,
     },
+    interactionIcon: {
+      width: 40,
+      height: 40
+    },
+    interactionContainer:{
+      flexDirection: "row",
+      marginRight: "5%"
+    }
   });
