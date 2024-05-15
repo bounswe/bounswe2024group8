@@ -12,9 +12,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReactionRequest {
 
-    Long postId;
-
-    Long commentId;
 
     @NotNull(message = "Reaction type is required")
     ReactionType reactionType;

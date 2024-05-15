@@ -8,12 +8,11 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ReactionResponse {
-    Long postId;
+public class CommentReactionResponse {
+    Long commentId;
 
     Integer likes;
 
     Integer dislikes;
 
-    Boolean bookmarked;
 }

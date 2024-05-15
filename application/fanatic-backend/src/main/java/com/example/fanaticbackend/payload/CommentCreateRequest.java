@@ -1,19 +1,21 @@
 package com.example.fanaticbackend.payload;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ReactionResponse {
+public class CommentCreateRequest {
+
+    @NotNull
     Long postId;
 
-    Integer likes;
-
-    Integer dislikes;
-
-    Boolean bookmarked;
+    @NotEmpty
+    String text;
 }

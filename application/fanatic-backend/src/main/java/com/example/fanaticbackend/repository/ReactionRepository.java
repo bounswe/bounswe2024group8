@@ -9,6 +9,8 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 
     Reaction findByPostIdAndUserId(Long postId, Long userId);
 
+    Reaction findByCommentIdAndUserId(Long commentId, Long userId);
+
     Boolean existsByPostIdAndUserId(Long postId, Long userId);
 
 }
