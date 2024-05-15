@@ -8,16 +8,14 @@ import com.example.fanaticbackend.model.Reaction;
 import com.example.fanaticbackend.model.User;
 import com.example.fanaticbackend.model.enums.ReactionType;
 import com.example.fanaticbackend.model.enums.Team;
-import com.example.fanaticbackend.payload.PostCreateRequest;
-import com.example.fanaticbackend.payload.ReactionRequest;
-import com.example.fanaticbackend.payload.ReactionResponse;
-import com.example.fanaticbackend.payload.SearchResponse;
+import com.example.fanaticbackend.payload.*;
 import com.example.fanaticbackend.repository.PostRepository;
 import com.example.fanaticbackend.repository.ReactionRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -61,6 +59,13 @@ public class PostService {
 
     public Post create(User user, PostCreateRequest request) {
 
+        Team userTeam = user.getCommunity().getTeam();
+        Team postTeam = request.getPostedAt();
+
+        if (postTeam != Team.GLOBAL && !userTeam.equals(postTeam)) {
+            throw new FanaticDatabaseException("User can only post to their own community or global feed");
+        }
+        
         Post post = Post.builder()
                 .title(request.getTitle())
                 .text(request.getText())
@@ -89,9 +94,10 @@ public class PostService {
         return post;
     }
 
-    public List<Post> getFeed() {
+    @Transactional(readOnly = true)
+    public List<PostResponse> getFeed(User user) {
 
-        return postRepository.findAllByOrderByIdDesc();
+        return postRepository.findAllPostsAndUserReactionsByUserDefault(user);
     }
 
 
@@ -105,6 +111,7 @@ public class PostService {
     }
 
 
+    @Transactional
     public ReactionResponse reactToPost(User user, ReactionRequest request, Long postId) {
 
         Long userId = user.getId();

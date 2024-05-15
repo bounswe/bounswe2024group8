@@ -7,7 +7,9 @@ import com.example.fanaticbackend.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -20,6 +22,9 @@ public class UserService {
 
     //Dependency Injection
     final UserRepository userRepository;
+
+    final PasswordEncoder passwordEncoder;
+
 
     public User saveUser(User user) {
         return userRepository.save(user);
@@ -44,6 +49,7 @@ public class UserService {
         return user;
     }
 
+    @Transactional
     public User updateProfilePicture(User user, Long userId, MultipartFile profilePicture){
 
         if (!user.getId().equals(userId)) {
@@ -62,6 +68,22 @@ public class UserService {
             throw new FanaticDatabaseException("Error while saving new profile picture");
         }
 
+    }
+
+    @Transactional
+    public User updatePassword(User user, Long userId, String newPassword){
+
+        if (!user.getId().equals(userId)) {
+            throw new FanaticDatabaseException("You can only update your own password");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        try {
+            return userRepository.save(user);
+        } catch (Exception e) {
+            throw new FanaticDatabaseException("Error while saving new password");
+        }
 
     }
 }

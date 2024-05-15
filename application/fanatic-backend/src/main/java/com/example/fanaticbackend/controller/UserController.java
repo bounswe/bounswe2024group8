@@ -5,6 +5,7 @@ package com.example.fanaticbackend.controller;
 import com.example.fanaticbackend.model.User;
 import com.example.fanaticbackend.payload.UpdateProfilePictureRequest;
 import com.example.fanaticbackend.service.UserService;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -37,6 +38,17 @@ public class UserController {
             @ModelAttribute UpdateProfilePictureRequest request) {
 
         User profile = userService.updateProfilePicture(user, id, request.getProfilePicture());
+
+        return ResponseEntity.ok(profile);
+    }
+
+    @PutMapping("/{id}/change-password")
+    public ResponseEntity<User> updateProfilePicture(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id,
+            @NotEmpty @RequestParam String password) {
+
+        User profile = userService.updatePassword(user, id, password);
 
         return ResponseEntity.ok(profile);
     }

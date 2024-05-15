@@ -32,7 +32,7 @@ public class PostController {
     @PostMapping("")
     public ResponseEntity<Post> create(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody PostCreateRequest request) {
+            @Valid @ModelAttribute PostCreateRequest request) {
 
         User user = (User) userDetails;
 
@@ -55,9 +55,12 @@ public class PostController {
     }
 
     @GetMapping("/feed")
-    public ResponseEntity<List<Post>> getFeed() {
+    public ResponseEntity<List<PostResponse>> getFeed(
+            @AuthenticationPrincipal UserDetails userDetails
+            ) {
 
-        List<Post> posts = postService.getFeed();
+
+        List<PostResponse> posts = postService.getFeed((User) userDetails);
 
         if (posts.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -98,10 +101,20 @@ public class PostController {
         // @oguz
         CommentReactionResponse result = commentService.reactToComment((User) userDetails, reactionType, commentId);
 
-
-
         return ResponseEntity.ok(result);
 
+    }
+
+    @GetMapping("/community/{communityTeam}")
+    public ResponseEntity<List<Post>> getPostsOfCommunity(@PathVariable String communityTeam) {
+
+        List<Post> posts = postService.getPostsByCommunity(communityTeam);
+
+        if (posts.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(posts);
     }
 
 
