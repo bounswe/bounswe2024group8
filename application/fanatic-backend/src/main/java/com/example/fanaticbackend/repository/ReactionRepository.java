@@ -11,5 +11,4 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 
     Boolean existsByPostIdAndUserId(Long postId, Long userId);
 
-    void updateReactionByPostIdAndUserId(Long postId, Long userId, ReactionType reactionType);
 }
