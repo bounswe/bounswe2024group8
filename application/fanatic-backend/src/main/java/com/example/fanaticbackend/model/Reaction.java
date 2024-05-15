@@ -25,7 +25,7 @@ public class Reaction {
     @Column(name = "reaction_type",nullable = false)
     ReactionType reactionType;
 
-    @Column(name = "bookmark",nullable = false)
+    @Column(name = "bookmark")  // Deleting nullable = false, because of comment reactions.
     Boolean bookmark;
 
     @ManyToOne

@@ -35,8 +35,9 @@ public class PostService {
     final CommunityService communityService;
 
 
-    public SearchResponse searchPost(User user, String param) {
-        //        var post = Post.builder().text(wikidataService.search(param))
+    public SearchResponse searchPost(String param) {
+        List<Post> results = new ArrayList<>();
+//        var post = Post.builder().text(wikidataService.search(param))
 //                .title("Wikidata Results")
 //                .build();
 //        results.add(post);
@@ -44,8 +45,16 @@ public class PostService {
 
         WikidataTeamDto team = wikidataService.search(param);
 
-        List<Post> posts = postRepository.findByTextLikeIgnoreCaseParams(param, team.getLocation());
-        List<Post> results = new ArrayList<>(posts);
+        if (team != null) {
+            List<Post> posts = postRepository.findByTextLikeIgnoreCaseParams(param, team.getLocation());
+            results.addAll(posts);
+
+        }
+        else {
+            List<Post> posts = postRepository.findByTextLikeIgnoreCase(param);
+            results.addAll(posts);
+
+        }
 
 
         SearchResponse result = new SearchResponse();

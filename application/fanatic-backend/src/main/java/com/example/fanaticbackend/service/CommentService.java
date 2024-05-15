@@ -13,6 +13,7 @@ import com.example.fanaticbackend.payload.ReactionRequest;
 import com.example.fanaticbackend.repository.CommentRepository;
 import com.example.fanaticbackend.repository.PostRepository;
 import com.example.fanaticbackend.repository.ReactionRepository;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -28,7 +29,7 @@ public class CommentService {
     final CommentRepository commentRepository;
     final ReactionRepository reactionRepository;
     final PostRepository postRepository;
-
+    @Transactional
     public CommentReactionResponse reactToComment(User user, ReactionType reactionType, Long commentId) {
         Long userId = user.getId();
         Comment comment = getCommentElseThrow(commentId);
@@ -69,6 +70,10 @@ public class CommentService {
                     comment.setDislikes(comment.getDislikes() + 1);
                 }
             }
+
+            reaction.setReactionType(reactionType);
+            reactionRepository.save(reaction);
+            commentRepository.save(comment);
         }
         else {
             reaction = Reaction.builder()
@@ -93,7 +98,7 @@ public class CommentService {
         result.setDislikes(comment.getDislikes());
         return result;
     }
-
+    @Transactional
     public Comment createComment(User user, CommentCreateRequest request) {
 
         Post post = postRepository.findPostById(request.getPostId());
@@ -106,6 +111,9 @@ public class CommentService {
         Comment comment = Comment.builder()
                 .text(request.getText())
                 .user(user)
+                .post(post)
+                .likes(0)
+                .dislikes(0)
                 .build();
 
         try {
@@ -114,7 +122,7 @@ public class CommentService {
         }
         catch (Exception e) {
             throw new RuntimeException("Comment could not be saved");
-    }
+        }
         return comment;
     }
 
