@@ -16,6 +16,8 @@ public enum Team {
     KASIMPASA,
     ANTALYASPOR,
     HATAYSPOR,
+
+    KONYASPOR,
     ALANYASPOR,
     KARAGUMRUK,
     GAZIANTEP,
