@@ -35,7 +35,9 @@ public class PostService {
     final CommunityService communityService;
 
 
-    public SearchResponse searchPost(String param) {
+    public SearchResponse searchPost(
+            User user,
+            String param) {
         List<Post> results = new ArrayList<>();
 //        var post = Post.builder().text(wikidataService.search(param))
 //                .title("Wikidata Results")
