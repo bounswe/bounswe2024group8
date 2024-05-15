@@ -35,9 +35,8 @@ public class PostService {
     final CommunityService communityService;
 
 
-    public SearchResponse searchPost(String param) {
-        List<Post> results = new ArrayList<>();
-//        var post = Post.builder().text(wikidataService.search(param))
+    public SearchResponse searchPost(User user, String param) {
+        //        var post = Post.builder().text(wikidataService.search(param))
 //                .title("Wikidata Results")
 //                .build();
 //        results.add(post);
@@ -46,11 +45,12 @@ public class PostService {
         WikidataTeamDto team = wikidataService.search(param);
 
         List<Post> posts = postRepository.findByTextLikeIgnoreCaseParams(param, team.getLocation());
-        results.addAll(posts);
+        List<Post> results = new ArrayList<>(posts);
 
 
         SearchResponse result = new SearchResponse();
-        result.setPosts(results);
+
+        result.setPosts(convertPostsToPostResponses(user, results));
         result.setTeam(team);
 
         return result;
@@ -94,7 +94,7 @@ public class PostService {
         return post;
     }
 
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     public List<PostResponse> getFeed(User user) {
 
         return postRepository.findAllPostsAndUserReactionsByUserDefault(user);
@@ -111,7 +111,7 @@ public class PostService {
     }
 
 
-    @Transactional
+//    @Transactional
     public ReactionResponse reactToPost(User user, ReactionRequest request, Long postId) {
 
         Long userId = user.getId();
@@ -186,11 +186,70 @@ public class PostService {
         result.setBookmarked(reaction.getBookmark());
         return result;
     }
-    public List<Post> getPostsByCommunity(String communityTeam) {
+
+    public List<PostResponse> getPostsByCommunity(User user, String communityTeam) {
 
         Community community = communityService.findCommunityByTeamElseThrow(communityTeam);
 
-        return postRepository.findByPostedAtOrderByIdDesc(community.getTeam());
+        return postRepository.findAllPostsAndUserReactionsByUserAndByCommunity(user, community.getTeam());
 
+    }
+
+
+    //TODO: To be used in the search mechanisms @oguz
+    public List<PostResponse> convertPostsToPostResponses(User user, List<Post> posts) {
+        List<PostResponse> postResponses = new ArrayList<>();
+
+        for (Post post : posts) {
+            Reaction reaction = reactionRepository.findByPostIdAndUserId(user.getId(), post.getId());
+            ReactionType reactionType = ReactionType.NONE;
+            Boolean bookmark = false;
+
+            if (reaction != null) {
+                reactionType = reaction.getReactionType();
+                bookmark = reaction.getBookmark();
+            }
+
+            PostResponse postResponse = PostResponse.builder()
+                    .postId(post.getId())
+                    .text(post.getText())
+                    .user(post.getUser())
+                    .title(post.getTitle())
+                    .likes(post.getLikes())
+                    .dislikes(post.getDislikes())
+                    .comments(post.getComments())
+                    .postedAt(post.getPostedAt())
+                    .image(post.getImage())
+                    .createdAt(post.getCreatedAt())
+                    .reactionId(reaction == null ? -1L : reaction.getId())
+                    .reactionType(reactionType)
+                    .bookmark(bookmark)
+                    .build();
+
+            postResponses.add(postResponse);
+        }
+
+        return postResponses;
+    }
+
+    public List<PostResponse> getPostsByUser(User user, Long userId) {
+
+        userService.getUserById(userId);
+
+        return postRepository.findAllPostsAndUserReactionsByUserAndPostedByAUser(user, userId);
+
+    }
+
+    public List<PostResponse> getPostsUserReactedTo(User currentUser, Long targetUserId) {
+
+        User targetUser = userService.getUserById(targetUserId);
+
+        List<Post> post = postRepository.findAllByUserReactedTo(targetUser);
+
+        if (post.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return convertPostsToPostResponses(currentUser, post);
     }
 }

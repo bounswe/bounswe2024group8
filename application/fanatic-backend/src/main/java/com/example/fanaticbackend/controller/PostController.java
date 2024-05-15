@@ -26,7 +26,6 @@ import java.util.List;
 public class PostController {
 
     final PostService postService;
-    final UserService userService;
     final CommentService commentService;
 
     @PostMapping("")
@@ -43,9 +42,10 @@ public class PostController {
 
     @GetMapping("")
     public ResponseEntity<SearchResponse> search(
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam String param) {
 
-        var result = postService.searchPost(param);
+        var result = postService.searchPost((User) userDetails, param);
 
         if (result.getPosts().isEmpty() && result.getTeam() == null) {
             return ResponseEntity.notFound().build();
@@ -56,9 +56,7 @@ public class PostController {
 
     @GetMapping("/feed")
     public ResponseEntity<List<PostResponse>> getFeed(
-            @AuthenticationPrincipal UserDetails userDetails
-            ) {
-
+            @AuthenticationPrincipal UserDetails userDetails) {
 
         List<PostResponse> posts = postService.getFeed((User) userDetails);
 
@@ -106,9 +104,40 @@ public class PostController {
     }
 
     @GetMapping("/community/{communityTeam}")
-    public ResponseEntity<List<Post>> getPostsOfCommunity(@PathVariable String communityTeam) {
+    public ResponseEntity<List<PostResponse>> getPostsOfCommunity(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable String communityTeam) {
 
-        List<Post> posts = postService.getPostsByCommunity(communityTeam);
+        List<PostResponse> posts = postService.getPostsByCommunity((User) userDetails, communityTeam);
+
+        if (posts.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<PostResponse>> getPostsOfUser(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long userId) {
+
+        List<PostResponse> posts = postService.getPostsByUser((User) userDetails, userId);
+
+        if (posts.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(posts);
+    }
+
+
+    @GetMapping("/user/{userId}/reacted")
+    public ResponseEntity<List<PostResponse>> getPostsUserReactedTo(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long userId) {
+
+        List<PostResponse> posts = postService.getPostsUserReactedTo((User) userDetails, userId);
 
         if (posts.isEmpty()) {
             return ResponseEntity.notFound().build();

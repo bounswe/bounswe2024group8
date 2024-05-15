@@ -8,6 +8,7 @@ import com.example.fanaticbackend.model.enums.ReactionType;
 import com.example.fanaticbackend.model.enums.Team;
 import com.example.fanaticbackend.payload.CommentCreateRequest;
 import com.example.fanaticbackend.payload.CommentReactionResponse;
+import com.example.fanaticbackend.payload.CommentResponse;
 import com.example.fanaticbackend.payload.ReactionRequest;
 import com.example.fanaticbackend.repository.CommentRepository;
 import com.example.fanaticbackend.repository.PostRepository;
@@ -16,6 +17,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -122,6 +125,16 @@ public class CommentService {
         }
         return comment;
 
+    }
+
+    public List<CommentResponse> getCommentsByPostId(User user, Long postId) {
+
+        Post post = postRepository.findPostById(postId);
+
+        if (post == null)
+            throw new RuntimeException("Post not found");
+
+        return commentRepository.findAllCommentsAndReactionsByPostAndUser(user.getId(), postId);
     }
 
 

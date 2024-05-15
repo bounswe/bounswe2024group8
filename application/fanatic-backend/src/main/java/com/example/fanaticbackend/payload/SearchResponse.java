@@ -16,6 +16,6 @@ public class SearchResponse {
 
     WikidataTeamDto team;
 
-    List<Post> posts;
+    List<PostResponse> posts;
 
 }
