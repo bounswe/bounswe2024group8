@@ -1,6 +1,7 @@
 package com.example.fanaticbackend.model;
 
 import com.example.fanaticbackend.model.enums.Role;
+import com.example.fanaticbackend.model.enums.Team;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -47,6 +48,9 @@ public class User implements UserDetails {
     @JoinColumn(name = "community_id", nullable = false)
     Community community;
 
+    @Lob
+    @Column(name = "profile_picture")
+    byte[] profilePicture;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

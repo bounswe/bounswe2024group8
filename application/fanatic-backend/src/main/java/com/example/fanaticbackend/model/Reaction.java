@@ -4,6 +4,9 @@ import com.example.fanaticbackend.model.enums.ReactionType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -36,6 +39,10 @@ public class Reaction {
     @ManyToOne
     @JoinColumn(name = "comment_id")
     Comment comment;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false)
+    Timestamp createdAt;
 
 
 }

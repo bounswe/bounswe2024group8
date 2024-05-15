@@ -25,8 +25,11 @@ public class Community {
     @Column(nullable = false)
     String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     Team team;
 
+    @Column(name = "fanatic_count", nullable = false)
+    Long fanaticCount = 0L;
 
 }
