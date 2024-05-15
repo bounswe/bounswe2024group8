@@ -8,6 +8,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -39,5 +42,26 @@ public class UserService {
         }
 
         return user;
+    }
+
+    public User updateProfilePicture(User user, Long userId, MultipartFile profilePicture){
+
+        if (!user.getId().equals(userId)) {
+            throw new FanaticDatabaseException("You can only update your own profile picture");
+        }
+
+        try {
+            user.setProfilePicture(profilePicture.getBytes());
+        } catch (Exception e) {
+            throw new FanaticDatabaseException("Error while updating profile picture");
+        }
+
+        try {
+            return userRepository.save(user);
+        } catch (Exception e) {
+            throw new FanaticDatabaseException("Error while saving new profile picture");
+        }
+
+
     }
 }
