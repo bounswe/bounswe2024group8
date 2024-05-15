@@ -24,9 +24,9 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    //TODO: This will resemble the labels of the posts. Should make it another relation of list with labels
-    @Enumerated(EnumType.STRING)
-    Team teamName;
+//    //TODO: This will resemble the labels of the posts. Should make it another relation of list with labels
+//    @Enumerated(EnumType.STRING)
+//    Team teamName;
 
     @Column(nullable = false)
     String text;

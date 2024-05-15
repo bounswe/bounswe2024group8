@@ -66,7 +66,7 @@ public class PostService {
         Post post = Post.builder()
                 .title(request.getTitle())
                 .text(request.getText())
-                .teamName(Team.valueOf(request.getTeamName()))
+//                .teamName(Team.valueOf(request.getTeamName()))
                 .postedAt(request.getPostedAt())
                 .user(user)
                 .likes(0)

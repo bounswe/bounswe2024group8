@@ -11,14 +11,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommunityService {
 
-    CommunityRepository communityRepository;
+    final CommunityRepository communityRepository;
 
-    UserRepository userRepository;
+    final UserRepository userRepository;
 
 
     public Community findCommunityByTeamElseThrow(String team) {
@@ -41,15 +44,54 @@ public class CommunityService {
         }
 
         Community community = findCommunityByTeamElseThrow(team);
+
+        community.setFanaticCount(community.getFanaticCount() + 1);
         
         user.setCommunity(community);
+
+        try {
+            communityRepository.save(community);
+        } catch (Exception e) {
+            throw new FanaticDatabaseException("Error while updating community");
+        }
 
         try {
             return userRepository.save(user);
         } catch (Exception e) {
             throw new FanaticDatabaseException("Error while joining community");
         }
+    }
 
+    public Boolean createAllCommunities() {
+
+        List<Community> communities = new ArrayList<>();
+        for (Team team : Team.values()) {
+            if (team == Team.GLOBAL) {
+                continue;
+            }
+            Community isExist = communityRepository.findCommunityByTeam(team);
+
+            if (isExist != null) {
+                continue;
+            }
+
+            Community community = Community.builder()
+                    .team(team)
+                    .name(team.name())
+                    .description("Community of " + team.name())
+                    .fanaticCount(0L)
+                    .build();
+
+            communities.add(community);
+        }
+
+        try {
+            communityRepository.saveAll(communities);
+        } catch (Exception e) {
+            throw new FanaticDatabaseException("Error while creating communities");
+        }
+
+        return true;
     }
 
 
