@@ -8,4 +8,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Comment findCommentById(Long id);
 
+    Comment findByPostId(Long postId);
+
 }
