@@ -1,10 +1,10 @@
 package com.example.fanaticbackend.controller;
 
+import com.example.fanaticbackend.model.Comment;
 import com.example.fanaticbackend.model.Post;
 import com.example.fanaticbackend.model.User;
-import com.example.fanaticbackend.payload.PostCreateRequest;
-import com.example.fanaticbackend.payload.ReactionRequest;
-import com.example.fanaticbackend.payload.SearchResponse;
+import com.example.fanaticbackend.model.enums.ReactionType;
+import com.example.fanaticbackend.payload.*;
 import com.example.fanaticbackend.service.CommentService;
 import com.example.fanaticbackend.service.PostService;
 import com.example.fanaticbackend.service.UserService;
@@ -27,6 +27,7 @@ public class PostController {
 
     final PostService postService;
     final UserService userService;
+    final CommentService commentService;
 
     @PostMapping("")
     public ResponseEntity<Post> create(
@@ -35,7 +36,7 @@ public class PostController {
 
         User user = (User) userDetails;
 
-        Post savedPost = postService.create(request);
+        Post savedPost = postService.create(user, request);
 
         return ResponseEntity.ok(savedPost);
     }
@@ -65,16 +66,39 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
-    @PostMapping("/react")
-    public ResponseEntity<Boolean> reactPostOrComment(
+    @PostMapping("/{postId}/react")
+    public ResponseEntity<ReactionResponse> reactPost(
             @AuthenticationPrincipal UserDetails userDetails,
-            @Valid @RequestBody ReactionRequest request) {
+            @Valid @RequestBody ReactionRequest request,
+            @PathVariable Long postId) {
         // @oguz
-        Boolean result = postService.reactPostOrComment((User) userDetails, request);
+        ReactionResponse result = postService.reactToPost((User) userDetails, request, postId);
 
-        if(!result) {
-            return ResponseEntity.badRequest().build();
-        }
+
+        return ResponseEntity.ok(result);
+
+    }
+
+    @PostMapping("/comment")
+    public ResponseEntity<Comment> createComment(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody CommentCreateRequest request) {
+
+        User user = (User) userDetails;
+        Comment savedComment = commentService.createComment((User) userDetails, request);
+
+        return ResponseEntity.ok(savedComment);
+    }
+
+    @PostMapping("/comment/{commentId}/react")
+    public ResponseEntity<CommentReactionResponse> reactComment(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam ReactionType reactionType,
+            @PathVariable Long commentId) {
+        // @oguz
+        CommentReactionResponse result = commentService.reactToComment((User) userDetails, reactionType, commentId);
+
+
 
         return ResponseEntity.ok(result);
 
