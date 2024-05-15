@@ -114,7 +114,7 @@ public class PostService {
         Team postTeam = post.getPostedAt();
 
         if (!userTeam.equals(postTeam) && !postTeam.equals(Team.GLOBAL)) {
-            throw new FanaticDatabaseException("User and post teams do not match");
+            throw new FanaticDatabaseException("Users can only react to posts from their own community or global posts");
         }
 
 
