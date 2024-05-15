@@ -26,9 +26,9 @@ public class UserService {
     final PasswordEncoder passwordEncoder;
 
 
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
+//    public User saveUser(User user) {
+//        return userRepository.save(user);
+//    }
 
     public User getUserByEmail(String email) {
 
@@ -49,8 +49,7 @@ public class UserService {
         return user;
     }
 
-    @Transactional
-    public User updateProfilePicture(User user, Long userId, MultipartFile profilePicture){
+    public Boolean updateProfilePicture(User user, Long userId, MultipartFile profilePicture){
 
         if (!user.getId().equals(userId)) {
             throw new FanaticDatabaseException("You can only update your own profile picture");
@@ -63,15 +62,16 @@ public class UserService {
         }
 
         try {
-            return userRepository.save(user);
+            userRepository.save(user);
         } catch (Exception e) {
             throw new FanaticDatabaseException("Error while saving new profile picture");
         }
 
+        return true;
+
     }
 
-    @Transactional
-    public User updatePassword(User user, Long userId, String newPassword){
+    public Boolean updatePassword(User user, Long userId, String newPassword){
 
         if (!user.getId().equals(userId)) {
             throw new FanaticDatabaseException("You can only update your own password");
@@ -80,10 +80,12 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(newPassword));
 
         try {
-            return userRepository.save(user);
+            userRepository.save(user);
         } catch (Exception e) {
             throw new FanaticDatabaseException("Error while saving new password");
         }
+
+        return true;
 
     }
 }

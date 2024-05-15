@@ -5,6 +5,7 @@ package com.example.fanaticbackend.controller;
 import com.example.fanaticbackend.model.User;
 import com.example.fanaticbackend.payload.UpdateProfilePictureRequest;
 import com.example.fanaticbackend.service.UserService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,25 +33,25 @@ public class UserController {
     }
 
     @PutMapping("/{id}/profile-picture")
-    public ResponseEntity<User> updateProfilePicture(
+    public ResponseEntity<Boolean> updateProfilePicture(
             @AuthenticationPrincipal User user,
             @PathVariable Long id,
             @ModelAttribute UpdateProfilePictureRequest request) {
 
-        User profile = userService.updateProfilePicture(user, id, request.getProfilePicture());
+        Boolean result = userService.updateProfilePicture(user, id, request.getProfilePicture());
 
-        return ResponseEntity.ok(profile);
+        return ResponseEntity.ok(result);
     }
 
-    @PutMapping("/{id}/change-password")
-    public ResponseEntity<User> updateProfilePicture(
+    @PutMapping("/{userId}/change-password")
+    public ResponseEntity<Boolean> updatePassword(
             @AuthenticationPrincipal User user,
-            @PathVariable Long id,
-            @NotEmpty @RequestParam String password) {
+            @PathVariable Long userId,
+            @Valid @NotEmpty @RequestParam String password) {
 
-        User profile = userService.updatePassword(user, id, password);
+        Boolean result = userService.updatePassword(user, userId, password);
 
-        return ResponseEntity.ok(profile);
+        return ResponseEntity.ok(result);
     }
 
 
