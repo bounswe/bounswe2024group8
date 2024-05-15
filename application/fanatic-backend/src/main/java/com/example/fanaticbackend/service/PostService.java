@@ -9,6 +9,7 @@ import com.example.fanaticbackend.model.enums.ReactionType;
 import com.example.fanaticbackend.model.enums.Team;
 import com.example.fanaticbackend.payload.PostCreateRequest;
 import com.example.fanaticbackend.payload.ReactionRequest;
+import com.example.fanaticbackend.payload.ReactionResponse;
 import com.example.fanaticbackend.payload.SearchResponse;
 import com.example.fanaticbackend.repository.PostRepository;
 import com.example.fanaticbackend.repository.ReactionRepository;
@@ -85,7 +86,6 @@ public class PostService {
     }
 
 
-
     public Post getPostByIdElseThrow(Long postId) {
         Post post = postRepository.findPostById(postId);
 
@@ -95,43 +95,80 @@ public class PostService {
         return post;
     }
 
-    public Boolean reactPostOrComment(User user, ReactionRequest request) {
 
-        Long postId = request.getPostId();
-        Long commentId = request.getCommentId();
+    public ReactionResponse reactToPost(User user, ReactionRequest request, Long postId) {
+
         Long userId = user.getId();
+        Post post = getPostByIdElseThrow(postId);
 
-        if (postId != null && commentId != null) {
-            throw new FanaticDatabaseException("You can only react to a post or a comment, not both");
+        Team userTeam = user.getCommunity().getTeam();
+        Team postTeam = post.getTeamName();
+
+        if (!userTeam.equals(postTeam)) {
+            throw new FanaticDatabaseException("User and post teams do not match");
         }
 
-        if (postId != null) {
-            return reactToPost(userId, postId, request);
-        } else if (commentId != null) {
-            return commentService.reactToComment(userId, commentId, request) ;
-        }
 
-        return false;
-    }
-
-
-    public Boolean reactToPost(Long userId, Long postId, ReactionRequest request) {
+        ReactionType reactionType = request.getReactionType();
+        Boolean bookmark = request.getBookmark();
 
         Reaction reaction = reactionRepository.findByPostIdAndUserId(userId, postId);
 
         if (reaction != null) {
-            if (!reaction.getReactionType().equals(reactionType)) {
-                reaction.setReactionType(reactionType);
-                return true;
-            } else {
-                reaction.setReactionType(ReactionType.NONE);
-                return true;
+
+            ReactionType oldReactionType = reaction.getReactionType();
+            reaction.setBookmark(bookmark);
+
+            if (oldReactionType.equals(ReactionType.LIKE)) {
+                if (reactionType.equals(ReactionType.DISLIKE)) {
+                    post.setLikes(post.getLikes() - 1);
+                    post.setDislikes(post.getDislikes() + 1);
+                } else if (reactionType.equals(ReactionType.NONE)) {
+                    post.setLikes(post.getLikes() - 1);
+                }
+            } else if (oldReactionType.equals(ReactionType.DISLIKE)) {
+                if (reactionType.equals(ReactionType.LIKE)) {
+                    post.setDislikes(post.getDislikes() - 1);
+                    post.setLikes(post.getLikes() + 1);
+                } else if (reactionType.equals(ReactionType.NONE)) {
+                    post.setDislikes(post.getDislikes() - 1);
+                }
+            } else if (oldReactionType.equals(ReactionType.NONE)) {
+                if (reactionType.equals(ReactionType.LIKE)) {
+                    post.setLikes(post.getLikes() + 1);
+                } else if (reactionType.equals(ReactionType.DISLIKE)) {
+                    post.setDislikes(post.getDislikes() + 1);
+                }
             }
-            //reactionRepository.save(reaction);
+
+            reaction.setReactionType(reactionType);
+            reactionRepository.save(reaction);
+            postRepository.save(post);
         } else {
-            reactionRepository.save(user, post);
-            return true;
+            reaction = Reaction.builder()
+                    .reactionType(reactionType)
+                    .bookmark(bookmark)
+                    .user(user)
+                    .post(post)
+                    .build();
+
+            reactionRepository.save(reaction);
+
+            if (reactionType.equals(ReactionType.LIKE)) {
+                post.setLikes(post.getLikes() + 1);
+            } else if (reactionType.equals(ReactionType.DISLIKE)) {
+                post.setDislikes(post.getDislikes() + 1);
+            }
+            postRepository.save(post);
         }
+
+
+        ReactionResponse result = new ReactionResponse();
+        result.setPostId(postId);
+        result.setLikes(post.getLikes());
+        result.setDislikes(post.getDislikes());
+        result.setBookmarked(reaction.getBookmark());
+        return result;
 
     }
 }
