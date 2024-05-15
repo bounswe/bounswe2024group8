@@ -2,6 +2,7 @@ package com.example.fanaticbackend.service;
 
 import com.example.fanaticbackend.dto.WikidataTeamDto;
 import com.example.fanaticbackend.exception.custom.FanaticDatabaseException;
+import com.example.fanaticbackend.model.Community;
 import com.example.fanaticbackend.model.Post;
 import com.example.fanaticbackend.model.Reaction;
 import com.example.fanaticbackend.model.User;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,8 @@ public class PostService {
     final UserService userService;
     final CommentService commentService;
     final ReactionRepository reactionRepository;
+
+    final CommunityService communityService;
 
 
     public SearchResponse searchPost(String param) {
@@ -57,19 +61,26 @@ public class PostService {
 
     }
 
-    public Post create(PostCreateRequest request) {
-
-        User user = userService.getUserById(request.getUserId());
+    public Post create(User user, PostCreateRequest request) {
 
         Post post = Post.builder()
                 .title(request.getTitle())
                 .text(request.getText())
                 .teamName(Team.valueOf(request.getTeamName()))
+                .postedAt(request.getPostedAt())
                 .user(user)
                 .likes(0)
                 .dislikes(0)
                 .comments(0)
                 .build();
+
+        if (request.getImage() != null) {
+            try {
+                post.setImage(request.getImage().getBytes());
+            } catch (IOException e) {
+                throw new FanaticDatabaseException("Image could not be saved");
+            }
+        }
 
         try {
             postRepository.save(post);
@@ -169,6 +180,12 @@ public class PostService {
         result.setDislikes(post.getDislikes());
         result.setBookmarked(reaction.getBookmark());
         return result;
+    }
+    public List<Post> getPostsByCommunity(String communityTeam) {
+
+        Community community = communityService.findCommunityByTeamElseThrow(communityTeam);
+
+        return postRepository.findByPostedAtOrderByIdDesc(community.getTeam());
 
     }
 }
