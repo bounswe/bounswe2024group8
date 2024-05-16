@@ -62,7 +62,7 @@ const Navbar: React.FC<NavbarProps> = ({ setShowCreatePostOverlay }) => {
             </a>
           </li>
           <li className="navbar-li">
-            <a className="navbar-a" href="#settings">
+            <a className="navbar-a" href="/settings">
               <IoSettingsSharp className="Icons" />
             </a>
           </li>

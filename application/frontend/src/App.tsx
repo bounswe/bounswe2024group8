@@ -25,6 +25,7 @@ import "./storage/storage.ts";
 import { searchResult, loggedInProfileInfo } from "./storage/storage.ts";
 import ProfileOuter from "./components/ProfileOuter.tsx";
 import axios from "axios";
+import Settings from "./components/Settings.tsx";
 
 function App() {
   const [showCreatePostOverlay, setShowCreatePostOverlay] = useState(false);
@@ -232,6 +233,7 @@ function App() {
             </div>
           }
         />
+        <Route path="/settings" element={<Settings />} />
         <Route path="/" element={<LoggedOut />} />
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/community/:communityName" element={<Community />} />
