@@ -22,7 +22,7 @@ public class RegisterRequest {
     String lastName;
 
     @NotEmpty
-    @Email
+    @Email(message = "Please provide a valid email address")
     String email;
 
     @NotEmpty
