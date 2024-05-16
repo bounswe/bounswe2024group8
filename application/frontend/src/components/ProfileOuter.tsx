@@ -5,6 +5,9 @@ import {
   setLoggedInProfileInfo,
 } from "../storage/storage";
 import Profile from "./Profile.tsx";
+import { PostData } from "../interfaces/postInterface.ts";
+import Feed from "./Feed.tsx";
+import { MdMargin } from "react-icons/md";
 
 interface ProfileOuterProps {
   userId: string | null;
@@ -12,6 +15,27 @@ interface ProfileOuterProps {
 
 const ProfileOuter: React.FC<ProfileOuterProps> = ({ userId }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [postsData, setPostsData] = useState<PostData[]>([]);
+
+  const convertBackendDataToPostData = (backendData: any[]): PostData[] => {
+    return backendData.map((post) => ({
+      id: post.postID,
+      profilePic: post.user.profilePicture
+        ? `data:image/png;base64,${post.user.profilePicture}`
+        : post.user.profilePicture,
+      username: post.username,
+      firstName: post.user.firstName,
+      lastName: post.user.lastName,
+      community: post.user.community.name,
+      communityLink: post.communityLink,
+      title: post.title,
+      text: post.text,
+      imageUrl: post.image ? `data:image/png;base64,${post.image}` : post.image,
+      likes: post.likes,
+      dislikes: post.dislikes,
+      commentsCount: post.commentsCount,
+    }));
+  };
 
   useEffect(() => {
     if (!userId) {
@@ -61,6 +85,24 @@ const ProfileOuter: React.FC<ProfileOuterProps> = ({ userId }) => {
     fetchProfileData();
   }, [userId]);
 
+  useEffect(() => {
+    if (userId) {
+      axios
+        .get(`${import.meta.env.VITE_API_URL}/api/v1/posts/user/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        })
+        .then((response) => {
+          const postDataArray = convertBackendDataToPostData(response.data);
+          setPostsData(postDataArray);
+        })
+        .catch((error) => {
+          console.log("No post yet", error);
+        });
+    }
+  }, [userId]);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -68,11 +110,18 @@ const ProfileOuter: React.FC<ProfileOuterProps> = ({ userId }) => {
   if (!userId) {
     return <div>No user ID found.</div>;
   }
+  const customFeedStyle = {
+    margin: "0",
+    padding: "0",
+    borderRadius: "5px",
+    width: "100%",
+  };
 
   return (
     <div className="outerProfile">
       <Profile {...loggedInProfileInfo} />
       <h1>POSTS</h1>
+      <Feed posts={postsData} style={customFeedStyle} />
     </div>
   );
 };
