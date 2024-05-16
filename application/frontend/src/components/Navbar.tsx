@@ -57,7 +57,7 @@ const Navbar: React.FC<NavbarProps> = ({ setShowCreatePostOverlay }) => {
           </li>
           <li className="navbar-li divider">|</li>
           <li className="navbar-li">
-            <a className="navbar-a" href="#profile">
+            <a className="navbar-a" href={"/profile/"+localStorage.getItem("id")} >
               <CgProfile className="Icons" />
             </a>
           </li>
