@@ -33,45 +33,43 @@ function App() {
 
   const convertBackendDataToPostData = (backendData: any[]): PostData[] => {
     return backendData.map((post) => ({
-      id: post.postID,
-      profilePic: post.user.profilePicture?`data:image/png;base64,${post.user.profilePicture}`:post.user.profilePicture,
-      username: post.username,
+      id: post.postId,
+      profilePic: post.user.profilePicture
+        ? `data:image/png;base64,${post.user.profilePicture}`
+        : post.user.profilePicture,
+      username: post.user.id,
       firstName: post.user.firstName,
       lastName: post.user.lastName,
-      community: post.user.community.name,
+      community: post.postedAt,
       communityLink: post.communityLink,
       title: post.title,
       text: post.text,
-      imageUrl: post.image?`data:image/png;base64,${post.image}`:post.image,
+      imageUrl: post.image ? `data:image/png;base64,${post.image}` : post.image,
       likes: post.likes,
       dislikes: post.dislikes,
-      commentsCount: post.commentsCount
+      reactionType: post.reactionType,
+      bookmark: post.bookmark,
+      commentsCount: post.commentsCount,
     }));
   };
 
-
   useEffect(() => {
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/api/v1/posts/feed`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        })
-        .then((response) => {
-          const postDataArray = convertBackendDataToPostData(response.data);
-          setPostsData(postDataArray);
-        })
-        .catch((error) => {
-          console.log("No post yet", error);
-        });
-    }
-  , []);
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/v1/posts/feed`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      })
+      .then((response) => {
+        const postDataArray = convertBackendDataToPostData(response.data);
+        setPostsData(postDataArray);
+      })
+      .catch((error) => {
+        console.log("No post yet", error);
+      });
+  }, []);
 
-
-
-
-
-  const postssData: PostData[] = [
+  /*const postssData: PostData[] = [
     {
       id: 1,
       profilePic: pp1,
@@ -146,7 +144,7 @@ function App() {
       dislikes: 1,
       commentsCount: 8,
     },
-  ];
+  ];*/
 
   const profileData: ProfileProps = {
     email: "ahmetali",
@@ -176,7 +174,7 @@ function App() {
               <div className="dummydiv"></div>
               <Feed posts={postsData}></Feed>
               <div className="dummydiv"></div>
-              <CommunityBar/>
+              <CommunityBar />
               <CreatePostOverlay
                 show={showCreatePostOverlay}
                 onClose={() => setShowCreatePostOverlay(false)}
@@ -221,12 +219,12 @@ function App() {
           }
         />
         <Route
-          path="profile"
+          path="/profile/:username"
           element={
             <div className="homepage">
               <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
               <div className="dummydiv"></div>
-              <ProfileOuter userId={localStorage.getItem("id")} />
+              <ProfileOuter  />
               <div className="dummydiv"></div>
               <CreatePostOverlay
                 show={showCreatePostOverlay}
@@ -239,6 +237,7 @@ function App() {
         <Route path="/" element={<LoggedOut />} />
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/community/:communityName" element={<Community />} />
+        <Route path="/community/:username" element={<ProfileOuter />} />
       </Routes>
     </Router>
   );

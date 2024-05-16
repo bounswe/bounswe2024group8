@@ -5,6 +5,7 @@ import {
   setLoggedInProfileInfo,
 } from "../storage/storage";
 import Profile from "./Profile.tsx";
+import { useParams } from 'react-router-dom';
 import { PostData } from "../interfaces/postInterface.ts";
 import Feed from "./Feed.tsx";
 import { MdMargin } from "react-icons/md";
@@ -13,26 +14,30 @@ interface ProfileOuterProps {
   userId: string | null;
 }
 
-const ProfileOuter: React.FC<ProfileOuterProps> = ({ userId }) => {
+const ProfileOuter: React.FC = () => {
+  const {username} = useParams();
+  const userId = username;
   const [isLoading, setIsLoading] = useState(true);
   const [postsData, setPostsData] = useState<PostData[]>([]);
 
   const convertBackendDataToPostData = (backendData: any[]): PostData[] => {
     return backendData.map((post) => ({
-      id: post.postID,
+      id: post.postId,
       profilePic: post.user.profilePicture
         ? `data:image/png;base64,${post.user.profilePicture}`
         : post.user.profilePicture,
-      username: post.username,
+      username: post.user.id,
       firstName: post.user.firstName,
       lastName: post.user.lastName,
-      community: post.user.community.name,
+      community: post.postedAt,
       communityLink: post.communityLink,
       title: post.title,
       text: post.text,
       imageUrl: post.image ? `data:image/png;base64,${post.image}` : post.image,
       likes: post.likes,
       dislikes: post.dislikes,
+      reactionType: post.reactionType,
+      bookmark: post.bookmark,
       commentsCount: post.commentsCount,
     }));
   };
