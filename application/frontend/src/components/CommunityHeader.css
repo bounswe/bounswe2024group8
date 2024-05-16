@@ -1,0 +1,47 @@
+.CommHeader {
+  width: 50%; 
+  max-width: 800px; 
+  margin: 80px auto; 
+  padding: 20px;
+  background-color: #5b696a; 
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  position: relative;
+  left: 0;
+  z-index: 1; 
+}
+
+.description {
+  position: relative;
+  border: 1px solid #ccc;
+  margin: -20px 0px 0px 0px;
+  top: 20px; 
+  background-color: #EEEEEE;
+  padding: auto;
+  z-index: 1; 
+}
+
+.CommImage {
+    position: relative;
+    top:10px;
+    left: 10px;
+    width: 120px; 
+    height: 120px;
+}
+
+.CommName {
+  position: relative;
+  font-size: 24px;
+  font-weight: bold;
+  top: -110px;
+  left:150px;
+}
+
+.FollowButton {
+  position: relative;
+  left:550px;
+  top: -170px;
+  height: 40px;
+  width: 120px;
+  border-radius: 30px;
+}
