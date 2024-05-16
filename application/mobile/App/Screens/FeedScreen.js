@@ -16,69 +16,37 @@ import Post from "../components/Post";
 
 export default function FeedScreen({ navigation, route }) {
   const getPosts = () => {
-    return [
-      {
-        id: 1,
-        profilePic: "pp1",
-        username: "Can Öztemiz",
-        community: "Fenerbahçe",
-        communityLink: "fenerbahcelink",
-        text: "Sizce Fenerbahçe'nin Trabzonspor karşısındaki hücum hattı nasıl olmalı?",
-        imageUrl: "image1",
-        likes: 278,
-        dislikes: 12,
-        commentsCount: 124,
+    const [data, setData] = useState(null);
+    const apiUrl = `${VITE_API_URL}/api/v1/posts/feed`;
+    console.log(route.params.authToken);
+    axios
+    .get(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${route.params.authToken}`,
       },
-      {
-        id: 2,
-        profilePic: "pp2",
-        username: "GalaGala123",
-        community: "Galatasaray",
-        communityLink: "galatasaraylink",
-        text: "Icardi'nin bugünkü performansı çok iyi değil miydi?",
-        imageUrl: "image2",
-        likes: 543,
-        dislikes: 23,
-        commentsCount: 87,
-      },
-      {
-        id: 3,
-        profilePic: "image1",
-        username: "jane_doe",
-        community: "Fenerbahçe",
-        communityLink: "fenerbahcelink",
-        text: "This is the second sample post",
-        imageUrl: "https://example.com/sampleimage2.jpg",
-        likes: 15,
-        dislikes: 3,
-        commentsCount: 8,
-      },
-      {
-        id: 4,
-        profilePic: "image2",
-        username: "jane_doe",
-        community: "Fenerbahçe",
-        communityLink: "fenerbahcelink",
-        text: "This is the second sample post",
-        imageUrl: "https://example.com/sampleimage2.jpg",
-        likes: 15,
-        dislikes: 3,
-        commentsCount: 8,
-      },
-      {
-        id: 5,
-        profilePic: "pp1",
-        username: "jane_doe",
-        community: "Fenerbahçe",
-        communityLink: "fenerbahcelink",
-        text: "This is the second sample post",
-        imageUrl: "https://example.com/sampleimage2.jpg",
-        likes: 15,
-        dislikes: 3,
-        commentsCount: 8,
-      },
-    ];
+    })
+    .then((response) => {
+      setData(response.data);
+    })
+    .catch((error) => {
+      console.error("Error fetching feed: ", error);
+      setData([]);
+    });
+
+    return (data ? data : []).map((post) => ({
+      id: post.postID,
+      profilePic: post.user.profilePicture,
+      username: post.username,
+      community: post.user.community?.name,
+      communityLink: post.communityLink,
+      text: post.text,
+      imageUrl: post.image,
+      likes: post.likes,
+      dislikes: post.dislikes,
+      commentsCount: post.commentsCount
+    }));
   };
+
 
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [text, setText] = useState("");
@@ -97,7 +65,7 @@ export default function FeedScreen({ navigation, route }) {
   };
   const createPost = () => {
     setIsMenuVisible(false);
-    navigation.navigate("Post");
+    navigation.navigate("Post", {authToken: route.params.authToken});
     console.log("create post");
   };
   const viewProfile = () => {

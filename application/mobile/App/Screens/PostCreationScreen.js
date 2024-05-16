@@ -18,6 +18,7 @@ import * as ImagePicker from 'expo-image-picker/src/ImagePicker';
 import {VITE_API_URL} from "@env";
 import TagModal from "../components/TagModal";
 import Checkbox from "expo-checkbox";
+import { useRoute } from "@react-navigation/native";
 
 export default function PostCreationScreen({navigation}){
     const profile = {
@@ -31,6 +32,10 @@ export default function PostCreationScreen({navigation}){
       const[postMessage, changePost] = useState("");
       const[modalVisible, setModalVisible] = useState(false);
       const[tags, setTags] = useState([]);
+      const[formData, setFormData] = useState(new FormData());
+      const[authToken, setAuthtoken] = useState("");
+      const[title, changeTitle] = useState("");
+      const route = useRoute();
       
       
 
@@ -98,14 +103,26 @@ export default function PostCreationScreen({navigation}){
         setTags(selectedTags);
       }
       const sendPost = () => {
-        navigation.navigate("Feed");
-        return;
-        axios.post(`${VITE_API_URL}/api/v1/posts`, {"user_id": 1, 
-        "title": profile.username, "text": postMessage, "teamName": profile.supportedTeam, "user": profile.email}).then( (response) => {
-          alert(response);
-          navigation.navigate("Feed");}
+        let comm = communityPost ? "COMMUNITY": "GLOBAL";
+        formData.append('title', title);
+        formData.append('text',postMessage);
+        formData.append("image", {
+          type: "file",
+          src: selectedImage,
+          disabled: selectedImage == null, 
+        });
+        formData.append("postedAt", comm);
+        console.log(formData);
+        axios.post(`${VITE_API_URL}/api/v1/posts`, formData, {headers: {
+          Authorization: `Bearer ${route.params.authToken}`
+        }}).then( (response) => {
+          setFormData(new FormData());
+          navigation.navigate("Feed", {authToken: route.params.authToken});}
         ).catch((error) => {
+          setFormData(new FormData());
+          console.log(error);
           alert("Something went wrong");
+          navigation.navigate("Feed", {authToken: route.params.authToken});
         })
         
       }
@@ -128,11 +145,14 @@ export default function PostCreationScreen({navigation}){
           </TouchableOpacity>
         </View>
       </View>
+      <TextInput style={{borderWidth: 1,
+      padding: 5,
+      borderRadius: 5,width: "50%", borderColor:"black"}} value={title} onChangeText={(val) => {changeTitle(val)}} placeholder="Your Post Title"/>
       <View style={{flexDirection:"row"}}>
         <View style={styles.profilePicContainer} >
         <Image style={styles.profilePic} source={profile.profilePhoto}/>
         </View>
-        <AutoExpandingTextInput onChangeText={textChanged}/>
+        <AutoExpandingTextInput changeFunc={textChanged}/>
       </View>
       <TouchableOpacity onPress={removeImage}>
         {selectedImage !== null && (
@@ -141,17 +161,10 @@ export default function PostCreationScreen({navigation}){
       </TouchableOpacity>
       <View style= {{flexDirection: "row", marginRight: "60%"}}>
         <TouchableOpacity onPress={pickImage} >
-          <Image source={require("../assets/image.png")} style={[styles.interactionIcon, {marginRight: '200%', marginLeft: '50%'}]}/>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={toggleModal}>
-          <Image source={require("../assets/community.png")} style={styles.interactionIcon}/>
+          <Image source={require("../assets/image.png")} style={[styles.interactionIcon, {marginRight: '200%', marginLeft: '42%'}]}/>
         </TouchableOpacity>
       </View>
-      <TagModal 
-        isVisible = {modalVisible}
-        closeModal = {closeModal}
-        onSelectTags = {handleTags}
-      />
+    
       <TouchableOpacity style={styles.button} onPress={sendPost}>
         <Text style={styles.buttonText}>Publish Post</Text>
       </TouchableOpacity>
