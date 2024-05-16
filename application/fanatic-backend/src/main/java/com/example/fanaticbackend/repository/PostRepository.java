@@ -32,8 +32,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT new com.example.fanaticbackend.payload.PostResponse(p.id, p.text, p.user, p.title, p.likes, p.dislikes, p.comments, p.postedAt, p.image, p.createdAt, " +
             "COALESCE(r.id, -1L), COALESCE(r.reactionType, com.example.fanaticbackend.model.enums.ReactionType.NONE), COALESCE(r.bookmark, false)) " +
             "FROM Post p LEFT JOIN Reaction r ON p.id = r.post.id AND r.user = :user " +
+            "WHERE p.postedAt = :userTeam OR p.postedAt = com.example.fanaticbackend.model.enums.Team.GLOBAL " +
             "ORDER BY p.id DESC")
-    List<PostResponse> findAllPostsAndUserReactionsByUserDefault(@Param("user") User user);
+    List<PostResponse> findAllPostsAndUserReactionsByUserDefault(@Param("user") User user, @Param("userTeam") Team userTeam);
 
 
     @Query("SELECT new com.example.fanaticbackend.payload.PostResponse(p.id, p.text, p.user, p.title, p.likes, p.dislikes, p.comments, p.postedAt, p.image, p.createdAt, " +
@@ -64,4 +65,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<PostResponse> findAllPostsAndUserReactionsByUserAndPostedByAUser(@Param("user") User user, @Param("postedBy") Long postedBy);
 
 
+    @Query("SELECT new com.example.fanaticbackend.payload.PostResponse(p.id, p.text, p.user, p.title, p.likes, p.dislikes, p.comments, p.postedAt, p.image, p.createdAt, " +
+            "r.id, r.reactionType, r.bookmark) " +
+            "FROM Post p JOIN Reaction r ON p.id = r.post.id AND r.user.id = :userId AND r.bookmark = true " +
+            "ORDER BY p.id DESC")
+    List<PostResponse> findAllBookmarkedPosts(@Param("userId") Long userId);
 }

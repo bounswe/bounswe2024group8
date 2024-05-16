@@ -1,5 +1,6 @@
 package com.example.fanaticbackend.service;
 
+import com.example.fanaticbackend.exception.custom.FanaticDatabaseException;
 import com.example.fanaticbackend.model.Comment;
 import com.example.fanaticbackend.model.Post;
 import com.example.fanaticbackend.model.Reaction;
@@ -29,7 +30,8 @@ public class CommentService {
     final CommentRepository commentRepository;
     final ReactionRepository reactionRepository;
     final PostRepository postRepository;
-    @Transactional
+
+//    @Transactional
     public CommentReactionResponse reactToComment(User user, ReactionType reactionType, Long commentId) {
         Long userId = user.getId();
         Comment comment = getCommentElseThrow(commentId);
@@ -40,7 +42,7 @@ public class CommentService {
 
 
         if (!userTeam.equals(commentTeam) && !commentTeam.equals(Team.GLOBAL)) {
-            throw new RuntimeException("User is not allowed to react to this comment");
+            throw new FanaticDatabaseException("User is not allowed to react to this comment");
         }
 
         Reaction reaction = reactionRepository.findByCommentIdAndUserId(commentId, userId);
@@ -98,14 +100,15 @@ public class CommentService {
         result.setDislikes(comment.getDislikes());
         return result;
     }
-    @Transactional
+
+//    @Transactional
     public Comment createComment(User user, CommentCreateRequest request) {
 
         Post post = postRepository.findPostById(request.getPostId());
 
         //TODO Allow global post reaction
         if (!post.getPostedAt().equals(user.getCommunity().getTeam()) && !post.getPostedAt().equals(Team.GLOBAL)) {
-            throw new RuntimeException("User is not allowed to comment on this post");
+            throw new FanaticDatabaseException("User is not allowed to comment on this post");
         }
 
         Comment comment = Comment.builder()
@@ -119,9 +122,10 @@ public class CommentService {
         try {
             commentRepository.save(comment);
             post.setComments(post.getComments() + 1);
+            postRepository.save(post);
         }
         catch (Exception e) {
-            throw new RuntimeException("Comment could not be saved");
+            throw new FanaticDatabaseException("Comment could not be saved");
         }
         return comment;
     }
@@ -129,7 +133,7 @@ public class CommentService {
     public Comment getCommentElseThrow(Long commentId) {
         Comment comment = commentRepository.findCommentById(commentId);
         if (comment == null) {
-            throw new RuntimeException("Comment not found");
+            throw new FanaticDatabaseException("Comment not found with id: " + commentId);
         }
         return comment;
 
@@ -140,7 +144,7 @@ public class CommentService {
         Post post = postRepository.findPostById(postId);
 
         if (post == null)
-            throw new RuntimeException("Post not found");
+            throw new FanaticDatabaseException("Post not found");
 
         return commentRepository.findAllCommentsAndReactionsByPostAndUser(user.getId(), postId);
     }

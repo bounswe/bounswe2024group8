@@ -4,6 +4,7 @@ import com.example.fanaticbackend.payload.AuthenticationRequest;
 import com.example.fanaticbackend.payload.AuthenticationResponse;
 import com.example.fanaticbackend.payload.RegisterRequest;
 import com.example.fanaticbackend.service.AuthenticationService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -23,7 +24,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody RegisterRequest request
+            @Valid @RequestBody RegisterRequest request
     ) {
         return ResponseEntity.ok(authenticationService.register(request));
     }
