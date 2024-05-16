@@ -2,9 +2,10 @@ import "./Feed.css";
 import Post from "./Post";
 import { FeedProps } from "../interfaces/postInterface";
 
-const Feed: React.FC<FeedProps> = (props) => {
+const Feed: React.FC<FeedProps> = (allProps) => {
+  const {style,...props} = allProps;
   return (
-    <div className="feed">
+    <div className="feed" style={style}>
       {props.posts.map((post) => (
         <Post
           key={post.id}
@@ -20,6 +21,8 @@ const Feed: React.FC<FeedProps> = (props) => {
           imageUrl={post.imageUrl}
           likes={post.likes}
           dislikes={post.dislikes}
+          reactionType={post.reactionType}
+          bookmark={post.bookmark}
           commentsCount={post.commentsCount}
           onLike={() => console.log("Liked", post.id)}
           onDislike={() => console.log("Disliked", post.id)}

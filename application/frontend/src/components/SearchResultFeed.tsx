@@ -16,7 +16,11 @@ const Feed: React.FC<FeedProps> = (props) => {
         <Post
           key={post.id}
           id={post.id}
-          profilePic={post.profilePic}
+          profilePic={
+            post.profilePic
+              ? `data:image/png;base64,${post.profilePic}`
+              : post.profilePic
+          }
           username={post.username}
           firstName={post.firstName}
           lastName={post.lastName}
@@ -24,9 +28,15 @@ const Feed: React.FC<FeedProps> = (props) => {
           communityLink={post.communityLink}
           title={post.title}
           text={post.text}
-          imageUrl={post.imageUrl}
+          imageUrl={
+            post.imageUrl
+              ? `data:image/png;base64,${post.imageUrl}`
+              : post.imageUrl
+          }
           likes={post.likes}
           dislikes={post.dislikes}
+          reactionType={post.reactionType}
+          bookmark={post.bookmark}
           commentsCount={post.commentsCount}
           onLike={() => console.log("Liked", post.id)}
           onDislike={() => console.log("Disliked", post.id)}

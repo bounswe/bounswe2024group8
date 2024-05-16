@@ -1,0 +1,53 @@
+.comment {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .comment-header {
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .comment-date {
+    margin-left: auto;
+    font-size: 0.8em;
+    color: #888;
+  }
+  
+  .comment-body {
+    margin-top: 10px;
+  }
+  
+  .comment-actions {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .comment-action {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+  }
+  
+  .comment-action button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-right: 5px;
+  }
+  
+  .comment-like,
+  .comment-dislike {
+    font-size: 1.2em;
+  }
+  
