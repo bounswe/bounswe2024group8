@@ -5,7 +5,9 @@ import { IoSettingsSharp } from "react-icons/io5";
 import { FaHome } from "react-icons/fa";
 import { IoLogOutOutline } from "react-icons/io5";
 import { IoMdCreate } from "react-icons/io";
+import { IoIosPeople } from "react-icons/io";
 import SearchBar from "./SearchBar";
+import Community from "../Community.tsx"
 
 interface NavbarProps {
   setShowCreatePostOverlay: React.Dispatch<React.SetStateAction<boolean>>;
@@ -32,6 +34,12 @@ const Navbar: React.FC<NavbarProps> = ({ setShowCreatePostOverlay }) => {
           >
             <a className="navbar-a" href="#write">
               <IoMdCreate className="Icons" />
+            </a>
+          </li>
+          <li className="navbar-li"
+            >
+            <a className="navbar-a" href="/community">
+              <IoIosPeople className="Icons" />
             </a>
           </li>
           <li className="navbar-li">
