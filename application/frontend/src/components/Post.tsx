@@ -29,6 +29,7 @@ interface Comment {
   likes: number;
   dislikes: number;
   createdAt: string;
+  reactionType: string;
 }
 
 const Post: React.FC<PostProps> = (props) => {
@@ -226,7 +227,7 @@ const Post: React.FC<PostProps> = (props) => {
       .then((response) => {
         // After successful API call, add the new comment to the state
         const newComment: Comment = {
-          commentId: response.data.commentId, // Assuming the response contains the new comment ID
+          commentId: response.data.id, // Assuming the response contains the new comment ID
           text: commentText,
           user: {
             id: 1, // Replace with actual user ID
@@ -237,6 +238,7 @@ const Post: React.FC<PostProps> = (props) => {
           likes: 0,
           dislikes: 0,
           createdAt: new Date().toISOString(),
+          reactionType: "NONE",
         };
         setComments([newComment, ...comments]);
       })

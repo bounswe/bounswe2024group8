@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SearchResultProps } from "../interfaces/postInterface.ts";
 import { searchResult } from "../storage/storage.ts";
+import { Bookmark } from "react-bootstrap-icons";
 
 interface InputProps {
   className: string;
@@ -84,7 +85,7 @@ const SearchBar = () => {
             },
             feedProps: {
               posts: response.data.posts.map((post: any) => ({
-                id: post.id,
+                id: post.postId,
                 profilePic: post.user.profilePicture,
                 username: post.user.firstName,
                 firstName: post.user.firstName,
@@ -97,6 +98,7 @@ const SearchBar = () => {
                 likes: post.likes,
                 dislikes: post.dislikes,
                 reactionType: post.reactionType,
+                bookmark:post.bookmark,
                 commentsCount: post.comments,
               })),
             },
