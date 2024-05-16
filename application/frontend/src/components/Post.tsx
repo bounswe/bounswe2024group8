@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Post.css";
 import { PostProps } from "../interfaces/postInterface";
 import {
@@ -10,6 +10,23 @@ import {
 import { FaRegCommentDots } from "react-icons/fa";
 import { IoBookmarkOutline, IoBookmark } from "react-icons/io5";
 import defaultpp from "../assets/defaultpp.png";
+import Comment from "./Comment";
+import axios from "axios";
+import AddComment from "./AddComment";
+
+interface Comment {
+  commentId: number;
+  text: string;
+  user: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    profilePicture: string;
+  };
+  likes: number;
+  dislikes: number;
+  createdAt: string;
+}
 
 const Post: React.FC<PostProps> = (props) => {
   const [liked, setLiked] = useState(false);
@@ -18,6 +35,29 @@ const Post: React.FC<PostProps> = (props) => {
   const [likeCount, setLikeCount] = useState(props.likes);
   const [dislikeCount, setDislikeCount] = useState(props.dislikes);
   const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+
+  useEffect(() => {
+    console.log("Post ID:", props.id); // Log the post ID
+    if (props.id) {
+      axios
+        .get(
+          `${import.meta.env.VITE_API_URL}/api/v1/comments/post/${props.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        )
+        .then((response) => {
+          console.log("Fetched comments:", response.data); // Log fetched comments
+          setComments(response.data);
+        })
+        .catch((error) => {
+          console.log("Error fetching comments", error);
+        });
+    }
+  }, [props.id]);
 
   const handleLike = () => {
     if (liked) {
@@ -52,6 +92,42 @@ const Post: React.FC<PostProps> = (props) => {
 
   const handleComment = () => {
     setShowComments(!showComments);
+  };
+
+  const handleAddComment = (commentText: string) => {
+    const body = {
+      postId: props.id,
+      text: commentText,
+    };
+
+    axios
+      .post(`${import.meta.env.VITE_API_URL}/api/v1/posts/comment`, body, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      })
+      .then((response) => {
+        // After successful API call, add the new comment to the state
+        const newComment: Comment = {
+          commentId: response.data.commentId, // Assuming the response contains the new comment ID
+          text: commentText,
+          user: {
+            id: 1, // Replace with actual user ID
+            firstName: response.data.user.firstName,
+            lastName: response.data.user.lastName,
+            profilePicture: response.data.user.profilePicture,
+          },
+          likes: 0,
+          dislikes: 0,
+          createdAt: new Date().toISOString(),
+        };
+        setComments([newComment, ...comments]);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    console.log(`New comment for post ${props.id}:`, commentText);
   };
 
   return (
@@ -117,7 +193,14 @@ const Post: React.FC<PostProps> = (props) => {
       </div>
       {showComments && (
         <div className="comment-section">
-          <h1>COMMENT SECTION</h1>
+          <AddComment postId={props.id} onAddComment={handleAddComment} />
+          {comments.length > 0 ? (
+            comments.map((comment) => (
+              <Comment key={comment.commentId} comment={comment} />
+            ))
+          ) : (
+            <div>No comments yet.</div>
+          )}
         </div>
       )}
     </div>
