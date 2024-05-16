@@ -23,7 +23,7 @@ const CommunityHeader = (props) => {
         <img src={Community.image} className="CommImage" />
         <div className="info">
           <p className="CommName">{Community.name}</p>
-          <p className="FollowerCount">{FollowerCount} Member</p>
+          <p className="FollowerCount">{FollowerCount} {(FollowerCount===0 || FollowerCount ===1)?"Fanatic":"Fanatics"}</p>
         </div>
       </div>
     </div>
