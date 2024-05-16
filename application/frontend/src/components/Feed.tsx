@@ -2,9 +2,10 @@ import "./Feed.css";
 import Post from "./Post";
 import { FeedProps } from "../interfaces/postInterface";
 
-const Feed: React.FC<FeedProps> = (props) => {
+const Feed: React.FC<FeedProps> = (allProps) => {
+  const {style,...props} = allProps;
   return (
-    <div className="feed">
+    <div className="feed" style={style}>
       {props.posts.map((post) => (
         <Post
           key={post.id}
