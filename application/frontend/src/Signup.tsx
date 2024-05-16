@@ -38,7 +38,7 @@ export default function SignUpPage() {
         localStorage.setItem("email", email);
         localStorage.setItem("id", response.data.userId);
         setLoggedInProfileInfoFromAPI();
-        navigate("/home");
+        window.location.href = "/home";
       })
       .catch((error) => {
         setError("Email already exist");

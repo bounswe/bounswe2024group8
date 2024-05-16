@@ -32,18 +32,19 @@ function App() {
 
   const convertBackendDataToPostData = (backendData: any[]): PostData[] => {
     return backendData.map((post) => ({
-      id: post.postID,
+      id: post.postId,
       profilePic: post.user.profilePicture?`data:image/png;base64,${post.user.profilePicture}`:post.user.profilePicture,
       username: post.username,
       firstName: post.user.firstName,
       lastName: post.user.lastName,
-      community: post.user.community.name,
+      community: post.postedAt,
       communityLink: post.communityLink,
       title: post.title,
       text: post.text,
       imageUrl: post.image?`data:image/png;base64,${post.image}`:post.image,
       likes: post.likes,
       dislikes: post.dislikes,
+      reactionType: post.reactionType,
       commentsCount: post.commentsCount
     }));
   };
@@ -58,6 +59,7 @@ function App() {
         })
         .then((response) => {
           const postDataArray = convertBackendDataToPostData(response.data);
+          console.log(postDataArray);
           setPostsData(postDataArray);
         })
         .catch((error) => {
@@ -66,86 +68,6 @@ function App() {
     }
   , []);
 
-
-
-
-
-  const postssData: PostData[] = [
-    {
-      id: 1,
-      profilePic: pp1,
-      username: "Can Öztemiz",
-      firstName: "Can",
-      lastName: "Öztemiz",
-      community: "Fenerbahçe",
-      communityLink: "fenerbahcelink",
-      title: "Fenerbahçe - Trabzonspor",
-      text: "Sizce Fenerbahçe'nin Trabzonspor karşısındaki hücum hattı nasıl olmalı?",
-      imageUrl: image1,
-      likes: 278,
-      dislikes: 12,
-      commentsCount: 124,
-    },
-    {
-      id: 2,
-      profilePic: pp2,
-      username: "GalaGala123",
-      firstName: "GalaGala123",
-      lastName: "",
-      community: "Galatasaray",
-      communityLink: "galatasaraylink",
-      title: "Bugünkü maç hakkında",
-      text: "Icardi'nin bugünkü performansı çok iyi değil miydi?",
-      imageUrl: image2,
-      likes: 543,
-      dislikes: 23,
-      commentsCount: 87,
-    },
-    {
-      id: 3,
-      profilePic: pp3,
-      username: "Tahsin Gözüpek",
-      firstName: "Tahsin",
-      lastName: "Gözüpek",
-      community: "Rizespor",
-      communityLink: "rizesporlink",
-      title: "Taraftara duyuru",
-      text: "Beşiktaş deplasmanı öncesi pazar günü evimizde oynayacağımız Ankaragücü maçı büyük önem taşımaktadır. Avrupa hedefine ulaşabilmek için pazar günü takımımıza büyük destek gerekmektedir. Belediyemizin aynı şekilde  şehirde araç dolaştırıp taraftarı davet etmesi gerekmektedir.",
-      likes: 73,
-      dislikes: 2,
-      commentsCount: 14,
-    },
-    {
-      id: 4,
-      profilePic: pp4,
-      username: "çArşı",
-      firstName: "çArşı",
-      lastName: "",
-      community: "Beşiktaş",
-      communityLink: "besiktaslink",
-      title: "ÖNEMLİ DUYURU",
-      text: "FENERBAHÇE DEPLASMANINA GELECEK OLAN TARAFTARLARIMIZIN DİKKATİNE; Şanlı Beşiktaş’ımızın 27 Nisan Cumartesi günü (YARIN) oynayacağı Fenerbahçe karşılaşması öncesinde taraftarlarımız bir arada ve organize şekilde hareket etme amacıyla maç günü saat 14.00’da Tüpraş Stadyumu Kuzey Tribünü önünde toplanacaktır. \n15.00’da otobüslerle toplu bir şekilde hareket edecektir. Taraftarlarımızın belirtilen saatlere uyması yaşanacak olumsuzlukların önüne geçecektir.",
-      imageUrl: image4,
-      likes: 323,
-      dislikes: 17,
-      commentsCount: 46,
-    },
-    {
-      id: 5,
-      profilePic: pp5,
-      username: "Kayserispor Fan",
-      firstName: "Kayserispor",
-      lastName: "Fan",
-      community: "Kayserispor",
-      communityLink: "kayserisporlink",
-      title: "Deplasmandayız",
-      text: "Pendik deplasmanı | Kayserispor tribünü 🟡🔴 #KapalıKale",
-      imageUrl: image5,
-      likes: 32,
-      dislikes: 1,
-      commentsCount: 8,
-    },
-  ];
 
   const profileData: ProfileProps = {
     email: "ahmetali",

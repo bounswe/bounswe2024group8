@@ -2,8 +2,8 @@ import "./Community.css";
 import { useState ,useEffect} from "react";
 import axios from "axios";
 import Navbar from "./components/Navbar";
-import { PostData } from "./interfaces/postInterface";
 import Feed from "./components/Feed";
+import { PostData } from "./interfaces/postInterface";
 import { useNavigate,useParams } from "react-router-dom";
 import CommunityHeader from "./components/CommunityHeader";
 import CreatePostOverlay from "./components/CreatePostOverlay.tsx";
@@ -32,18 +32,19 @@ const Community = () =>  {
 
     const convertBackendDataToPostData = (backendData: any[]): PostData[] => {
       return backendData.map((post) => ({
-        id: post.postID,
+        id: post.postId,
         profilePic: post.user.profilePicture?`data:image/png;base64,${post.user.profilePicture}`:post.user.profilePicture,
         username: post.username,
         firstName: post.user.firstName,
         lastName: post.user.lastName,
-        community: post.user.community.name,
+        community: post.postedAt,
         communityLink: post.communityLink,
         title: post.title,
         text: post.text,
         imageUrl: post.image?`data:image/png;base64,${post.image}`:post.image,
         likes: post.likes,
         dislikes: post.dislikes,
+        reactionType: post.reactionType,
         commentsCount: post.commentsCount
       }));
     };
@@ -89,7 +90,7 @@ const Community = () =>  {
     }, [communityNameParam]);
 
     if (loading) {
-      return <h1>LOADING</h1>;
+      return;
     }
 
   const stylee = {

@@ -72,6 +72,7 @@ const Login: React.FC = () => {
         localStorage.setItem("authToken", response.data.accessToken);
         localStorage.setItem("email", email);
         localStorage.setItem("id", response.data.userId);
+        localStorage.setItem("myCommunity", response.data.favoriteTeam);
         setLoggedInProfileInfoFromAPI();
         axios
           .get(
@@ -84,10 +85,9 @@ const Login: React.FC = () => {
             }
           )
           .then((response) => {
-            localStorage.setItem("myCommunity", response.data.community.name);
           })
-          .catch((error) => {});
-        navigate("/home");
+          .catch((error) => {});        
+        window.location.href = "/home";
       })
       .catch((error) => {
         // Hata durumunda yapılacak işlemler

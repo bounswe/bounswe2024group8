@@ -11,6 +11,7 @@ export interface PostData {
   imageUrl?: string;
   likes: number;
   dislikes: number;
+  reactionType: string;
   commentsCount: number;
 }
 
