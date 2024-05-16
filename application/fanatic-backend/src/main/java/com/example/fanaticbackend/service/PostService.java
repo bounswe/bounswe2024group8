@@ -115,7 +115,7 @@ public class PostService {
 //    @Transactional(readOnly = true)
     public List<PostResponse> getFeed(User user) {
 
-        return postRepository.findAllPostsAndUserReactionsByUserDefault(user);
+        return postRepository.findAllPostsAndUserReactionsByUserDefault(user, user.getCommunity().getTeam());
     }
 
 
