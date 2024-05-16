@@ -1,4 +1,4 @@
-body {
+.settings-body {
     background-color: #2c2c2c;
     color: #fff;
     font-family: Arial, sans-serif;
@@ -41,8 +41,7 @@ body {
     margin-bottom: 10px;
 }
 
-input[type="file"],
-input[type="password"] {
+.settingsinput {
     background-color: #333;
     border: none;
     border-radius: 5px;
@@ -52,7 +51,7 @@ input[type="password"] {
     width: calc(100% - 22px);
 }
 
-button {
+.settingsbutton {
     background-color: #007bff;
     border: none;
     border-radius: 5px;
@@ -62,6 +61,6 @@ button {
     width: 100%;
 }
 
-button:hover {
+.settingsbutton:hover {
     background-color: #0056b3;
 }
