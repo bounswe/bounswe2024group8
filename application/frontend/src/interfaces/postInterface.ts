@@ -16,6 +16,7 @@ export interface PostData {
 
 export interface FeedProps {
   posts: PostData[];
+  style?: React.CSSProperties;
 }
 
 export interface PostProps extends PostData {
