@@ -32,8 +32,10 @@ function App() {
 
   const convertBackendDataToPostData = (backendData: any[]): PostData[] => {
     return backendData.map((post) => ({
-      id: post.postID,
-      profilePic: post.user.profilePicture?`data:image/png;base64,${post.user.profilePicture}`:post.user.profilePicture,
+      id: post.postId,
+      profilePic: post.user.profilePicture
+        ? `data:image/png;base64,${post.user.profilePicture}`
+        : post.user.profilePicture,
       username: post.username,
       firstName: post.user.firstName,
       lastName: post.user.lastName,
@@ -41,34 +43,28 @@ function App() {
       communityLink: post.communityLink,
       title: post.title,
       text: post.text,
-      imageUrl: post.image?`data:image/png;base64,${post.image}`:post.image,
+      imageUrl: post.image ? `data:image/png;base64,${post.image}` : post.image,
       likes: post.likes,
       dislikes: post.dislikes,
-      commentsCount: post.commentsCount
+      commentsCount: post.commentsCount,
     }));
   };
 
-
   useEffect(() => {
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/api/v1/posts/feed`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          },
-        })
-        .then((response) => {
-          const postDataArray = convertBackendDataToPostData(response.data);
-          setPostsData(postDataArray);
-        })
-        .catch((error) => {
-          console.log("No post yet", error);
-        });
-    }
-  , []);
-
-
-
-
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/v1/posts/feed`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      })
+      .then((response) => {
+        const postDataArray = convertBackendDataToPostData(response.data);
+        setPostsData(postDataArray);
+      })
+      .catch((error) => {
+        console.log("No post yet", error);
+      });
+  }, []);
 
   const postssData: PostData[] = [
     {
@@ -175,7 +171,7 @@ function App() {
               <div className="dummydiv"></div>
               <Feed posts={postsData}></Feed>
               <div className="dummydiv"></div>
-              <CommunityBar/>
+              <CommunityBar />
               <CreatePostOverlay
                 show={showCreatePostOverlay}
                 onClose={() => setShowCreatePostOverlay(false)}
