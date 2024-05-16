@@ -60,11 +60,11 @@ const SearchBar = () => {
                 username: post.user.firstName, // Assuming 'user' is correctly populated
                 firstName: post.user.firstName,
                 lastName: post.user.lastName,
-                community: "Global", // Static value; change if different logic is needed
+                community: post.user.community.name, // Static value; change if different logic is needed
                 communityLink: "", // Empty string as placeholder
                 title: post.title,
                 text: post.text,
-                imageUrl: "", // Provide default or conditional value
+                imageUrl: post.image, // Provide default or conditional value
                 likes: post.likes,
                 dislikes: post.dislikes,
                 commentsCount: post.comments,
