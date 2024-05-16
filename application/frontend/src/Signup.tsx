@@ -26,6 +26,7 @@ export default function SignUpPage() {
       password: password,
       favoriteTeam: favoriteTeam,
     };
+    localStorage.setItem("myCommunity",favoriteTeam);
 
     axios
       .post(
