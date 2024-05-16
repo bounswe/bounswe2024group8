@@ -39,13 +39,14 @@ function App() {
       username: post.username,
       firstName: post.user.firstName,
       lastName: post.user.lastName,
-      community: post.user.community.name,
+      community: post.postedAt,
       communityLink: post.communityLink,
       title: post.title,
       text: post.text,
       imageUrl: post.image ? `data:image/png;base64,${post.image}` : post.image,
       likes: post.likes,
       dislikes: post.dislikes,
+      reactionType: post.reactionType,
       commentsCount: post.commentsCount,
     }));
   };
@@ -66,7 +67,7 @@ function App() {
       });
   }, []);
 
-  const postssData: PostData[] = [
+  /*const postssData: PostData[] = [
     {
       id: 1,
       profilePic: pp1,
@@ -141,7 +142,7 @@ function App() {
       dislikes: 1,
       commentsCount: 8,
     },
-  ];
+  ];*/
 
   const profileData: ProfileProps = {
     email: "ahmetali",

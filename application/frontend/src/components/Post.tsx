@@ -29,7 +29,7 @@ interface Comment {
 }
 
 const Post: React.FC<PostProps> = (props) => {
-  const [liked, setLiked] = useState(false);
+  const [reaction, setReaction] = useState(props.reactionType);
   const [disliked, setDisliked] = useState(false);
   const [bookmarked, setBookmark] = useState(false);
   const [likeCount, setLikeCount] = useState(props.likes);
@@ -60,29 +60,118 @@ const Post: React.FC<PostProps> = (props) => {
   }, [props.id]);
 
   const handleLike = () => {
-    if (liked) {
-      setLikeCount(likeCount - 1); // Decrement like count if unliking
-    } else {
-      setLikeCount(likeCount + 1); // Increment like count if liking
-      if (disliked) {
-        setDislikeCount(dislikeCount - 1); // If previously disliked, adjust dislike count
-        setDisliked(false);
+    if (
+      props.community === localStorage.getItem("myCommunity") ||
+      props.community === "GLOBAL"
+    ) {
+      console.log(props.reactionType);
+      if (reaction === "LIKE") {
+        const body = {
+          reactionType: "NONE",
+          bookmark: false,
+        };
+        axios
+          .post(
+            `${import.meta.env.VITE_API_URL}/api/v1/posts/${props.id}/react`,
+            body,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+              },
+            }
+          )
+          .then((response) => {
+            setReaction("NONE");
+            console.log("like basılıydı tekrar tıkladık basılı değil");
+            setLikeCount(response.data.likes); // Decrement like count if unliking
+            setDislikeCount(response.data.dislikes);
+          })
+          .catch((error) => {
+            console.log("like error");
+          });
+      } else {
+        const body = {
+          reactionType: "LIKE",
+          bookmark: false,
+        };
+        axios
+          .post(
+            `${import.meta.env.VITE_API_URL}/api/v1/posts/${props.id}/react`,
+            body,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+              },
+            }
+          )
+          .then((response) => {
+            console.log("like çalıştıXX");
+            setReaction("LIKE");
+            setLikeCount(response.data.likes); // Increment like count if liking
+            setDislikeCount(response.data.dislikes);
+          })
+          .catch((error) => {
+            console.log("like error");
+          });
       }
     }
-    setLiked(!liked);
   };
 
   const handleDislike = () => {
-    if (disliked) {
-      setDislikeCount(dislikeCount - 1); // Decrement dislike count if undisliking
-    } else {
-      setDislikeCount(dislikeCount + 1); // Increment dislike count if disliking
-      if (liked) {
-        setLikeCount(likeCount - 1); // If previously liked, adjust like count
-        setLiked(false);
+    if (
+      props.community === localStorage.getItem("myCommunity") ||
+      props.community === "GLOBAL"
+    ) {
+      if (reaction === "DISLIKE") {
+        const body = {
+          reactionType: "NONE",
+          bookmark: false,
+        };
+        axios
+          .post(
+            `${import.meta.env.VITE_API_URL}/api/v1/posts/${props.id}/react`,
+            body,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+              },
+            }
+          )
+          .then((response) => {
+            setReaction("NONE");
+            console.log("dislike basılıydı tekrar tıkladık basılı değil");
+            setLikeCount(response.data.likes);
+            setDislikeCount(response.data.dislikes);
+          })
+          .catch((error) => {
+            console.log("dislike unpress error");
+          });
+      } else {
+        const body = {
+          reactionType: "DISLIKE",
+          bookmark: false,
+        };
+        axios
+          .post(
+            `${import.meta.env.VITE_API_URL}/api/v1/posts/${props.id}/react`,
+            body,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+              },
+            }
+          )
+          .then((response) => {
+            console.log("dislike calıstı");
+            setReaction("DISLIKE");
+            setLikeCount(response.data.likes);
+            setDislikeCount(response.data.dislikes); // Increment like count if liking
+          })
+          .catch((error) => {
+            console.log("like error");
+          });
       }
     }
-    setDisliked(!disliked);
   };
 
   const handleBookmark = () => {
@@ -156,7 +245,9 @@ const Post: React.FC<PostProps> = (props) => {
         <div className="post-actions">
           <div className="post-action">
             <button onClick={handleLike}>
-              {liked ? (
+              {reaction === "LIKE" &&
+              (props.community === localStorage.getItem("myCommunity") ||
+                props.community === "GLOBAL") ? (
                 <AiFillLike className="like" color="Red" />
               ) : (
                 <AiOutlineLike className="like" />
@@ -166,7 +257,9 @@ const Post: React.FC<PostProps> = (props) => {
           </div>
           <div className="post-action">
             <button onClick={handleDislike}>
-              {disliked ? (
+              {reaction === "DISLIKE" &&
+              (props.community === localStorage.getItem("myCommunity") ||
+                props.community === "GLOBAL") ? (
                 <AiFillDislike className="like" color="Blue" />
               ) : (
                 <AiOutlineDislike className="like" />

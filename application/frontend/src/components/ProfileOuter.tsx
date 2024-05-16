@@ -26,13 +26,14 @@ const ProfileOuter: React.FC<ProfileOuterProps> = ({ userId }) => {
       username: post.username,
       firstName: post.user.firstName,
       lastName: post.user.lastName,
-      community: post.user.community.name,
+      community: post.postedAt,
       communityLink: post.communityLink,
       title: post.title,
       text: post.text,
       imageUrl: post.image ? `data:image/png;base64,${post.image}` : post.image,
       likes: post.likes,
       dislikes: post.dislikes,
+      reactionType: post.reactionType,
       commentsCount: post.commentsCount,
     }));
   };
