@@ -1,0 +1,11 @@
+.feedInSearch {
+    max-width: 800px; 
+    margin: 40px auto; 
+    padding: 20px;
+    background-color: #5b696a; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    border-radius: 10px;
+    position: relative;
+    left: 0;
+  }
+  

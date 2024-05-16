@@ -1,0 +1,17 @@
+.search-bar {
+    display: flex;
+    flex-grow: 0; 
+    flex-shrink: 0; 
+    padding: 10px;
+    left: 6%; 
+    top: 80px; 
+    margin-left: 20px;
+  }
+  
+  .search-bar input {
+    width: 100%; 
+    padding: 8px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+  }
+  

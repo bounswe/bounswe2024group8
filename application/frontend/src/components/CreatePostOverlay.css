@@ -1,0 +1,81 @@
+.overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.overlay-content {
+    position: relative;
+    padding: 0px;
+    width: 40%;
+    max-width: 600px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-button {
+    width:40px;
+    height:40px;
+    line-height:40px;
+    color: black;
+    background: white;
+    border: none;
+    text-align: center;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 2rem;
+}
+.close-button:hover {
+    background: rgb(216, 216, 216);
+    border-radius: 50%;
+}
+
+/* Additional styles for form elements */
+.overlay-content input[type="text"]{
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+}
+.overlay-content textarea{
+    resize: none;
+    font-family: Arial, Helvetica, sans-serif;
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+}
+
+
+
+.overlay input[type="file"] {
+    margin-top: 8px;
+    margin-bottom: 16px;
+}
+
+/* Styles for labels */
+.overlay label {
+    align-self: flex-start;
+    margin-bottom: -8px;
+    font-weight: bold;
+}
