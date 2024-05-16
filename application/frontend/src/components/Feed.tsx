@@ -22,6 +22,7 @@ const Feed: React.FC<FeedProps> = (allProps) => {
           likes={post.likes}
           dislikes={post.dislikes}
           reactionType={post.reactionType}
+          bookmark={post.bookmark}
           commentsCount={post.commentsCount}
           onLike={() => console.log("Liked", post.id)}
           onDislike={() => console.log("Disliked", post.id)}

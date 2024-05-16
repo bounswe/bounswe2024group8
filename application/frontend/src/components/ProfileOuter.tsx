@@ -19,7 +19,7 @@ const ProfileOuter: React.FC<ProfileOuterProps> = ({ userId }) => {
 
   const convertBackendDataToPostData = (backendData: any[]): PostData[] => {
     return backendData.map((post) => ({
-      id: post.postID,
+      id: post.postId,
       profilePic: post.user.profilePicture
         ? `data:image/png;base64,${post.user.profilePicture}`
         : post.user.profilePicture,

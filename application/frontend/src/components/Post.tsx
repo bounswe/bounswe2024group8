@@ -31,7 +31,7 @@ interface Comment {
 const Post: React.FC<PostProps> = (props) => {
   const [reaction, setReaction] = useState(props.reactionType);
   const [disliked, setDisliked] = useState(false);
-  const [bookmarked, setBookmark] = useState(false);
+  const [bookmarked, setBookmarked] = useState(props.bookmark);
   const [likeCount, setLikeCount] = useState(props.likes);
   const [dislikeCount, setDislikeCount] = useState(props.dislikes);
   const [showComments, setShowComments] = useState(false);
@@ -68,7 +68,7 @@ const Post: React.FC<PostProps> = (props) => {
       if (reaction === "LIKE") {
         const body = {
           reactionType: "NONE",
-          bookmark: false,
+          bookmark: bookmarked,
         };
         axios
           .post(
@@ -92,7 +92,7 @@ const Post: React.FC<PostProps> = (props) => {
       } else {
         const body = {
           reactionType: "LIKE",
-          bookmark: false,
+          bookmark: bookmarked,
         };
         axios
           .post(
@@ -125,7 +125,7 @@ const Post: React.FC<PostProps> = (props) => {
       if (reaction === "DISLIKE") {
         const body = {
           reactionType: "NONE",
-          bookmark: false,
+          bookmark: bookmarked,
         };
         axios
           .post(
@@ -149,7 +149,7 @@ const Post: React.FC<PostProps> = (props) => {
       } else {
         const body = {
           reactionType: "DISLIKE",
-          bookmark: false,
+          bookmark: bookmarked,
         };
         axios
           .post(
@@ -175,8 +175,27 @@ const Post: React.FC<PostProps> = (props) => {
   };
 
   const handleBookmark = () => {
-    props.onBookmark?.(); // Ensure to call the function if it exists
-    setBookmark(!bookmarked);
+    const body = {
+      reactionType: reaction,
+      bookmark: !bookmarked,
+    };
+    axios
+      .post(
+        `${import.meta.env.VITE_API_URL}/api/v1/posts/${props.id}/react`,
+        body,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log("bookmark calıstı");
+        setBookmarked(!bookmarked);
+      })
+      .catch((error) => {
+        console.log("bookmark error");
+      });
   };
 
   const handleComment = () => {
