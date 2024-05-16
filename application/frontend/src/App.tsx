@@ -23,11 +23,53 @@ import CreatePostOverlay from "./components/CreatePostOverlay.tsx";
 import "./storage/storage.ts";
 import { searchResult, loggedInProfileInfo } from "./storage/storage.ts";
 import ProfileOuter from "./components/ProfileOuter.tsx";
+import axios from "axios";
 
 function App() {
   const [showCreatePostOverlay, setShowCreatePostOverlay] = useState(false);
+  const [postsData, setPostsData] = useState<PostData[]>([]);
 
-  const postsData: PostData[] = [
+  const convertBackendDataToPostData = (backendData: any[]): PostData[] => {
+    return backendData.map((post) => ({
+      id: post.postID,
+      profilePic: post.user.profilePicture?`data:image/png;base64,${post.user.profilePicture}`:post.user.profilePicture,
+      username: post.username,
+      firstName: post.user.firstName,
+      lastName: post.user.lastName,
+      community: post.user.community.name,
+      communityLink: post.communityLink,
+      title: post.title,
+      text: post.text,
+      imageUrl: post.image?`data:image/png;base64,${post.image}`:post.image,
+      likes: post.likes,
+      dislikes: post.dislikes,
+      commentsCount: post.commentsCount
+    }));
+  };
+
+
+  useEffect(() => {
+      axios
+        .get(`${import.meta.env.VITE_API_URL}/api/v1/posts/feed`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        })
+        .then((response) => {
+          const postDataArray = convertBackendDataToPostData(response.data);
+          setPostsData(postDataArray);
+        })
+        .catch((error) => {
+          console.log("No post yet", error);
+        });
+    }
+  , []);
+
+
+
+
+
+  const postssData: PostData[] = [
     {
       id: 1,
       profilePic: pp1,
