@@ -1,5 +1,6 @@
 .CommBarContainer {
-    width: 20%; 
+    margin-left: 9%;
+    width: 12%; 
     max-width: 800px; 
     padding: 20px;
     background-color: #5b696a; 
@@ -15,9 +16,16 @@
     margin: 0px 0 0px 0;
     padding: 15px;
     background-color: #EEEEEE;
+    text-align: center;
 }
 
 .CommLink{
     text-decoration: none; 
     color: black;
+    margin: 10px;
+}
+
+.CommLink:hover{
+    color: #194c68;
+    cursor: pointer;
 }
