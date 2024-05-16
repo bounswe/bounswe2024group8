@@ -52,6 +52,19 @@ const Community = () =>  {
     if(loading){
       return <h1>LAODING</h1>
     }
+
+    axios
+          .get(`${import.meta.env.VITE_API_URL}/api/v1/posts/community/${communityNameParam}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          })
+          .then((response) => {
+            console.log(response.data);
+          })
+          .catch((error) => {
+            console.log("no post yet");
+          });
     
 
 
@@ -217,4 +230,5 @@ const Community = () =>  {
 };
 
 export default Community;
+
 
