@@ -10,6 +10,7 @@ import {
   Dimensions,
   Image,
   Button,  
+  Modal,
 } from "react-native";
 import Icon from "react-native-vector-icons/Entypo";
 import axios from "axios";
@@ -128,6 +129,22 @@ export default function PostCreationScreen({navigation}){
           </TouchableOpacity>
         </View>
       </View>
+      <Modal visible={isMenuVisible} animationType="slide" transparent={true}>
+        <View style={styles.modalContainer}>
+          <TouchableOpacity style={styles.menuItem} onPress={settings}>
+            <Icon name="cog" style={styles.menuItemIcon} />
+            <Text style={styles.menuItemText}>Settings</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={logout}>
+            <Icon name="log-out" style={styles.menuItemIcon} />
+            <Text style={styles.menuItemText}>Logout</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.closeButton} onPress={toggleMenu}>
+            <Icon name="cross" style={styles.menuItemIcon} />
+            <Text style={styles.menuItemText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
       <View style={{flexDirection:"row"}}>
         <View style={styles.profilePicContainer} >
         <Image style={styles.profilePic} source={profile.profilePhoto}/>
