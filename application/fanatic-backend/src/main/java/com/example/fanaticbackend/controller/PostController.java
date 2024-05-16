@@ -146,6 +146,20 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
+    @GetMapping("/user/{userId}/bookmarked")
+    public ResponseEntity<List<PostResponse>> getBookmarkedPosts(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long userId) {
+
+        List<PostResponse> posts = postService.getBookmarkedPosts((User) userDetails, userId);
+
+        if (posts.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(posts);
+    }
+
 
 
 

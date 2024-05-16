@@ -270,4 +270,15 @@ public class PostService {
 
         return convertPostsToPostResponses(currentUser, post);
     }
+
+    public List<PostResponse> getBookmarkedPosts(User userDetails, Long userId) {
+
+        if (!userDetails.getId().equals(userId)) {
+            throw new FanaticDatabaseException("You can only get your own bookmarked posts");
+        }
+
+        List<PostResponse> bookmarkedPosts = postRepository.findAllBookmarkedPosts(userDetails.getId());
+
+        return bookmarkedPosts;
+    }
 }
