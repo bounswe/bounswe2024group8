@@ -2,10 +2,28 @@ package com.example.fanaticbackend.model.enums;
 
 public enum Team {
 
+    GLOBAL,
     GALATASARAY,
     FENERBAHCE,
     BESIKTAS,
-    TRABZONSPOR;
+    TRABZONSPOR,
+    BASAKSEHIR,
+    ADANADEMIRSPOR,
+    ANKARAGUCU,
+    SAMSUNSPOR,
+    RIZESPOR,
+    KAYSERISPOR,
+    KASIMPASA,
+    ANTALYASPOR,
+    HATAYSPOR,
+
+    KONYASPOR,
+    ALANYASPOR,
+    KARAGUMRUK,
+    GAZIANTEP,
+    PENDIKSPOR,
+    SIVASSPOR,
+    ISTANBULSPOR;
 
 
 }

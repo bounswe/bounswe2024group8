@@ -18,4 +18,6 @@ public class WikidataTeamDto {
     Integer year;
 
     String coachName;
+
+    String location;
 }

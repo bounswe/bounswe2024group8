@@ -47,12 +47,12 @@ const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
     };
     
     axios
-      .get("http://localhost:8080/api/v1/users?email="+localStorage.getItem("email"),config)
+      .get(`${import.meta.env.VITE_API_URL}/api/v1/users?email=`+localStorage.getItem("email"),config)
       .then((response) => {
         postCreateRequest.userId=response.data.id;
 
         axios
-        .post("http://localhost:8080/api/v1/posts", postCreateRequest,config)
+        .post(`${import.meta.env.VITE_API_URL}/api/v1/posts`, postCreateRequest,config)
         .then((response) => {
           onClose();
         })

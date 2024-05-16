@@ -64,7 +64,7 @@ const Login: React.FC = () => {
     };
 
     axios
-      .post("http://localhost:8080/api/v1/auth/authenticate", data)
+      .post(`${import.meta.env.VITE_API_URL}/api/v1/auth/authenticate`, data)
       .then((response) => {
         // Başarılı giriş durumunda yapılacak işlemler
         console.log(response.data.accessToken);
