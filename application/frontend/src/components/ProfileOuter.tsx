@@ -34,6 +34,7 @@ const ProfileOuter: React.FC<ProfileOuterProps> = ({ userId }) => {
       likes: post.likes,
       dislikes: post.dislikes,
       reactionType: post.reactionType,
+      bookmark: post.bookmark,
       commentsCount: post.commentsCount,
     }));
   };

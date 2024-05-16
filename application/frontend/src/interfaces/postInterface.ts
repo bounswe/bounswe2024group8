@@ -12,6 +12,7 @@ export interface PostData {
   likes: number;
   dislikes: number;
   reactionType: string;
+  bookmark: boolean;
   commentsCount: number;
 }
 

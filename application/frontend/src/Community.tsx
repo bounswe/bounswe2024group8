@@ -45,6 +45,7 @@ const Community = () =>  {
         likes: post.likes,
         dislikes: post.dislikes,
         reactionType: post.reactionType,
+        bookmark: post.bookmark,
         commentsCount: post.commentsCount
       }));
     };
