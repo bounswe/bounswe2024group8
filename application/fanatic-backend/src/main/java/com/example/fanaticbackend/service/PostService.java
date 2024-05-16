@@ -46,24 +46,31 @@ public class PostService {
         //TODO: @oguz WikidataService should return type: WikidataTeamDto
 
         WikidataTeamDto team = wikidataService.search(param);
+        SearchResponse result = new SearchResponse();
 
-        if (team != null) {
+
+        if (team != null && team.getLocation() != null) {
             List<Post> posts = postRepository.findByTextLikeIgnoreCaseParams(param, team.getLocation());
+            results.addAll(posts);
+            result.setTeam(team);
+
+
+        }
+        else if (team != null) {
+            List<Post> posts = postRepository.findByTextLikeIgnoreCaseParams(param, team.getTeamName());
             results.addAll(posts);
 
         }
+
         else {
             List<Post> posts = postRepository.findByTextLikeIgnoreCase(param);
             results.addAll(posts);
-
+            result.setTeam(team);
         }
 
 
-        SearchResponse result = new SearchResponse();
 
         result.setPosts(convertPostsToPostResponses(user, results));
-        result.setTeam(team);
-
         return result;
 
     }
@@ -262,5 +269,16 @@ public class PostService {
         }
 
         return convertPostsToPostResponses(currentUser, post);
+    }
+
+    public List<PostResponse> getBookmarkedPosts(User userDetails, Long userId) {
+
+        if (!userDetails.getId().equals(userId)) {
+            throw new FanaticDatabaseException("You can only get your own bookmarked posts");
+        }
+
+        List<PostResponse> bookmarkedPosts = postRepository.findAllBookmarkedPosts(userDetails.getId());
+
+        return bookmarkedPosts;
     }
 }

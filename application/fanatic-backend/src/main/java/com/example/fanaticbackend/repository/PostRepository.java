@@ -64,4 +64,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<PostResponse> findAllPostsAndUserReactionsByUserAndPostedByAUser(@Param("user") User user, @Param("postedBy") Long postedBy);
 
 
+    @Query("SELECT new com.example.fanaticbackend.payload.PostResponse(p.id, p.text, p.user, p.title, p.likes, p.dislikes, p.comments, p.postedAt, p.image, p.createdAt, " +
+            "r.id, r.reactionType, r.bookmark) " +
+            "FROM Post p JOIN Reaction r ON p.id = r.post.id AND r.user.id = :userId AND r.bookmark = true " +
+            "ORDER BY p.id DESC")
+    List<PostResponse> findAllBookmarkedPosts(@Param("userId") Long userId);
 }

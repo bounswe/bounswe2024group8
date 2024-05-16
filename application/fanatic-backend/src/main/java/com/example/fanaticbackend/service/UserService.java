@@ -25,13 +25,9 @@ public class UserService {
 
     //Dependency Injection
     final UserRepository userRepository;
-    final PostRepository postRepository;
     final PasswordEncoder passwordEncoder;
 
 
-//    public User saveUser(User user) {
-//        return userRepository.save(user);
-//    }
 
     public User getUserByEmail(String email) {
 
