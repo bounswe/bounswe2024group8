@@ -40,7 +40,7 @@ const Post: React.FC<PostProps> = (props) => {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const navigate = useNavigate();
-
+  console.log(props.reactionType+"AA");
   function handleOnClick(){
     console.log(props.username);
     navigate(`/profile/${props.username}`);

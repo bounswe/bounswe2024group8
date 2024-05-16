@@ -28,12 +28,16 @@ const Settings: React.FC = () => {
     formData.append("profilePicture", selectedFile);
 
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/v1/users/${id}/profile-picture`, formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/v1/users/${id}/profile-picture`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       alert("Profile picture updated successfully!");
     } catch (error) {
       console.error("Error updating profile picture", error);
@@ -47,7 +51,10 @@ const Settings: React.FC = () => {
     const id = localStorage.getItem("id");
     try {
       await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/v1/users/${id}/change-password?password=${newPassword}`,{},
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/v1/users/${id}/change-password?password=${newPassword}`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -62,25 +69,38 @@ const Settings: React.FC = () => {
     }
   };
 
-
   return (
-    <div className="settings-container">
-      <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
-      <h1>Settings</h1>
-      <div className="settings-section">
-        <h2>Profile Photo</h2>
-        <input type="file" onChange={handleFileChange} />
-        <button onClick={handleProfilePictureUpload}>Upload</button>
-      </div>
-      <div className="settings-section">
-        <h2>Change Password</h2>
-        <input
-          type="password"
-          placeholder="New Password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-        />
-        <button onClick={handlePasswordChange}>Change Password</button>
+    <div className="settings-body">
+      <div className="settings-container">
+        <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
+        <h1>Settings</h1>
+        <div className="settings-section">
+          <h2>Profile Photo</h2>
+          <input
+            className="settingsinput"
+            type="file"
+            onChange={handleFileChange}
+          />
+          <button
+            className="settingsbutton"
+            onClick={handleProfilePictureUpload}
+          >
+            Upload
+          </button>
+        </div>
+        <div className="settings-section">
+          <h2>Change Password</h2>
+          <input
+            className="settingsinput"
+            type="password"
+            placeholder="New Password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+          <button className="settingsbutton" onClick={handlePasswordChange}>
+            Change Password
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -46,6 +46,7 @@ const SearchBar = () => {
 
         let searchResultLoc: SearchResultProps;
         if (response.data.team) {
+          console.log("hey");
           searchResultLoc = {
             team: {
               teamName: response.data.team.teamName,
@@ -55,19 +56,21 @@ const SearchBar = () => {
             },
             feedProps: {
               posts: response.data.posts.map((post: any) => ({
-                id: post.id,
+                id: post.postId,
                 profilePic: null, // Assuming a default value; change if different logic is needed
-                username: post.user.firstName, // Assuming 'user' is correctly populated
+                username: post.user.id, // Assuming 'user' is correctly populated
                 firstName: post.user.firstName,
                 lastName: post.user.lastName,
-                community: post.user.community.name, // Static value; change if different logic is needed
+                community: post.postedAt, // Static value; change if different logic is needed
                 communityLink: "", // Empty string as placeholder
                 title: post.title,
                 text: post.text,
                 imageUrl: post.image, // Provide default or conditional value
                 likes: post.likes,
                 dislikes: post.dislikes,
-                commentsCount: post.comments,
+                reactionType: post.reactionType,
+                bookmark: post.bookmark,
+                commentsCount: post.comments
               })),
             },
           };
@@ -82,17 +85,18 @@ const SearchBar = () => {
             feedProps: {
               posts: response.data.posts.map((post: any) => ({
                 id: post.id,
-                profilePic: null,
+                profilePic: post.user.profilePicture,
                 username: post.user.firstName,
                 firstName: post.user.firstName,
                 lastName: post.user.lastName,
-                community: "Global",
+                community: post.postedAt,
                 communityLink: "",
                 title: post.title,
                 text: post.text,
-                imageUrl: "",
+                imageUrl: post.image,
                 likes: post.likes,
                 dislikes: post.dislikes,
+                reactionType: post.reactionType,
                 commentsCount: post.comments,
               })),
             },
