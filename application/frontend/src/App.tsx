@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoggedOut from "./LoggedOut";
 import Navbar from "./components/Navbar";
 import Feed from "./components/Feed";
+import Community from "./Community";
 import SignUpPage from "./Signup";
 import SearchResult from "./components/SearchResult.tsx";
 import SearchResultIntermediate from "./components/SearchResultIntermediate.tsx";
@@ -157,6 +158,7 @@ function App() {
         />
         <Route path="/" element={<LoggedOut />} />
         <Route path="/sign-up" element={<SignUpPage />} />
+        <Route path="/community" element={<Community />} />
       </Routes>
     </Router>
   );
