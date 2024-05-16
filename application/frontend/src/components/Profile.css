@@ -1,0 +1,55 @@
+.outerProfile {
+    width: 50%; 
+    max-width: 800px; 
+    margin: 80px auto; 
+    padding: 20px;
+    background-color: #5b696a; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    border-radius: 10px;
+    position: relative;
+    left: 0;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+  
+  .profile img {
+    width: 100px; /* Adjust size as needed */
+    height: auto;
+    margin-right: 20px;
+    border-radius: 50%;
+  }
+  
+  .profileDetails {
+    flex-grow: 1;
+    color: rgb(0, 0, 0); /* Adjust text color for better readability */
+  }
+  
+  .profileDetails h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  
+  .profileDetails p {
+    margin: 5px 0;
+  }
+  
+  .community {
+    margin-top: 20px;
+  }
+  
+  .community h3 {
+    margin-top: 0;
+  }
+  
+  .account-status {
+    margin-top: 20px;
+  }
+  

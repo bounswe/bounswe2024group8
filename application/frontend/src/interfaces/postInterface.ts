@@ -37,3 +37,20 @@ export interface TeamInfoProps {
   year: number;
   coachName: string;
 }
+
+export interface ProfileProps {
+  email: string;
+  firstName: string;
+  lastName: string;
+  community: {
+    id: number;
+    name: string;
+    description: string;
+    team: string;
+    fanaticCount: number;
+  };
+  profilePicture: null;
+  accountNonExpired: boolean;
+  accountNonLocked: boolean;
+  credentialsNonExpired: boolean;
+}

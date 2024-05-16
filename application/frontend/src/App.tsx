@@ -8,6 +8,7 @@ import SignUpPage from "./Signup";
 import SearchResult from "./components/SearchResult.tsx";
 import SearchResultIntermediate from "./components/SearchResultIntermediate.tsx";
 import { PostData } from "./interfaces/postInterface";
+import { ProfileProps } from "./interfaces/postInterface";
 import image1 from "./assets/dummyimages/image1.png";
 import image2 from "./assets/dummyimages/image2.png";
 import image4 from "./assets/dummyimages/image4.png";
@@ -20,7 +21,8 @@ import pp5 from "./assets/dummyimages/pp5.png";
 import { useState, useEffect } from "react";
 import CreatePostOverlay from "./components/CreatePostOverlay.tsx";
 import "./storage/storage.ts";
-import { searchResult } from "./storage/storage.ts";
+import { searchResult, loggedInProfileInfo } from "./storage/storage.ts";
+import ProfileOuter from "./components/ProfileOuter.tsx";
 
 function App() {
   const [showCreatePostOverlay, setShowCreatePostOverlay] = useState(false);
@@ -102,6 +104,23 @@ function App() {
     },
   ];
 
+  const profileData: ProfileProps = {
+    email: "ahmetali",
+    firstName: "ahmet",
+    lastName: "ali",
+    community: {
+      id: 1,
+      name: "GALATASARAY",
+      description: "Community of GALATASARAY",
+      team: "GALATASARAY",
+      fanaticCount: 2,
+    },
+    profilePicture: null,
+    accountNonExpired: true,
+    accountNonLocked: true,
+    credentialsNonExpired: true,
+  };
+
   return (
     <Router>
       <Routes>
@@ -148,6 +167,21 @@ function App() {
                 team={searchResult.team}
                 feedProps={searchResult.feedProps}
               />
+              <div className="dummydiv"></div>
+              <CreatePostOverlay
+                show={showCreatePostOverlay}
+                onClose={() => setShowCreatePostOverlay(false)}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="profile"
+          element={
+            <div className="homepage">
+              <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
+              <div className="dummydiv"></div>
+              <ProfileOuter userId={localStorage.getItem("id")} />
               <div className="dummydiv"></div>
               <CreatePostOverlay
                 show={showCreatePostOverlay}

@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import logo from "./assets/logo.png";
 import "./LoggedOut.css";
 import axios from "axios";
+import { loggedInProfileInfo, setLoggedInProfileInfo } from "./storage/storage";
 
 interface ButtonProps {
   text: string;
@@ -37,7 +38,7 @@ export const Input: React.FC<InputProps> = ({
   id,
   placeHolder,
   onChange,
-  onKeyDown
+  onKeyDown,
 }) => (
   <input
     className={className}
@@ -70,18 +71,22 @@ const Login: React.FC = () => {
         console.log(response.data.accessToken);
         localStorage.setItem("authToken", response.data.accessToken);
         localStorage.setItem("email", email);
+        localStorage.setItem("id", response.data.userId);
+        setLoggedInProfileInfoFromAPI();
         axios
-        .get(`${import.meta.env.VITE_API_URL}/api/v1/users?email=` + `${localStorage.getItem("email")}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-        })
-        .then((response) => {
-          localStorage.setItem("myCommunity", response.data.community.name);
-      })
-      .catch((error) => {
-        
-      });
+          .get(
+            `${import.meta.env.VITE_API_URL}/api/v1/users?email=` +
+              `${localStorage.getItem("email")}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+              },
+            }
+          )
+          .then((response) => {
+            localStorage.setItem("myCommunity", response.data.community.name);
+          })
+          .catch((error) => {});
         navigate("/home");
       })
       .catch((error) => {
@@ -91,11 +96,46 @@ const Login: React.FC = () => {
       });
   }
 
+  function setLoggedInProfileInfoFromAPI() {
+    const id = localStorage.getItem("id");
+
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/v1/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      })
+      .then((response) => {
+        const profileData = response.data;
+
+        // Update the loggedInProfileInfo object
+        setLoggedInProfileInfo({
+          email: profileData.email,
+          firstName: profileData.firstName,
+          lastName: profileData.lastName,
+          community: {
+            id: profileData.community.id,
+            name: profileData.community.name,
+            description: profileData.community.description,
+            team: profileData.community.team,
+            fanaticCount: profileData.community.fanaticCount,
+          },
+          profilePicture: profileData.profilePicture,
+          accountNonExpired: profileData.accountNonExpired,
+          accountNonLocked: profileData.accountNonLocked,
+          credentialsNonExpired: profileData.credentialsNonExpired,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
   function handleOnSignUp() {
     navigate("/sign-up");
   }
   function handleOnKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleOnLogin();
     }
   }

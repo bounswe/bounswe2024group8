@@ -4,6 +4,10 @@ import { Input, Button } from "./LoggedOut.tsx";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import logo from "./assets/logo.png";
+import {
+  loggedInProfileInfo,
+  setLoggedInProfileInfo,
+} from "./storage/storage.ts";
 
 export default function SignUpPage() {
   const [email, setEmail] = useState<string>("");
@@ -13,6 +17,7 @@ export default function SignUpPage() {
   const [error, setError] = useState<string>("");
   const [favoriteTeam, setFavoriteTeam] = useState<string>("GALATASARAY");
   const navigate = useNavigate();
+
   function handleOnSignUp() {
     const registerUser = {
       firstName: firstName,
@@ -23,24 +28,69 @@ export default function SignUpPage() {
     };
 
     axios
-      .post(`${import.meta.env.VITE_API_URL}/api/v1/auth/register`, registerUser)
+      .post(
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/register`,
+        registerUser
+      )
       .then((response) => {
         localStorage.setItem("authToken", response.data.accessToken);
         localStorage.setItem("email", email);
+        localStorage.setItem("id", response.data.userId);
+        setLoggedInProfileInfoFromAPI();
         navigate("/home");
       })
       .catch((error) => {
         setError("Email already exist");
       });
   }
+
+  function setLoggedInProfileInfoFromAPI() {
+    const id = localStorage.getItem("id");
+
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/v1/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      })
+      .then((response) => {
+        const profileData = response.data;
+
+        // Update the loggedInProfileInfo object
+        setLoggedInProfileInfo({
+          email: profileData.email,
+          firstName: profileData.firstName,
+          lastName: profileData.lastName,
+          community: {
+            id: profileData.community.id,
+            name: profileData.community.name,
+            description: profileData.community.description,
+            team: profileData.community.team,
+            fanaticCount: profileData.community.fanaticCount,
+          },
+          profilePicture: profileData.profilePicture,
+          accountNonExpired: profileData.accountNonExpired,
+          accountNonLocked: profileData.accountNonLocked,
+          credentialsNonExpired: profileData.credentialsNonExpired,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
   function handleOnKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-    if (event.key === 'Enter' && email !== "" &&
-    password !== "" &&
-    firstName !== "" &&
-    lastName !== "") {
+    if (
+      event.key === "Enter" &&
+      email !== "" &&
+      password !== "" &&
+      firstName !== "" &&
+      lastName !== ""
+    ) {
       handleOnSignUp();
     }
   }
+
   return (
     <div className="container">
       <div className="logodiv">
@@ -85,7 +135,6 @@ export default function SignUpPage() {
             setLastName(e.target.value)
           }
           onKeyDown={handleOnKeyDown}
-          
         />
         <Input
           className="SignUpForm"
@@ -99,9 +148,14 @@ export default function SignUpPage() {
         />
         <div>
           <h4 style={{ textAlign: "center" }}>Select the team you support!</h4>
-          <select className="SignUpForm" name="team" id="team" onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-            {setFavoriteTeam(e.target.value);
-            }}>
+          <select
+            className="SignUpForm"
+            name="team"
+            id="team"
+            onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+              setFavoriteTeam(e.target.value);
+            }}
+          >
             <option value="GALATASARAY">Galatasaray</option>
             <option value="FENERBAHCE">Fenerbahçe</option>
             <option value="BESIKTAS">Beşiktaş</option>
