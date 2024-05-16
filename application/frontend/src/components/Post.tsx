@@ -17,6 +17,7 @@ const Post: React.FC<PostProps> = (props) => {
   const [bookmarked, setBookmark] = useState(false);
   const [likeCount, setLikeCount] = useState(props.likes);
   const [dislikeCount, setDislikeCount] = useState(props.dislikes);
+  const [showComments, setShowComments] = useState(false);
 
   const handleLike = () => {
     if (liked) {
@@ -47,6 +48,10 @@ const Post: React.FC<PostProps> = (props) => {
   const handleBookmark = () => {
     props.onBookmark?.(); // Ensure to call the function if it exists
     setBookmark(!bookmarked);
+  };
+
+  const handleComment = () => {
+    setShowComments(!showComments);
   };
 
   return (
@@ -94,7 +99,7 @@ const Post: React.FC<PostProps> = (props) => {
             <span>{dislikeCount}</span>
           </div>
           <div className="post-action">
-            <button onClick={props.onComment}>
+            <button onClick={handleComment}>
               <FaRegCommentDots className="like" />
             </button>
             <span>{props.commentsCount}</span>
@@ -110,6 +115,11 @@ const Post: React.FC<PostProps> = (props) => {
           </div>
         </div>
       </div>
+      {showComments && (
+        <div className="comment-section">
+          <h1>COMMENT SECTION</h1>
+        </div>
+      )}
     </div>
   );
 };

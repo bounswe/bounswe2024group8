@@ -113,14 +113,12 @@ const ProfileOuter: React.FC<ProfileOuterProps> = ({ userId }) => {
   const customFeedStyle = {
     margin: "0",
     padding: "0",
-    borderRadius: "5px",
     width: "100%",
   };
 
   return (
     <div className="outerProfile">
       <Profile {...loggedInProfileInfo} />
-      <h1>POSTS</h1>
       <Feed posts={postsData} style={customFeedStyle} />
     </div>
   );

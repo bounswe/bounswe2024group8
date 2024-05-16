@@ -15,7 +15,12 @@ const Profile: React.FC<ProfileProps> = ({
 }) => {
   return (
     <div className="profile">
-      <img src={profilePicture || defaultPp} alt={`${firstName} ${lastName}`} />
+      <img
+        src={
+          profilePicture ? `data:image/png;base64,${profilePicture}` : defaultPp
+        }
+        alt={`${firstName} ${lastName}`}
+      />
       <div className="profileDetails">
         <h2>{`${firstName} ${lastName}`}</h2>
         <div className="community">
