@@ -11,6 +11,7 @@ export default function SignUpPage() {
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [favoriteTeam, setFavoriteTeam] = useState<string>("GALATASARAY");
   const navigate = useNavigate();
   function handleOnSignUp() {
     const registerUser = {
@@ -18,6 +19,7 @@ export default function SignUpPage() {
       lastName: lastName,
       email: email,
       password: password,
+      favoriteTeam: favoriteTeam,
     };
 
     axios
@@ -32,7 +34,10 @@ export default function SignUpPage() {
       });
   }
   function handleOnKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && email !== "" &&
+    password !== "" &&
+    firstName !== "" &&
+    lastName !== "") {
       handleOnSignUp();
     }
   }
@@ -94,27 +99,29 @@ export default function SignUpPage() {
         />
         <div>
           <h4 style={{ textAlign: "center" }}>Select the team you support!</h4>
-          <select className="SignUpForm" name="team" id="team">
-            <option value="gs">Galatasaray</option>
-            <option value="fb">Fenerbahçe</option>
-            <option value="bjk">Beşiktaş</option>
-            <option value="ts">Trabzonspor</option>
-            <option value="bşk">Başakşehir</option>
-            <option value="riz">Rizespor</option>
-            <option value="las">Kasımpaşa</option>
-            <option value="aln">Alanyaspor</option>
-            <option value="svs">Sivasspor</option>
-            <option value="ant">Antalyaspor</option>
-            <option value="ads">Adana Demirspor</option>
-            <option value="kay">Kayserispor</option>
-            <option value="sam">Samsunspor</option>
-            <option value="ank">Ankaragücü</option>
-            <option value="gfk">Gaziantep FK</option>
-            <option value="kon">Konyaspor</option>
-            <option value="krg">Karagümrük</option>
-            <option value="hty">Hatayspor</option>
-            <option value="pen">Pendikspor</option>
-            <option value="ist">İstanbulspor</option>
+          <select className="SignUpForm" name="team" id="team" onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+            {setFavoriteTeam(e.target.value);
+            }}>
+            <option value="GALATASARAY">Galatasaray</option>
+            <option value="FENERBAHCE">Fenerbahçe</option>
+            <option value="BESIKTAS">Beşiktaş</option>
+            <option value="TRABZONSPOR">Trabzonspor</option>
+            <option value="BASAKSEHIR">Başakşehir</option>
+            <option value="RIZESPOR">Rizespor</option>
+            <option value="KASIMPASA">Kasımpaşa</option>
+            <option value="ALANYASPOR">Alanyaspor</option>
+            <option value="SIVASSPOR">Sivasspor</option>
+            <option value="ANTALYASPOR">Antalyaspor</option>
+            <option value="ADANADEMIRSPOR">Adana Demirspor</option>
+            <option value="KAYSERISPOR">Kayserispor</option>
+            <option value="SAMSUNSPOR">Samsunspor</option>
+            <option value="ANKARAGUCU">Ankaragücü</option>
+            <option value="GAZIANTEP">Gaziantep</option>
+            <option value="KONYASPOR">Konyaspor</option>
+            <option value="KARAGUMRUK">Karagümrük</option>
+            <option value="HATAYSPOR">Hatayspor</option>
+            <option value="PENDIKSPOR">Pendikspor</option>
+            <option value=" ISTANBULSPOR">İstanbulspor</option>
           </select>
         </div>
         <Button
