@@ -25,6 +25,7 @@ import "./storage/storage.ts";
 import { searchResult, loggedInProfileInfo } from "./storage/storage.ts";
 import ProfileOuter from "./components/ProfileOuter.tsx";
 import axios from "axios";
+import Settings from "./components/Settings.tsx";
 
 function App() {
   const [showCreatePostOverlay, setShowCreatePostOverlay] = useState(false);
@@ -36,7 +37,7 @@ function App() {
       profilePic: post.user.profilePicture
         ? `data:image/png;base64,${post.user.profilePicture}`
         : post.user.profilePicture,
-      username: post.username,
+      username: post.user.id,
       firstName: post.user.firstName,
       lastName: post.user.lastName,
       community: post.postedAt,
@@ -218,12 +219,12 @@ function App() {
           }
         />
         <Route
-          path="profile"
+          path="/profile/:username"
           element={
             <div className="homepage">
               <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
               <div className="dummydiv"></div>
-              <ProfileOuter userId={localStorage.getItem("id")} />
+              <ProfileOuter  />
               <div className="dummydiv"></div>
               <CreatePostOverlay
                 show={showCreatePostOverlay}
@@ -232,9 +233,11 @@ function App() {
             </div>
           }
         />
+        <Route path="/settings" element={<Settings />} />
         <Route path="/" element={<LoggedOut />} />
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/community/:communityName" element={<Community />} />
+        <Route path="/community/:username" element={<ProfileOuter />} />
       </Routes>
     </Router>
   );

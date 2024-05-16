@@ -34,7 +34,7 @@ const Community = () =>  {
       return backendData.map((post) => ({
         id: post.postId,
         profilePic: post.user.profilePicture?`data:image/png;base64,${post.user.profilePicture}`:post.user.profilePicture,
-        username: post.username,
+        username: post.user.id,
         firstName: post.user.firstName,
         lastName: post.user.lastName,
         community: post.postedAt,
