@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Post.css";
 import { PostProps } from "../interfaces/postInterface";
+import { useNavigate } from "react-router-dom";
 import {
   AiFillLike,
   AiOutlineLike,
@@ -13,6 +14,8 @@ import defaultpp from "../assets/defaultpp.png";
 import Comment from "./Comment";
 import axios from "axios";
 import AddComment from "./AddComment";
+import ProfileOuter from "./ProfileOuter.tsx"
+import Profile from "./Profile";
 
 interface Comment {
   commentId: number;
@@ -36,6 +39,12 @@ const Post: React.FC<PostProps> = (props) => {
   const [dislikeCount, setDislikeCount] = useState(props.dislikes);
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
+  const navigate = useNavigate();
+
+  function handleOnClick(){
+    console.log(props.username);
+    navigate(`/profile/${props.username}`);
+  }
 
   useEffect(() => {
     console.log("Post ID:", props.id); // Log the post ID
@@ -247,7 +256,7 @@ const Post: React.FC<PostProps> = (props) => {
           className="profile-pic"
         />
 
-        <span>{props.firstName + " " + props.lastName}</span>
+        <span onClick={handleOnClick}  style={{ cursor: "pointer" }}>{props.firstName + " " + props.lastName}</span>
         <span className="communityspan">{"posted at " + props.community}</span>
       </div>
       <div className="post-content">
