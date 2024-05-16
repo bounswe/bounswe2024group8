@@ -2,6 +2,8 @@
 FROM maven:3.8.4-openjdk-17-slim AS build
 WORKDIR /app
 COPY pom.xml .
+# Pre-fetch dependencies to improve subsequent build times
+RUN mvn dependency:go-offline
 COPY src src
 # Package the application
 RUN mvn clean package -DskipTests
