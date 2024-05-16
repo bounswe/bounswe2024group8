@@ -5,8 +5,9 @@ import "./PostForm.css"
 interface PostData {
   title: string;
   content: string;
+  teamName:string;
   image?: File | null;
-  tag: string;
+  postedAt:string;
 }
 interface PostFormProps {
   onClose: () => void;
@@ -16,8 +17,9 @@ const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
   const [postData, setPostData] = useState<PostData>({
     title: '',
     content: '',
+    teamName:'',
     image: null,
-    tag: ''
+    postedAt: ''
   });
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -29,6 +31,12 @@ const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
     }
   };
 
+  const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+      setPostData({ ...postData, [name]: value });
+    
+  };
+
   const handleTextAreaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setPostData({ ...postData, [name]: value });
@@ -36,12 +44,15 @@ const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
 
   const handleSubmit = (e: FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const postCreateRequest = {   
-        userId: "",
-        title: postData.title,
-        text: postData.content,
-        teamName: "GALATASARAY"    
+
+    const formData = new FormData();
+    formData.append('title', postData.title);
+    formData.append('text', postData.content);
+    formData.append('postedAt', postData.postedAt);
+    if (postData.image) {
+      formData.append('image', postData.image);
     }
+
     const config = {
       headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
     };
@@ -49,10 +60,9 @@ const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
     axios
       .get(`${import.meta.env.VITE_API_URL}/api/v1/users?email=`+localStorage.getItem("email"),config)
       .then((response) => {
-        postCreateRequest.userId=response.data.id;
-
+        console.log("user get request success");
         axios
-        .post(`${import.meta.env.VITE_API_URL}/api/v1/posts`, postCreateRequest,config)
+        .post(`${import.meta.env.VITE_API_URL}/api/v1/posts`, formData,config)
         .then((response) => {
           onClose();
         })
@@ -69,6 +79,17 @@ const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
 
   return (
       <form>
+        <label htmlFor='postedAt'/>
+        Post To:
+        <select
+          className='postTo'
+          name="postedAt"
+          value={postData.postedAt}
+          onChange={handleSelectChange}>
+          <option>GLOBAL</option>
+          <option>{localStorage.getItem("myCommunity")}</option>
+        </select>
+        <br/><br/>
         <label htmlFor="title">
           Title:
           <input
@@ -113,3 +134,4 @@ const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
 };
 
 export default PostForm;
+
