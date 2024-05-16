@@ -13,6 +13,8 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Entypo";
 import Post from "../components/Post";
+import { VITE_API_URL } from "@env";
+import axios from "axios";
 
 export default function FeedScreen({ navigation, route }) {
   const getPosts = () => {
@@ -20,18 +22,18 @@ export default function FeedScreen({ navigation, route }) {
     const apiUrl = `${VITE_API_URL}/api/v1/posts/feed`;
     console.log(route.params.authToken);
     axios
-    .get(apiUrl, {
-      headers: {
-        Authorization: `Bearer ${route.params.authToken}`,
-      },
-    })
-    .then((response) => {
-      setData(response.data);
-    })
-    .catch((error) => {
-      console.error("Error fetching feed: ", error);
-      setData([]);
-    });
+      .get(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${route.params.authToken}`,
+        },
+      })
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching feed: ", error);
+        setData([]);
+      });
 
     return (data ? data : []).map((post) => ({
       id: post.postID,
@@ -43,10 +45,9 @@ export default function FeedScreen({ navigation, route }) {
       imageUrl: post.image,
       likes: post.likes,
       dislikes: post.dislikes,
-      commentsCount: post.commentsCount
+      commentsCount: post.commentsCount,
     }));
   };
-
 
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [text, setText] = useState("");
@@ -65,7 +66,7 @@ export default function FeedScreen({ navigation, route }) {
   };
   const createPost = () => {
     setIsMenuVisible(false);
-    navigation.navigate("Post", {authToken: route.params.authToken});
+    navigation.navigate("Post", { authToken: route.params.authToken });
     console.log("create post");
   };
   const viewProfile = () => {
