@@ -158,7 +158,7 @@ function App() {
         />
         <Route path="/" element={<LoggedOut />} />
         <Route path="/sign-up" element={<SignUpPage />} />
-        <Route path="/community" element={<Community />} />
+        <Route path="/community/:communityName" element={<Community />} />
       </Routes>
     </Router>
   );

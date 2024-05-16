@@ -1,10 +1,10 @@
 import "./Community.css";
-import { useState, ChangeEvent } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState ,useEffect} from "react";
 import axios from "axios";
 import Navbar from "./components/Navbar";
 import { PostData } from "./interfaces/postInterface";
 import Feed from "./components/Feed";
+import { useNavigate,useParams } from "react-router-dom";
 import CommunityHeader from "./components/CommunityHeader";
 import CreatePostOverlay from "./components/CreatePostOverlay.tsx";
 import image1 from "./assets/dummyimages/image1.png";
@@ -19,11 +19,41 @@ import pp5 from "./assets/dummyimages/pp5.png";
 
 
 
-export default function Community() {
-
+const Community = () =>  {
     const [showCreatePostOverlay, setShowCreatePostOverlay] = useState(false);
-    const [communityName, setCommunityName] = useState<string>("");
+    const [followerCount, setFollowerCount] = useState<number>(0);
     const [communityData, setCommunityData] = useState(null);
+    const [communityName, setCommunityName] = useState<string>("");
+    const { communityName: communityNameParam } = useParams();
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+      if (communityNameParam && communityNameParam !== "") {
+        setCommunityName(communityNameParam);
+        axios
+          .get(`${import.meta.env.VITE_API_URL}/api/v1/communities/${communityNameParam}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          })
+          .then((response) => {
+            setFollowerCount(response.data.fanaticCount);
+            setCommunityData(response.data.community);
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.error(error);
+            setLoading(false);
+          });
+      }
+    }, [communityNameParam]);
+  
+
+    if(loading){
+      return <h1>LAODING</h1>
+    }
+    
+
 
   const postsData: PostData[] = [
     {
@@ -170,33 +200,21 @@ export default function Community() {
                     "year":"1905"}                        
       };
 
-      axios
-      .get(`${import.meta.env.VITE_API_URL}/api/v1/users?email=` + `${localStorage.getItem("email")}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      })
-      .then((response) => {
-        setCommunityName(response.data.community.name);
-        setCommunityData(Communities[communityName.toUpperCase()])
-        console.log(communityName);
-      })
-      .catch((error) => {
-        
-      });
-      if (!communityData) {
-        return;
-      }
+      
+
+
     return (
         <>
         <div className="Follower"></div>
         <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
-        <CommunityHeader Community={communityData}/>
+        <CommunityHeader Community={Communities[communityName]} FollowerCount = {followerCount}/>
         <Feed posts={postsData} style={stylee}></Feed>
         <CreatePostOverlay
         show={showCreatePostOverlay}
         onClose={() => setShowCreatePostOverlay(false)}
         />
         </>);
-}
+};
+
+export default Community;
 

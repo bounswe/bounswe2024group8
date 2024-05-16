@@ -7,7 +7,7 @@ import { useState } from "react";
 const CommunityHeader = (props) => {
     const [isFollowing, setIsFollowing] = useState<boolean>(false);
     const Community = props.Community;
-    const navigate = useNavigate();
+    const FollowerCount = props.FollowerCount;
 
     function handleOnFollow() {
         if (isFollowing){
@@ -25,7 +25,8 @@ const CommunityHeader = (props) => {
          <p className="CommName">{Community.name}</p>
          <button  onClick={handleOnFollow}>
          <img className="FollowButton" src={isFollowing?unfollow:follow}/>
-         </button>        
+         </button> 
+         <p className="FollowerCount">{FollowerCount} Follower</p>       
         </div>
         </div>);
 };

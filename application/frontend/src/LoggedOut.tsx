@@ -70,6 +70,18 @@ const Login: React.FC = () => {
         console.log(response.data.accessToken);
         localStorage.setItem("authToken", response.data.accessToken);
         localStorage.setItem("email", email);
+        axios
+        .get(`${import.meta.env.VITE_API_URL}/api/v1/users?email=` + `${localStorage.getItem("email")}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+        })
+        .then((response) => {
+          localStorage.setItem("myCommunity", response.data.community.name);
+      })
+      .catch((error) => {
+        
+      });
         navigate("/home");
       })
       .catch((error) => {
