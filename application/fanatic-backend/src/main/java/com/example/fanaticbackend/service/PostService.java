@@ -115,7 +115,7 @@ public class PostService {
 //    @Transactional(readOnly = true)
     public List<PostResponse> getFeed(User user) {
 
-        return postRepository.findAllPostsAndUserReactionsByUserDefault(user);
+        return postRepository.findAllPostsAndUserReactionsByUserDefault(user, user.getCommunity().getTeam());
     }
 
 
@@ -146,7 +146,7 @@ public class PostService {
         ReactionType reactionType = request.getReactionType();
         Boolean bookmark = request.getBookmark();
 
-        Reaction reaction = reactionRepository.findByPostIdAndUserId(userId, postId);
+        Reaction reaction = reactionRepository.findByPostIdAndUserId(postId, userId);
 
         if (reaction != null) {
 

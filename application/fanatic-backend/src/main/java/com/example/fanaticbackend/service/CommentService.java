@@ -29,7 +29,8 @@ public class CommentService {
     final CommentRepository commentRepository;
     final ReactionRepository reactionRepository;
     final PostRepository postRepository;
-    @Transactional
+
+//    @Transactional
     public CommentReactionResponse reactToComment(User user, ReactionType reactionType, Long commentId) {
         Long userId = user.getId();
         Comment comment = getCommentElseThrow(commentId);
@@ -98,7 +99,8 @@ public class CommentService {
         result.setDislikes(comment.getDislikes());
         return result;
     }
-    @Transactional
+
+//    @Transactional
     public Comment createComment(User user, CommentCreateRequest request) {
 
         Post post = postRepository.findPostById(request.getPostId());
