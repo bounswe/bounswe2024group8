@@ -24,8 +24,28 @@ const Community = () =>  {
     const [followerCount, setFollowerCount] = useState<number>(0);
     const [communityData, setCommunityData] = useState(null);
     const [communityName, setCommunityName] = useState<string>("");
+    const [postsData, setPostsData] = useState<PostData[]>([]);
     const { communityName: communityNameParam } = useParams();
     const [loading, setLoading] = useState<boolean>(true);
+    let CommunityPosts;
+
+    const convertBackendDataToPostData = (backendData: any[]): PostData[] => {
+      return backendData.map((post) => ({
+        id: post.postID,
+        profilePic: post.user.profilePicture?`data:image/png;base64,${post.user.profilePicture}`:post.user.profilePicture,
+        username: post.username,
+        firstName: post.user.firstName,
+        lastName: post.user.lastName,
+        community: post.user.community.name,
+        communityLink: post.communityLink,
+        title: post.title,
+        text: post.text,
+        imageUrl: post.image?`data:image/png;base64,${post.image}`:post.image,
+        likes: post.likes,
+        dislikes: post.dislikes,
+        commentsCount: post.commentsCount
+      }));
+    };
 
     useEffect(() => {
       if (communityNameParam && communityNameParam !== "") {
@@ -39,36 +59,43 @@ const Community = () =>  {
           .then((response) => {
             setFollowerCount(response.data.fanaticCount);
             setCommunityData(response.data.community);
-            setLoading(false);
           })
           .catch((error) => {
             console.error(error);
+          })
+          .finally(() => {
             setLoading(false);
           });
       }
     }, [communityNameParam]);
   
-
-    if(loading){
-      return <h1>LAODING</h1>
-    }
-
-    axios
+    useEffect(() => {
+      if (communityNameParam) {
+        axios
           .get(`${import.meta.env.VITE_API_URL}/api/v1/posts/community/${communityNameParam}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("authToken")}`,
             },
           })
           .then((response) => {
-            console.log(response.data);
+            const postDataArray = convertBackendDataToPostData(response.data);
+            setPostsData(postDataArray);
           })
           .catch((error) => {
-            console.log("no post yet");
+            console.log("No post yet", error);
           });
-    
+      }
+    }, [communityNameParam]);
+
+    if (loading) {
+      return <h1>LOADING</h1>;
+    }
+      
+  
+  
 
 
-  const postsData: PostData[] = [
+  const postssData: PostData[] = [
     {
       id: 1,
       profilePic: pp1,

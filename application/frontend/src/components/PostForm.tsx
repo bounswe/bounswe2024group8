@@ -1,6 +1,8 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from "axios";
-import "./PostForm.css"
+import "./PostForm.css";
+import { useNavigate } from "react-router-dom";
+
 
 interface PostData {
   title: string;
@@ -14,12 +16,13 @@ interface PostFormProps {
 }
 
 const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
+  const navigate = useNavigate();
   const [postData, setPostData] = useState<PostData>({
     title: '',
     content: '',
     teamName:'',
     image: null,
-    postedAt: ''
+    postedAt: "GLOBAL"
   });
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -61,12 +64,23 @@ const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
       .get(`${import.meta.env.VITE_API_URL}/api/v1/users?email=`+localStorage.getItem("email"),config)
       .then((response) => {
         console.log("user get request success");
+        console.log(postData.postedAt);
+        console.log("hi");
         axios
         .post(`${import.meta.env.VITE_API_URL}/api/v1/posts`, formData,config)
         .then((response) => {
+          if (postData.postedAt === "GLOBAL"){
+            navigate("/home");
+            window.location.reload();
+          }
+          else{            
+            navigate("/community/"+localStorage.getItem("myCommunity"));
+            window.location.reload();
+          }
           onClose();
         })
         .catch((error) => {
+          console.log(postData.postedAt);
           alert("Authentication error");
         });
 
@@ -86,7 +100,7 @@ const PostForm: React.FC<PostFormProps> = ({ onClose }) => {
           name="postedAt"
           value={postData.postedAt}
           onChange={handleSelectChange}>
-          <option>GLOBAL</option>
+          <option>{"GLOBAL"}</option>
           <option>{localStorage.getItem("myCommunity")}</option>
         </select>
         <br/><br/>
