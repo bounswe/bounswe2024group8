@@ -49,7 +49,7 @@ function App() {
       dislikes: post.dislikes,
       reactionType: post.reactionType,
       bookmark: post.bookmark,
-      commentsCount: post.commentsCount,
+      commentsCount: post.comments
     }));
   };
 

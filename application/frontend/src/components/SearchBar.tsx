@@ -70,7 +70,7 @@ const SearchBar = () => {
                 dislikes: post.dislikes,
                 reactionType: post.reactionType,
                 bookmark: post.bookmark,
-                commentsCount: post.commentsCount,
+                commentsCount: post.comments
               })),
             },
           };
@@ -85,15 +85,15 @@ const SearchBar = () => {
             feedProps: {
               posts: response.data.posts.map((post: any) => ({
                 id: post.id,
-                profilePic: null,
+                profilePic: post.user.profilePicture,
                 username: post.user.firstName,
                 firstName: post.user.firstName,
                 lastName: post.user.lastName,
-                community: "Global",
+                community: post.postedAt,
                 communityLink: "",
                 title: post.title,
                 text: post.text,
-                imageUrl: "",
+                imageUrl: post.image,
                 likes: post.likes,
                 dislikes: post.dislikes,
                 reactionType: post.reactionType,
