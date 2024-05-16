@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoggedOut from "./LoggedOut";
 import Navbar from "./components/Navbar";
 import Feed from "./components/Feed";
+import CommunityBar from "./components/CommunityBar.tsx";
 import Community from "./Community";
 import SignUpPage from "./Signup";
 import SearchResult from "./components/SearchResult.tsx";
@@ -174,6 +175,7 @@ function App() {
               <div className="dummydiv"></div>
               <Feed posts={postsData}></Feed>
               <div className="dummydiv"></div>
+              <CommunityBar/>
               <CreatePostOverlay
                 show={showCreatePostOverlay}
                 onClose={() => setShowCreatePostOverlay(false)}

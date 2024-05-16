@@ -7,6 +7,7 @@ import Feed from "./components/Feed";
 import { useNavigate,useParams } from "react-router-dom";
 import CommunityHeader from "./components/CommunityHeader";
 import CreatePostOverlay from "./components/CreatePostOverlay.tsx";
+import CommunityBar from "./components/CommunityBar.tsx";
 import image1 from "./assets/dummyimages/image1.png";
 import image2 from "./assets/dummyimages/image2.png";
 import image4 from "./assets/dummyimages/image4.png";
@@ -169,6 +170,7 @@ const Community = () =>  {
         <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
         <CommunityHeader Community={Communities[communityName]} FollowerCount = {followerCount}/>
         <Feed posts={postsData} style={stylee}></Feed>
+        <CommunityBar/>
         <CreatePostOverlay
         show={showCreatePostOverlay}
         onClose={() => setShowCreatePostOverlay(false)}
