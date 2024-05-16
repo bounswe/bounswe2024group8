@@ -112,7 +112,6 @@ public class PostService {
         return post;
     }
 
-//    @Transactional(readOnly = true)
     public List<PostResponse> getFeed(User user) {
 
         return postRepository.findAllPostsAndUserReactionsByUserDefault(user, user.getCommunity().getTeam());
@@ -129,7 +128,6 @@ public class PostService {
     }
 
 
-//    @Transactional
     public ReactionResponse reactToPost(User user, ReactionRequest request, Long postId) {
 
         Long userId = user.getId();

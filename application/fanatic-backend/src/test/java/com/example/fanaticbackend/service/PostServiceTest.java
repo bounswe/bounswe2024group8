@@ -8,10 +8,7 @@ import com.example.fanaticbackend.model.Reaction;
 import com.example.fanaticbackend.model.User;
 import com.example.fanaticbackend.model.enums.ReactionType;
 import com.example.fanaticbackend.model.enums.Team;
-import com.example.fanaticbackend.payload.PostCreateRequest;
-import com.example.fanaticbackend.payload.ReactionRequest;
-import com.example.fanaticbackend.payload.ReactionResponse;
-import com.example.fanaticbackend.payload.SearchResponse;
+import com.example.fanaticbackend.payload.*;
 import com.example.fanaticbackend.repository.PostRepository;
 import com.example.fanaticbackend.repository.ReactionRepository;
 import org.junit.jupiter.api.Test;
@@ -266,6 +263,42 @@ public class PostServiceTest {
         assertEquals(0, result.getLikes());
         assertEquals(0, result.getDislikes());
         assertTrue(result.getBookmarked());
+    }
+
+
+    @Test
+    public void getPostsUserReactedTo_ReturnsPostsUserReactedTo() {
+        // Arrange
+        User user = User.builder()
+                .id(1L)
+                .build();
+
+        User targetUser = User.builder()
+                .id(2L)
+                .build();
+
+        Post post = Post.builder()
+                .id(1L)
+                .user(targetUser)
+                .text("text")
+                .title("title")
+                .likes(0)
+                .dislikes(0)
+                .comments(0)
+                .build();
+
+        List<Post> posts = new ArrayList<>();
+        posts.add(post);
+
+        when(userService.getUserById(targetUser.getId())).thenReturn(targetUser);
+
+        when(postRepository.findAllByUserReactedTo(targetUser)).thenReturn(posts);
+
+        // Act
+        List<PostResponse> result = postService.getPostsUserReactedTo(user, targetUser.getId());
+
+        // Assert
+        assertEquals(1, result.size());
     }
 
 }
