@@ -89,6 +89,12 @@ export default function FeedScreen({ navigation, route }) {
     setIsMenuVisible(!isMenuVisible);
   };
 
+  const viewCommunity = () => {
+    navigation.navigate("Community", {
+      email: route.params.email,
+      authToken: route.params.authToken,
+    });
+  };
   const createPost = () => {
     setIsMenuVisible(false);
     navigation.navigate("Post");
@@ -96,15 +102,16 @@ export default function FeedScreen({ navigation, route }) {
   };
   const viewProfile = () => {
     setIsMenuVisible(false);
-    navigation.navigate("ProfileScreen", {"profile": {"username": "Jeffrey J.", "profilePhoto": "pp2"}, "selfP": true});
+    navigation.navigate("ProfileScreen", {
+      profile: { username: "Jeffrey J.", profilePhoto: "pp2" },
+      selfP: true,
+    });
     console.log("view profile");
-    
   };
   const settings = () => {
     console.log("settings");
     setIsMenuVisible(false);
     navigation.navigate("Settings");
-    
   };
   const logout = () => {
     console.log("logout");
@@ -117,9 +124,9 @@ export default function FeedScreen({ navigation, route }) {
       authToken: route.params.accessToken,
     });
   };
-  const goToProfile = (attrs) =>{
-    navigation.navigate("ProfileScreen", {"profile": attrs});
-  }
+  const goToProfile = (attrs) => {
+    navigation.navigate("ProfileScreen", { profile: attrs });
+  };
 
   return (
     <View style={styles.backgroundContainer}>
@@ -137,6 +144,10 @@ export default function FeedScreen({ navigation, route }) {
       </View>
       <Modal visible={isMenuVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
+          <TouchableOpacity style={styles.menuItem} onPress={viewCommunity}>
+            <Icon name="user" style={styles.menuItemIcon} />
+            <Text style={styles.menuItemText}>View Community</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={createPost}>
             <Icon name="edit" style={styles.menuItemIcon} />
             <Text style={styles.menuItemText}>Create Post</Text>
@@ -170,17 +181,19 @@ export default function FeedScreen({ navigation, route }) {
       <FlatList
         data={getPosts()}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => {
-            navigation.navigate("PostScreen", {"item": item});
-          }}>
-          <Post
-            username={item.username}
-            profilePic={item.profilePic}
-            text={item.text}
-            likes = {item.likes}
-            dislikes = {item.dislikes}
-            profileFunction = {goToProfile}
-          ></Post>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("PostScreen", { item: item });
+            }}
+          >
+            <Post
+              username={item.username}
+              profilePic={item.profilePic}
+              text={item.text}
+              likes={item.likes}
+              dislikes={item.dislikes}
+              profileFunction={goToProfile}
+            ></Post>
           </TouchableOpacity>
         )}
         style={styles.flatList}

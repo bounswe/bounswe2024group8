@@ -10,6 +10,7 @@ import PostScreen from "./App/Screens/PostScreen";
 import ChangePassword from "./App/Screens/ChangePassword";
 import DeleteAccount from "./App/Screens/DeleteAccount";
 import ProfileScreen from "./App/Screens/ProfileScreen";
+import CommunityScreen from "./App/Screens/CommunityScreen";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -61,8 +62,16 @@ export default function App() {
           component={DeleteAccount}
           options={{ headerShown: false }}
         />
-        <Stack.Screen name="PostScreen" component={PostScreen}
-          options={{ headerShown: false }}></Stack.Screen>
+        <Stack.Screen
+          name="PostScreen"
+          component={PostScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Community"
+          component={CommunityScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
