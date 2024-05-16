@@ -10,70 +10,73 @@ import {
   Alert,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import {VITE_API_URL} from "@env";
+import { VITE_API_URL } from "@env";
 import axios from "axios";
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
-  const [team, setTeam] = useState("");
   const [error, setError] = useState("");
 
   const [teamDropdownOpen, teamDropdownSetOpen] = useState(false);
   const [teamDropdownValue, teamDropdownSetValue] = useState(null);
   const [teamDropdownItems, teamDropdownSetItems] = useState([
-    { label: "Adana Demirspor", value: "Adana Demirspor" },
-    { label: "Alanyaspor", value: "Alanyaspor" },
-    { label: "Ankaragucu", value: "Ankaragucu" },
-    { label: "Antalyaspor", value: "Antalyaspor" },
-    { label: "Basaksehir", value: "Basaksehir" },
-    { label: "Besiktas", value: "Besiktas" },
-    { label: "Fatih Karagumruk", value: "Fatih Karagumruk" },
-    { label: "Fenerbahce", value: "Fenerbahce" },
-    { label: "Galatasaray", value: "Galatasaray" },
-    { label: "Gaziantep", value: "Gaziantep" },
-    { label: "Hatayspor", value: "Hatayspor" },
-    { label: "Istanbulspor", value: "Istanbulspor" },
-    { label: "Kasimpasa", value: "Kasimpasa" },
-    { label: "Kayserispor", value: "Kayserispor" },
-    { label: "Konyaspor", value: "Konyaspor" },
-    { label: "Pendikspor", value: "Pendikspor" },
-    { label: "Rizespor", value: "Rizespor" },
-    { label: "Samsunspor", value: "Samsunspor" },
-    { label: "Sivasspor", value: "Sivasspor" },
-    { label: "Trabzonspor", value: "Trabzonspor" },
+    { label: "Adana Demirspor", value: "ADANADEMIRSPOR" },
+    { label: "Alanyaspor", value: "ALANYASPOR" },
+    { label: "Ankaragucu", value: "ANKARAGUCU" },
+    { label: "Antalyaspor", value: "ANTALYASPOR" },
+    { label: "Basaksehir", value: "BASAKSEHIR" },
+    { label: "Besiktas", value: "BESIKTAS" },
+    { label: "Fatih Karagumruk", value: "KARAGUMRUK" },
+    { label: "Fenerbahce", value: "FENERBAHCE" },
+    { label: "Galatasaray", value: "GALATASARAY" },
+    { label: "Gaziantep", value: "GAZIANTEP" },
+    { label: "Hatayspor", value: "HATAYSPOR" },
+    { label: "Istanbulspor", value: "ISTANBULSPOR" },
+    { label: "Kasimpasa", value: "KASIMPASA" },
+    { label: "Kayserispor", value: "KAYSERISPOR" },
+    { label: "Konyaspor", value: "KONYASPOR" },
+    { label: "Pendikspor", value: "PENDIKSPOR" },
+    { label: "Rizespor", value: "RIZESPOR" },
+    { label: "Samsunspor", value: "SAMSUNSPOR" },
+    { label: "Sivasspor", value: "SIVASSPOR" },
+    { label: "Trabzonspor", value: "TRABZONSPOR" },
   ]);
 
   let email_reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-  let username_password_reg = /^[A-Zığüçşa-z0-9]+$/;
+  let password_reg = /^[A-Zığüçşa-z0-9]+$/;
 
-  const ref_username = useRef();
+  const ref_firstName = useRef();
+  const ref_lastName = useRef();
   const ref_password = useRef();
-  const ref_team = useRef();
 
   const onSignupClick = () => {
     if (email === "") {
       setError("Email can not be left empty.");
     } else if (email_reg.test(email) === false) {
       setError("Email format is not valid.");
-    } else if (username === "") {
-      setError("Username can not be left empty.");
-    } else if (username_password_reg.test(username) === false) {
-      setError("Username must consist of only letters and numbers.");
+    } else if (firstName === "") {
+      setError("First Name can not be left empty.");
+    } else if (lastName === "") {
+      setError("Last Name can not be left empty.");
     } else if (password.length < 8) {
       setError("Password should be at least 8 characters long.");
-    } else if (username_password_reg.test(password) === false) {
+    } else if (password_reg.test(password) === false) {
       setError("Password must consist of only letters and numbers.");
-    } /*else if (team === "") {
+    } else if (teamDropdownValue === null) {
       setError("Team can not be left empty.");
-    }*/ else {
+    } else {
       const userParams = {
-        firstName: username,
-        lastName: "",
+        firstName: firstName,
+        lastName: lastName,
         email: email,
         password: password,
+        favoriteTeam: teamDropdownValue,
       };
+
+      console.log(userParams);
 
       axios
         .post(`${VITE_API_URL}/api/v1/auth/register`, userParams)
@@ -84,7 +87,7 @@ export default function RegisterScreen({ navigation }) {
           ]);
         })
         .catch((error) => {
-          setError("Duplicate entry");
+          setError(email + " already in use.");
           console.log(error);
         });
     }
@@ -106,16 +109,26 @@ export default function RegisterScreen({ navigation }) {
             placeholder="E-mail"
             autoCapitalize="none"
             value={email}
-            onSubmitEditing={() => ref_username.current.focus()}
+            onSubmitEditing={() => ref_firstName.current.focus()}
             blurOnSubmit={false}
           />
           <TextInput
             style={styles.inputText}
-            onChangeText={setUsername}
-            placeholder="Username"
+            onChangeText={setFirstName}
+            placeholder="First Name"
             autoCapitalize="none"
-            value={username}
-            ref={ref_username}
+            value={firstName}
+            ref={ref_firstName}
+            onSubmitEditing={() => ref_lastName.current.focus()}
+            blurOnSubmit={false}
+          />
+          <TextInput
+            style={styles.inputText}
+            onChangeText={setLastName}
+            placeholder="Last Name"
+            autoCapitalize="none"
+            value={lastName}
+            ref={ref_lastName}
             onSubmitEditing={() => ref_password.current.focus()}
             blurOnSubmit={false}
           />
@@ -127,8 +140,6 @@ export default function RegisterScreen({ navigation }) {
             secureTextEntry
             value={password}
             ref={ref_password}
-            onSubmitEditing={() => ref_team.current.focus()}
-            blurOnSubmit={false}
           />
           <DropDownPicker
             open={teamDropdownOpen}
@@ -140,12 +151,12 @@ export default function RegisterScreen({ navigation }) {
             placeholder="Team"
           />
         </View>
-        {error && <Text style={styles.errorText}>{error}</Text>}
         <View style={styles.buttonContainer}>
           <TouchableOpacity onPress={onSignupClick} style={styles.signupButton}>
             <Text style={styles.signupButtonText}>Sign Up</Text>
           </TouchableOpacity>
         </View>
+        {error && <Text style={styles.errorText}>{error}</Text>}
       </View>
     </ImageBackground>
   );
@@ -190,12 +201,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: "lightgrey",
   },
-  errorText: { color: "red", textAlign: "center" },
+  errorText: { color: "red", textAlign: "center", marginTop: "3%" },
   buttonContainer: {
     height: "10%",
     width: "90%",
     alignItems: "center",
-    marginTop: "5%",
+    marginTop: "10%",
   },
   signupButton: {
     height: "100%",

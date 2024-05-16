@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import {VITE_API_URL} from "@env";
+import { VITE_API_URL } from "@env";
 import axios from "axios";
 
 export default function LoginScreen({ navigation }) {
@@ -23,7 +23,6 @@ export default function LoginScreen({ navigation }) {
       email: email,
       password: password,
     };
-
     axios
       .post(`${VITE_API_URL}/api/v1/auth/authenticate`, userParams)
       .then((response) => {
@@ -35,8 +34,7 @@ export default function LoginScreen({ navigation }) {
       })
       .catch((error) => {
         setError("Incorrect e-mail or password!");
-        console.log(error.response.data);
-        console.log(error.response.status);
+        console.log(error);
       });
   };
 
