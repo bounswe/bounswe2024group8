@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Text,
   View,
@@ -13,72 +13,46 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/Entypo";
 import Post from "../components/Post";
+import { VITE_API_URL } from "@env";
+import axios from "axios";
 
 export default function FeedScreen({ navigation, route }) {
+  const [data, setData] = useState(null);
+  useEffect(() => {
   const getPosts = () => {
-    return [
-      {
-        id: 1,
-        profilePic: "pp1",
-        username: "Can Öztemiz",
-        community: "Fenerbahçe",
-        communityLink: "fenerbahcelink",
-        text: "Sizce Fenerbahçe'nin Trabzonspor karşısındaki hücum hattı nasıl olmalı?",
-        imageUrl: "image1",
-        likes: 278,
-        dislikes: 12,
-        commentsCount: 124,
-      },
-      {
-        id: 2,
-        profilePic: "pp2",
-        username: "GalaGala123",
-        community: "Galatasaray",
-        communityLink: "galatasaraylink",
-        text: "Icardi'nin bugünkü performansı çok iyi değil miydi?",
-        imageUrl: "image2",
-        likes: 543,
-        dislikes: 23,
-        commentsCount: 87,
-      },
-      {
-        id: 3,
-        profilePic: "image1",
-        username: "jane_doe",
-        community: "Fenerbahçe",
-        communityLink: "fenerbahcelink",
-        text: "This is the second sample post",
-        imageUrl: "https://example.com/sampleimage2.jpg",
-        likes: 15,
-        dislikes: 3,
-        commentsCount: 8,
-      },
-      {
-        id: 4,
-        profilePic: "image2",
-        username: "jane_doe",
-        community: "Fenerbahçe",
-        communityLink: "fenerbahcelink",
-        text: "This is the second sample post",
-        imageUrl: "https://example.com/sampleimage2.jpg",
-        likes: 15,
-        dislikes: 3,
-        commentsCount: 8,
-      },
-      {
-        id: 5,
-        profilePic: "pp1",
-        username: "jane_doe",
-        community: "Fenerbahçe",
-        communityLink: "fenerbahcelink",
-        text: "This is the second sample post",
-        imageUrl: "https://example.com/sampleimage2.jpg",
-        likes: 15,
-        dislikes: 3,
-        commentsCount: 8,
-      },
-    ];
-  };
+    const apiUrl = `${VITE_API_URL}/api/v1/posts/feed`;
+    console.log(route.params.authToken);
+    axios
+      .get(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${route.params.authToken}`,
+        },
+      })
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching feed: ", error);
+        setData([]);
+      });
+    };
+
+    getPosts();
+  }, [route.params.authToken]);
+
+  const transformData = (data) =>
+    (data ? data : []).map((post) => ({
+      id: post.postID,
+      profilePic: post.user.profilePicture,
+      username: post.username,
+      community: post.user.community?.name,
+      communityLink: post.communityLink,
+      text: post.text,
+      imageUrl: post.image,
+      likes: post.likes,
+      dislikes: post.dislikes,
+      commentsCount: post.commentsCount,
+    }));
 
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [text, setText] = useState("");
@@ -89,17 +63,29 @@ export default function FeedScreen({ navigation, route }) {
     setIsMenuVisible(!isMenuVisible);
   };
 
+  const viewCommunity = () => {
+    navigation.navigate("Community", {
+      email: route.params.email,
+      authToken: route.params.authToken,
+    });
+  };
   const createPost = () => {
-    navigation.navigate("Post");
+    setIsMenuVisible(false);
+    navigation.navigate("Post", { authToken: route.params.authToken });
     console.log("create post");
   };
   const viewProfile = () => {
-    console.log("view profile");
     setIsMenuVisible(false);
-    navigation.navigate("Profile");
+    navigation.navigate("ProfileScreen", {
+      profile: { username: "Jeffrey J.", profilePhoto: "pp2" },
+      selfP: true,
+    });
+    console.log("view profile");
   };
   const settings = () => {
     console.log("settings");
+    setIsMenuVisible(false);
+    navigation.navigate("Settings");
   };
   const logout = () => {
     console.log("logout");
@@ -111,6 +97,9 @@ export default function FeedScreen({ navigation, route }) {
       param: text,
       authToken: route.params.accessToken,
     });
+  };
+  const goToProfile = (attrs) => {
+    navigation.navigate("ProfileScreen", { profile: attrs });
   };
 
   return (
@@ -129,6 +118,10 @@ export default function FeedScreen({ navigation, route }) {
       </View>
       <Modal visible={isMenuVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
+          <TouchableOpacity style={styles.menuItem} onPress={viewCommunity}>
+            <Icon name="user" style={styles.menuItemIcon} />
+            <Text style={styles.menuItemText}>View Community</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.menuItem} onPress={createPost}>
             <Icon name="edit" style={styles.menuItemIcon} />
             <Text style={styles.menuItemText}>Create Post</Text>
@@ -160,13 +153,22 @@ export default function FeedScreen({ navigation, route }) {
         />
       </View>
       <FlatList
-        data={getPosts()}
+        data={transformData(data)}
         renderItem={({ item }) => (
-          <Post
-            username={item.username}
-            profilePic={item.profilePic}
-            text={item.text}
-          ></Post>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("PostScreen", { item: item });
+            }}
+          >
+            <Post
+              username={item.username}
+              profilePic={item.profilePic}
+              text={item.text}
+              likes={item.likes}
+              dislikes={item.dislikes}
+              profileFunction={goToProfile}
+            ></Post>
+          </TouchableOpacity>
         )}
         style={styles.flatList}
       />

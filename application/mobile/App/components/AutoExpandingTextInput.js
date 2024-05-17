@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { TextInput, View, StyleSheet } from 'react-native';
 
-const AutoExpandingTextInput = () => {
+const AutoExpandingTextInput = (props) => {
   const [inputValue, setInputValue] = useState('');
   const [inputHeight, setInputHeight] = useState(40); 
 
   const handleChangeText = (text) => {
+    if(text.length >= 256){
+      return;
+    }
+    props.changeFunc(text);
     setInputValue(text);
     const lineCount = Math.ceil((text.length + 1) / 40); 
     setInputHeight(Math.max(40, lineCount * 40)); 

@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useState } from "react";
 export default function Post(props) {
   const viewProfile = () => {
+    props.profileFunction({"username":props.username, "profilePhoto": props.profilePic})
     console.log(props.username);
   };
 
@@ -14,11 +15,12 @@ export default function Post(props) {
   };
   const [postLiked, changeLike] = useState(false);
   const [postDisliked, changeDislike] = useState(false);
+  const [postBookmarked, changeBookmark] = useState(false);
   const getLikeCount = () => {
-    return 5;
+    return props.likes;
   };
   const getDislikeCount = () => {
-    return 5;
+    return props.dislikes;
   };
   const [likeCount, setLikeCount] = useState(getLikeCount());
   const [dislikeCount, setDislikeCount] = useState(getDislikeCount());
@@ -28,6 +30,10 @@ export default function Post(props) {
   const changeDislikeCount = (change) => {
     setDislikeCount(dislikeCount + change);
   };
+
+  const bookmarkClicked = () =>{
+    changeBookmark(!postBookmarked);
+  }
 
   const likeClicked = () => {
     if (postLiked) {
@@ -89,12 +95,12 @@ export default function Post(props) {
             {postDisliked ? dislikeCount : "Dislike"}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.rowContainer}>
+        <TouchableOpacity onPress={bookmarkClicked} style={styles.rowContainer}>
           <Image
             style={styles.interactionIcon}
-            source={require("../assets/comment.png")}
+            source={postBookmarked ? require("../assets/bookmarked.png"):  require("../assets/bookmark.png")}
           />
-          <Text>Comment</Text>
+          <Text>Bookmark</Text>
         </TouchableOpacity>
       </View>
     </View>
