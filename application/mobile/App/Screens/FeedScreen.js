@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Text,
   View,
@@ -17,8 +17,9 @@ import { VITE_API_URL } from "@env";
 import axios from "axios";
 
 export default function FeedScreen({ navigation, route }) {
+  const [data, setData] = useState(null);
+  useEffect(() => {
   const getPosts = () => {
-    const [data, setData] = useState(null);
     const apiUrl = `${VITE_API_URL}/api/v1/posts/feed`;
     console.log(route.params.authToken);
     axios
@@ -34,8 +35,13 @@ export default function FeedScreen({ navigation, route }) {
         console.error("Error fetching feed: ", error);
         setData([]);
       });
+    };
 
-    return (data ? data : []).map((post) => ({
+    getPosts();
+  }, [route.params.authToken]);
+
+  const transformData = (data) =>
+    (data ? data : []).map((post) => ({
       id: post.postID,
       profilePic: post.user.profilePicture,
       username: post.username,
@@ -47,7 +53,6 @@ export default function FeedScreen({ navigation, route }) {
       dislikes: post.dislikes,
       commentsCount: post.commentsCount,
     }));
-  };
 
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [text, setText] = useState("");
@@ -148,7 +153,7 @@ export default function FeedScreen({ navigation, route }) {
         />
       </View>
       <FlatList
-        data={getPosts()}
+        data={transformData(data)}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => {
