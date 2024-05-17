@@ -1,0 +1,44 @@
+name: Task Issue
+description: A template for creating task issues
+body:
+  - type: textarea
+    id: issue_desc
+    attributes:
+      label: Issue Description
+      description: Please clearly describe your issue...
+      placeholder:
+    validations:
+      required: true
+  - type: input
+    id: issue_due
+    attributes:
+      label: Issue Due Date
+      placeholder: DD/MM/YYYY HH:MM 
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Reviewer
+      description: Choose the reviewer
+      multiple: false
+      options:
+        - "@erselcanakcili"
+        - "@yektaercul"
+        - "@daghanerdonmez"
+        - "@edonmez01"
+        - "@CotSezer"
+        - "@cberko"
+        - "@oguzkagnici"
+        - "@onurcerli"
+        - "@deniz6221" 
+      default: 0
+    validations:
+      required: true
+  - type: input
+    id: revision_due
+    attributes:
+      label: Revision Due Date
+      placeholder: DD/MM/YYYY HH:MM
+    validations:
+      required: true
+   
