@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.Date;
 
@@ -37,6 +38,18 @@ public class GlobalExceptionHandler {
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false)
+        );
+
+        return message;
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ErrorMessage handleMaxSizeException() {
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.PAYLOAD_TOO_LARGE.value(),
+                new Date(),
+                "File too large!",
+                "Please upload an image smaller than 4MB"
         );
 
         return message;

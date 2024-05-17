@@ -37,12 +37,14 @@ public class WikidataService {
                     .year(Integer.parseInt(teamSearch.get("yearFounded").substring(0, 4)))
                     .coachName(teamSearch.get("coachLabel").replace("@en", ""))
                     .logoUrl(teamSearch.get("logo"))
+                    .location(teamSearch.get("locationLabel").replace("@en", ""))
                     .build();
         }
-        //String playerSearch = searchPlayer(keyword);
-        //if (!playerSearch.isEmpty()) {
-        //    return playerSearch;
-        //}
+        HashMap<String, String> playerSearch = searchPlayer(keyword);
+        if (!playerSearch.isEmpty()) {
+            return WikidataTeamDto.builder().teamName(playerSearch.get("teamLabel").replace("@tr", ""))
+                    .build();
+        }
 
 
         //return "No results found for keyword: " + keyword;
@@ -63,6 +65,7 @@ public class WikidataService {
                 //"          schema:description ?teamDesc.\n" +
                 //"          FILTER(lang(?teamDesc) = \"en\")\n" +
                 "          rdfs:label ?teamLabel.\n" +
+                "  FILTER(lang(?teamLabel) = \"en\")\n" +
                 "    OPTIONAL { ?team wdt:P154 ?logo.}\n" +
                 "    OPTIONAL { ?team wdt:P571 ?yearFounded. }\n" +
                 "    OPTIONAL { ?team wdt:P286 ?coach.\n" +
@@ -71,11 +74,11 @@ public class WikidataService {
                 "    OPTIONAL { ?team wdt:P159 ?location.\n" +
                 "               ?location rdfs:label ?locationLabel.\n" +
                 "               FILTER(lang(?locationLabel) = \"en\") }\n" +
-                "    FILTER(lang(?teamLabel) = \"en\" && contains(lcase(?teamLabel), \"" + keyword.toLowerCase() + "\"))\n" +
+                "    FILTER(CONTAINS(LCASE(?teamLabel), \"" + keyword.toLowerCase() + "\"@en))\n" +
                 "}";
 
         // Execute SPARQL query
-        QueryExecution queryExec = QueryExecutionFactory.sparqlService("https://query.wikidata.org/sparql", sparqlQuery);
+        QueryExecution queryExec = QueryExecutionFactory.sparqlService("https://qlever.cs.uni-freiburg.de/api/wikidata", sparqlQuery);
         ResultSet resultSet = queryExec.execSelect();
 
         // Process results
@@ -99,6 +102,10 @@ public class WikidataService {
             if (solution.contains("logo")) {
                 result.put("logo", solution.get("logo").toString());
             }
+
+            if (solution.contains("locationLabel")) {
+                result.put("locationLabel", solution.get("locationLabel").toString());
+            }
         }
 
         // Close query execution
@@ -106,40 +113,45 @@ public class WikidataService {
 
         return result;
     }
-//
-//    public String searchPlayer(String keyword) {
-//        String sparqlQuery = "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n" +
-//                "PREFIX wd: <http://www.wikidata.org/entity/>\n" +
-//                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-//                "SELECT DISTINCT ?player ?playerLabel ?position ?team ?teamLabel WHERE {\n" +
-//                "    ?player wdt:P31 wd:Q5;\n" +
-//                "            wdt:P106 wd:Q937857;\n" +
-//                "            rdfs:label ?playerLabel.\n" +
-//                "    OPTIONAL { ?player wdt:P413 ?position. }\n" +
-//                "    OPTIONAL { ?player wdt:P54 ?team.\n" +
-//                "               ?team rdfs:label ?teamLabel.\n" +
-//                "               FILTER(lang(?teamLabel) = \"en\") }\n" +
-//                "    FILTER(lang(?playerLabel) = \"en\" && contains(lcase(?playerLabel), \"" + keyword.toLowerCase() + "\"))\n" +
-//                "}";
-//
-//        // Execute SPARQL query
-//        QueryExecution queryExec = QueryExecutionFactory.sparqlService("https://query.wikidata.org/sparql", sparqlQuery);
-//        ResultSet resultSet = queryExec.execSelect();
-//
-//        // Process results
-//        StringBuilder result = new StringBuilder();
-//        while (resultSet.hasNext()) {
-//            QuerySolution solution = resultSet.nextSolution();
-//            result.append("Player: ").append(solution.get("playerLabel")).append("\n");
-//            result.append("Position: ").append(solution.get("position")).append("\n");
-//            result.append("Team: ").append(solution.get("teamLabel")).append("\n\n");
-//        }
-//
-//        // Close query execution
-//        queryExec.close();
-//
-//        return result.toString();
-//    }
+
+    public HashMap<String, String> searchPlayer(String keyword) {
+        String sparqlQuery = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n" +
+                "PREFIX wd: <http://www.wikidata.org/entity/>\n" +
+                "SELECT DISTINCT ?player ?playerLabel ?team ?teamLabel\n" +
+                "WHERE {\n" +
+                "  ?player rdfs:label ?playerLabel.\n" +
+                "  ?player wdt:P106 wd:Q937857.\n" +
+                "  ?player wdt:P2458 [].\n" +
+                "  ?player wdt:P54 ?team.\n" +
+                "  ?team rdfs:label ?teamLabel.\n" +
+                "  FILTER(lang(?teamLabel) = \"tr\")\n" +
+                "  FILTER(lang(?playerLabel) = \"en\")\n" +
+                "  FILTER(CONTAINS(LCASE(?playerLabel), \"" + keyword.toLowerCase() + "\"@en))\n" +
+                "}\n" +
+                "LIMIT 1";
+
+        // Execute SPARQL query
+        QueryExecution queryExec = QueryExecutionFactory.sparqlService("https://qlever.cs.uni-freiburg.de/api/wikidata", sparqlQuery);
+        ResultSet resultSet = queryExec.execSelect();
+
+        // Process results
+        HashMap<String, String> result = new HashMap<>();
+        while (resultSet.hasNext()) {
+            QuerySolution solution = resultSet.nextSolution();
+            if (solution.contains("playerLabel")) {
+                result.put("playerLabel", solution.get("playerLabel").toString());
+            }
+            if (solution.contains("teamLabel")) {
+                result.put("teamLabel", solution.get("teamLabel").toString());
+            }
+        }
+
+        // Close query execution
+        queryExec.close();
+
+        return result;
+    }
 
 
 

@@ -2,6 +2,7 @@ package com.example.fanaticbackend.service;
 
 import com.example.fanaticbackend.config.JwtService;
 import com.example.fanaticbackend.exception.custom.FanaticDatabaseException;
+import com.example.fanaticbackend.model.Community;
 import com.example.fanaticbackend.model.User;
 import com.example.fanaticbackend.model.enums.Role;
 import com.example.fanaticbackend.payload.AuthenticationRequest;
@@ -29,6 +30,8 @@ public class AuthenticationService {
     final JwtService jwtService;
     final AuthenticationManager authenticationManager;
 
+    final CommunityService communityService;
+
     public AuthenticationResponse register(RegisterRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail());
@@ -45,13 +48,19 @@ public class AuthenticationService {
                 .role(Role.USER)
                 .build();
 
-        User savedUser = userRepository.save(user);
+        User savedUser = communityService.joinCommunity(user, request.getFavoriteTeam().name());
 
-        String jwtToken = jwtService.generateToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
+//        User savedUser = userService.saveUser(user);
 
-//        saveUserToken(savedUser, jwtToken);
+        String jwtToken = jwtService.generateToken(savedUser);
+        String refreshToken = jwtService.generateRefreshToken(savedUser);
+
         return AuthenticationResponse.builder()
+                .userId(savedUser.getId())
+                .email(savedUser.getEmail())
+                .firstName(savedUser.getFirstName())
+                .lastName(savedUser.getLastName())
+                .favoriteTeam(savedUser.getCommunity().getTeam())
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
@@ -72,6 +81,11 @@ public class AuthenticationService {
         var refreshToken = jwtService.generateRefreshToken(user);
 
         return AuthenticationResponse.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .favoriteTeam(user.getCommunity().getTeam())
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();

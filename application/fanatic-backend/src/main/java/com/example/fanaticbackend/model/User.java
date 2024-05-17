@@ -1,6 +1,7 @@
 package com.example.fanaticbackend.model;
 
 import com.example.fanaticbackend.model.enums.Role;
+import com.example.fanaticbackend.model.enums.Team;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -10,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 
 @Entity
@@ -41,6 +44,14 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     Role role;
 
+    @ManyToOne
+    @JoinColumn(name = "community_id", nullable = false)
+    Community community;
+
+    @Lob
+    @Column(name = "profile_picture")
+    byte[] profilePicture;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -71,6 +82,8 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 
 
 
