@@ -3,10 +3,13 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoggedOut from "./LoggedOut";
 import Navbar from "./components/Navbar";
 import Feed from "./components/Feed";
+import CommunityBar from "./components/CommunityBar.tsx";
+import Community from "./Community";
 import SignUpPage from "./Signup";
 import SearchResult from "./components/SearchResult.tsx";
 import SearchResultIntermediate from "./components/SearchResultIntermediate.tsx";
 import { PostData } from "./interfaces/postInterface";
+import { ProfileProps } from "./interfaces/postInterface";
 import image1 from "./assets/dummyimages/image1.png";
 import image2 from "./assets/dummyimages/image2.png";
 import image4 from "./assets/dummyimages/image4.png";
@@ -19,12 +22,54 @@ import pp5 from "./assets/dummyimages/pp5.png";
 import { useState, useEffect } from "react";
 import CreatePostOverlay from "./components/CreatePostOverlay.tsx";
 import "./storage/storage.ts";
-import { searchResult } from "./storage/storage.ts";
+import { searchResult, loggedInProfileInfo } from "./storage/storage.ts";
+import ProfileOuter from "./components/ProfileOuter.tsx";
+import axios from "axios";
+import Settings from "./components/Settings.tsx";
 
 function App() {
   const [showCreatePostOverlay, setShowCreatePostOverlay] = useState(false);
+  const [postsData, setPostsData] = useState<PostData[]>([]);
 
-  const postsData: PostData[] = [
+  const convertBackendDataToPostData = (backendData: any[]): PostData[] => {
+    return backendData.map((post) => ({
+      id: post.postId,
+      profilePic: post.user.profilePicture
+        ? `data:image/png;base64,${post.user.profilePicture}`
+        : post.user.profilePicture,
+      username: post.user.id,
+      firstName: post.user.firstName,
+      lastName: post.user.lastName,
+      community: post.postedAt,
+      communityLink: post.communityLink,
+      title: post.title,
+      text: post.text,
+      imageUrl: post.image ? `data:image/png;base64,${post.image}` : post.image,
+      likes: post.likes,
+      dislikes: post.dislikes,
+      reactionType: post.reactionType,
+      bookmark: post.bookmark,
+      commentsCount: post.comments
+    }));
+  };
+
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/v1/posts/feed`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      })
+      .then((response) => {
+        const postDataArray = convertBackendDataToPostData(response.data);
+        setPostsData(postDataArray);
+      })
+      .catch((error) => {
+        console.log("No post yet", error);
+      });
+  }, []);
+
+  /*const postssData: PostData[] = [
     {
       id: 1,
       profilePic: pp1,
@@ -99,7 +144,24 @@ function App() {
       dislikes: 1,
       commentsCount: 8,
     },
-  ];
+  ];*/
+
+  const profileData: ProfileProps = {
+    email: "ahmetali",
+    firstName: "ahmet",
+    lastName: "ali",
+    community: {
+      id: 1,
+      name: "GALATASARAY",
+      description: "Community of GALATASARAY",
+      team: "GALATASARAY",
+      fanaticCount: 2,
+    },
+    profilePicture: null,
+    accountNonExpired: true,
+    accountNonLocked: true,
+    credentialsNonExpired: true,
+  };
 
   return (
     <Router>
@@ -112,6 +174,7 @@ function App() {
               <div className="dummydiv"></div>
               <Feed posts={postsData}></Feed>
               <div className="dummydiv"></div>
+              <CommunityBar />
               <CreatePostOverlay
                 show={showCreatePostOverlay}
                 onClose={() => setShowCreatePostOverlay(false)}
@@ -155,8 +218,26 @@ function App() {
             </div>
           }
         />
+        <Route
+          path="/profile/:username"
+          element={
+            <div className="homepage">
+              <Navbar setShowCreatePostOverlay={setShowCreatePostOverlay} />
+              <div className="dummydiv"></div>
+              <ProfileOuter  />
+              <div className="dummydiv"></div>
+              <CreatePostOverlay
+                show={showCreatePostOverlay}
+                onClose={() => setShowCreatePostOverlay(false)}
+              />
+            </div>
+          }
+        />
+        <Route path="/settings" element={<Settings />} />
         <Route path="/" element={<LoggedOut />} />
         <Route path="/sign-up" element={<SignUpPage />} />
+        <Route path="/community/:communityName" element={<Community />} />
+        <Route path="/community/:username" element={<ProfileOuter />} />
       </Routes>
     </Router>
   );

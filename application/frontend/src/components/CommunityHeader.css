@@ -1,0 +1,48 @@
+.CommHeader {
+  width: 50%; 
+  max-width: 800px; 
+  margin: 80px auto; 
+  padding: 20px;
+  background-color: #5b696a; 
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  position: relative;
+  left: 0;
+  z-index: 1; 
+}
+
+.description {
+  position: relative;
+  border: 1px solid #ccc;
+  margin: -20px 0px 0px 0px;
+  top: 20px; 
+  background-color: #EEEEEE;
+  padding: auto;
+  z-index: 1; 
+  min-height: 160px;
+}
+
+.CommImage {
+  width: auto; /* Adjust size as needed */
+  height: 120px;
+  margin-right: 20px;
+  float: left;
+  margin-left: 20px;
+  margin-top: 20px;
+}
+
+.info{
+  margin-right: 40%;
+}
+
+.CommName {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  margin-top: 30px;
+}
+
+.FollowerCount {
+  font-size: 20px;
+  margin-top: 5px;
+}

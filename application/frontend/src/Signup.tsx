@@ -4,6 +4,10 @@ import { Input, Button } from "./LoggedOut.tsx";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import logo from "./assets/logo.png";
+import {
+  loggedInProfileInfo,
+  setLoggedInProfileInfo,
+} from "./storage/storage.ts";
 
 export default function SignUpPage() {
   const [email, setEmail] = useState<string>("");
@@ -11,31 +15,83 @@ export default function SignUpPage() {
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [favoriteTeam, setFavoriteTeam] = useState<string>("GALATASARAY");
   const navigate = useNavigate();
+
   function handleOnSignUp() {
     const registerUser = {
       firstName: firstName,
       lastName: lastName,
       email: email,
       password: password,
+      favoriteTeam: favoriteTeam,
     };
+    localStorage.setItem("myCommunity",favoriteTeam);
 
     axios
-      .post(`${import.meta.env.VITE_API_URL}/api/v1/auth/register`, registerUser)
+      .post(
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/register`,
+        registerUser
+      )
       .then((response) => {
         localStorage.setItem("authToken", response.data.accessToken);
         localStorage.setItem("email", email);
-        navigate("/home");
+        localStorage.setItem("id", response.data.userId);
+        setLoggedInProfileInfoFromAPI();
+        window.location.href = "/home";
       })
       .catch((error) => {
         setError("Email already exist");
       });
   }
+
+  function setLoggedInProfileInfoFromAPI() {
+    const id = localStorage.getItem("id");
+
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/v1/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      })
+      .then((response) => {
+        const profileData = response.data;
+
+        // Update the loggedInProfileInfo object
+        setLoggedInProfileInfo({
+          email: profileData.email,
+          firstName: profileData.firstName,
+          lastName: profileData.lastName,
+          community: {
+            id: profileData.community.id,
+            name: profileData.community.name,
+            description: profileData.community.description,
+            team: profileData.community.team,
+            fanaticCount: profileData.community.fanaticCount,
+          },
+          profilePicture: profileData.profilePicture,
+          accountNonExpired: profileData.accountNonExpired,
+          accountNonLocked: profileData.accountNonLocked,
+          credentialsNonExpired: profileData.credentialsNonExpired,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
   function handleOnKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-    if (event.key === 'Enter') {
+    if (
+      event.key === "Enter" &&
+      email !== "" &&
+      password !== "" &&
+      firstName !== "" &&
+      lastName !== ""
+    ) {
       handleOnSignUp();
     }
   }
+
   return (
     <div className="container">
       <div className="logodiv">
@@ -80,7 +136,6 @@ export default function SignUpPage() {
             setLastName(e.target.value)
           }
           onKeyDown={handleOnKeyDown}
-          
         />
         <Input
           className="SignUpForm"
@@ -94,27 +149,34 @@ export default function SignUpPage() {
         />
         <div>
           <h4 style={{ textAlign: "center" }}>Select the team you support!</h4>
-          <select className="SignUpForm" name="team" id="team">
-            <option value="gs">Galatasaray</option>
-            <option value="fb">Fenerbahçe</option>
-            <option value="bjk">Beşiktaş</option>
-            <option value="ts">Trabzonspor</option>
-            <option value="bşk">Başakşehir</option>
-            <option value="riz">Rizespor</option>
-            <option value="las">Kasımpaşa</option>
-            <option value="aln">Alanyaspor</option>
-            <option value="svs">Sivasspor</option>
-            <option value="ant">Antalyaspor</option>
-            <option value="ads">Adana Demirspor</option>
-            <option value="kay">Kayserispor</option>
-            <option value="sam">Samsunspor</option>
-            <option value="ank">Ankaragücü</option>
-            <option value="gfk">Gaziantep FK</option>
-            <option value="kon">Konyaspor</option>
-            <option value="krg">Karagümrük</option>
-            <option value="hty">Hatayspor</option>
-            <option value="pen">Pendikspor</option>
-            <option value="ist">İstanbulspor</option>
+          <select
+            className="SignUpForm"
+            name="team"
+            id="team"
+            onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+              setFavoriteTeam(e.target.value);
+            }}
+          >
+            <option value="GALATASARAY">Galatasaray</option>
+            <option value="FENERBAHCE">Fenerbahçe</option>
+            <option value="BESIKTAS">Beşiktaş</option>
+            <option value="TRABZONSPOR">Trabzonspor</option>
+            <option value="BASAKSEHIR">Başakşehir</option>
+            <option value="RIZESPOR">Rizespor</option>
+            <option value="KASIMPASA">Kasımpaşa</option>
+            <option value="ALANYASPOR">Alanyaspor</option>
+            <option value="SIVASSPOR">Sivasspor</option>
+            <option value="ANTALYASPOR">Antalyaspor</option>
+            <option value="ADANADEMIRSPOR">Adana Demirspor</option>
+            <option value="KAYSERISPOR">Kayserispor</option>
+            <option value="SAMSUNSPOR">Samsunspor</option>
+            <option value="ANKARAGUCU">Ankaragücü</option>
+            <option value="GAZIANTEP">Gaziantep</option>
+            <option value="KONYASPOR">Konyaspor</option>
+            <option value="KARAGUMRUK">Karagümrük</option>
+            <option value="HATAYSPOR">Hatayspor</option>
+            <option value="PENDIKSPOR">Pendikspor</option>
+            <option value=" ISTANBULSPOR">İstanbulspor</option>
           </select>
         </div>
         <Button

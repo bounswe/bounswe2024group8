@@ -217,7 +217,7 @@ public class PostService {
         List<PostResponse> postResponses = new ArrayList<>();
 
         for (Post post : posts) {
-            Reaction reaction = reactionRepository.findByPostIdAndUserId(user.getId(), post.getId());
+            Reaction reaction = reactionRepository.findByPostIdAndUserId(post.getId(), user.getId());
             ReactionType reactionType = ReactionType.NONE;
             Boolean bookmark = false;
 
