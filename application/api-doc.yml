@@ -1,0 +1,744 @@
+openapi: 3.0.0
+info:
+  title: appFanatic
+  description: This is the API documentation for the appFanatic
+  version: 1.0.0
+servers:
+  - url: https://fanatic-backend-bjbpof6jaq-oa.a.run.app/api/v1
+    description: Main API Server
+
+tags:
+  - name: Authentication
+    description: Endpoints related to authentication
+  - name: Posts
+    description: Endpoints related to post operations
+  - name: Comments
+    description: Endpoints related to comment operations
+  - name: Users
+    description: Endpoints related to user operations
+  - name: Communities
+    description: Endpoints related to community operations
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+
+  /auth/authenticate:
+    post:
+      tags:
+        - Authentication
+      summary: Authenticate a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationRequest'
+      responses:
+        '200':
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+
+  /posts:
+    post:
+      tags:
+        - Posts
+      summary: Create a new post
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostCreateRequest'
+      responses:
+        '200':
+          description: Successfully created post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+
+    get:
+      tags:
+        - Posts
+      summary: Search posts
+      parameters:
+        - in: query
+          name: param
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '404':
+          description: No posts found
+
+  /posts/feed:
+    get:
+      tags:
+        - Posts
+      summary: Get user feed
+      responses:
+        '200':
+          description: List of posts in user feed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostResponse'
+        '404':
+          description: No posts found
+
+  /posts/{postId}/react:
+    post:
+      tags:
+        - Posts
+      summary: React to a post
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReactionRequest'
+      responses:
+        '200':
+          description: Reaction recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReactionResponse'
+
+  /posts/comment:
+    post:
+      tags:
+        - Posts
+      summary: Create a comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentCreateRequest'
+      responses:
+        '200':
+          description: Comment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+
+  /posts/comment/{commentId}/react:
+    post:
+      tags:
+        - Posts
+      summary: React to a comment
+      parameters:
+        - in: path
+          name: commentId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: reactionType
+          required: true
+          schema:
+            $ref: '#/components/schemas/ReactionType'
+      responses:
+        '200':
+          description: Reaction recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentReactionResponse'
+
+  /posts/community/{communityTeam}:
+    get:
+      tags:
+        - Posts
+      summary: Get posts of a community
+      parameters:
+        - in: path
+          name: communityTeam
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of posts in the community
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostResponse'
+        '404':
+          description: No posts found
+
+  /posts/user/{userId}:
+    get:
+      tags:
+        - Posts
+      summary: Get posts of a user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of user posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostResponse'
+        '404':
+          description: No posts found
+
+  /posts/user/{userId}/reacted:
+    get:
+      tags:
+        - Posts
+      summary: Get posts user reacted to
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of posts user reacted to
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostResponse'
+        '404':
+          description: No posts found
+
+  /posts/user/{userId}/bookmarked:
+    get:
+      tags:
+        - Posts
+      summary: Get user's bookmarked posts
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of bookmarked posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostResponse'
+        '404':
+          description: No posts found
+
+  /comments/post/{postId}:
+    get:
+      tags:
+        - Comments
+      summary: Get comments for a post
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommentResponse'
+        '404':
+          description: No comments found
+
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get user by email
+      parameters:
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get user by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{id}/profile-picture:
+    put:
+      tags:
+        - Users
+      summary: Update profile picture
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateProfilePictureRequest'
+      responses:
+        '200':
+          description: Profile picture updated
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  /users/{userId}/change-password:
+    put:
+      tags:
+        - Users
+      summary: Change user password
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: password
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Password updated
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  /communities/{communityName}:
+    get:
+      tags:
+        - Communities
+      summary: Get community by name
+      parameters:
+        - in: path
+          name: communityName
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Community details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Community'
+
+  /communities:
+    post:
+      tags:
+        - Communities
+      summary: Create all communities
+      responses:
+        '200':
+          description: Communities created
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+          description: Please provide a valid email address
+        password:
+          type: string
+        favoriteTeam:
+          $ref: '#/components/schemas/Team'
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+        - favoriteTeam
+
+    AuthenticationRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    AuthenticationResponse:
+      type: object
+      properties:
+        token:
+          type: string
+
+    PostCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        text:
+          type: string
+        teamName:
+          type: string
+        image:
+          type: integer
+          format: binary
+        postedAt:
+          $ref: '#/components/schemas/Team'
+      required:
+        - title
+        - content
+        - postedAt
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        text:
+          type: string
+        image:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        likes:
+          type: integer
+        dislikes:
+          type: integer
+        comments:
+            type: integer
+        user:
+          $ref: '#/components/schemas/User'
+
+
+    SearchResponse:
+      type: object
+      properties:
+        team:
+          $ref: '#/components/schemas/WikidataTeamDto'
+        posts:
+            type: array
+            items:
+                $ref: '#/components/schemas/PostResponse'
+
+    PostResponse:
+      type: object
+      properties:
+        posId:
+            type: integer
+        text:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+        title:
+          type: string
+        likes:
+          type: integer
+        dislikes:
+            type: integer
+        comments:
+            type: integer
+        postedAt:
+          $ref: '#/components/schemas/Team'
+        image:
+          type: integer
+          format: binary
+        createdAt:
+          type: string
+          format: date-time
+        reactionId:
+          type: integer
+        reactionType:
+            $ref: '#/components/schemas/ReactionType'
+        bookmark:
+          type: boolean
+        
+
+    ReactionRequest:
+      type: object
+      properties:
+        reactionType:
+          $ref: '#/components/schemas/ReactionType'
+        bookmark:
+            type: boolean
+      required:
+        - reactionType
+        - bookmark
+
+    ReactionResponse:
+      type: object
+      properties:
+        postId:
+          type: integer
+        likes:
+          type: integer
+        dislikes:
+            type: integer
+        bookmarked:
+          type: boolean
+
+    Reaction:
+      type: object
+      properties:
+        id:
+          type: integer
+        reactionType:
+          $ref: '#/components/schemas/ReactionType'
+        bookmark:
+          type: boolean
+        user:
+          $ref: '#/components/schemas/User'
+        post:
+          $ref: '#/components/schemas/Post'
+        comment:
+          $ref: '#/components/schemas/Comment'
+        createdAt:
+          type: string
+          format: date-time
+
+    ReactionType:
+      type: string
+      enum:
+        - LIKE
+        - DISLIKE
+        - NONE
+
+    CommentCreateRequest:
+      type: object
+      properties:
+        postId:
+          type: integer
+        text:
+          type: string
+      required:
+        - postId
+        - content
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          $ref: '#/components/schemas/User'
+        post:
+            $ref: '#/components/schemas/Post'
+        text:
+          type: string
+        likes:
+          type: integer
+        dislikes:
+            type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CommentResponse:
+      type: object
+      properties:
+        commentId:
+          type: integer
+        text:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+        likes:
+          type: integer
+        dislikes:
+            type: integer
+        createdAt:
+          type: string
+          format: date-time
+        reactionId:
+          type: integer
+        reactionType:
+          $ref: '#/components/schemas/ReactionType'
+
+    CommentReactionResponse:
+      type: object
+      properties:
+        reactionId:
+          type: integer
+        likes:
+          type: integer
+        dislikes:
+            type: integer
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          $ref: '#/components/schemas/Role'
+        community:
+          $ref: '#/components/schemas/Community'
+        profilePicture:
+          type: integer
+          format: binary
+
+    UpdateProfilePictureRequest:
+      type: object
+      properties:
+        profilePicture:
+          type: integer
+          format: binary
+
+    Community:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        team:
+          $ref: '#/components/schemas/Team'
+        createdAt:
+          type: integer
+
+    Team:
+      type: string
+      enum:
+        - GLOBAL
+        - GALATASARAY
+        - FENERBAHCE
+        - BESIKTAS
+        - TRABZONSPOR
+        - BASAKSEHIR
+        - ADANADEMIRSPOR
+        - ANKARAGUCU
+        - SAMSUNSPOR
+        - RIZESPOR
+        - KAYSERISPOR
+        - KASIMPASA
+        - ANTALYASPOR
+        - HATAYSPOR
+        - KONYASPOR
+        - ALANYASPOR
+        - KARAGUMRUK
+        - GAZIANTEP
+        - PENDIKSPOR
+        - SIVASSPOR
+        - ISTANBULSPOR
+
+    WikidataTeamDto:
+      type: object
+      properties:
+        teamName:
+          type: string
+        logoUrl:
+          type: string
+        year:
+          type: integer
+        coachName:
+          type: string
+        location:
+          type: string
+
+    Role:
+        type: string
+        enum:
+            - USER
+            - ADMIN
