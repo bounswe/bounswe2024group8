@@ -1,4 +1,4 @@
-# 2024 CmpE 352 Group 8
+# 2024 CmpE 451 Group 8
 
 ### Welcome to our repository. 
 
