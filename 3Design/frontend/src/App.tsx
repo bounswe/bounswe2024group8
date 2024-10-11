@@ -1,16 +1,16 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from './components/Login/LoginPage';
 import HomePage from './components/HomePage/HomePage';
 import RegisterPage from './components/RegisterPage/RegisterPage';
 
 function App() {
   return (
-    <div className="App">
-      <Router>
+    <Router>
       <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route
           path="/login"
           element={
@@ -31,7 +31,6 @@ function App() {
         />
       </Routes>
     </Router>
-    </div>
   );
 }
 

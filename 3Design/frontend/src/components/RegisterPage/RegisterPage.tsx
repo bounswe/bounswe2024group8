@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import styles from "./RegisterPage.module.css"
-import { TextField } from '@mui/material'
+import { CircularProgress, TextField } from '@mui/material'
 const RegisterPage = () => {
     const [email,setEmail] = useState("");
     const [emailError, setEmailError] = useState("");
@@ -10,6 +10,8 @@ const RegisterPage = () => {
 
     const [username, setUsername] = useState("");
     const [usernameError, setUsernameError] = useState("");
+
+    const [registerLoading, setRegisterLoading] = useState(false);
 
 
     const validatePassword = () => {
@@ -53,9 +55,13 @@ const RegisterPage = () => {
         if (!!emailValidation || !!passwordValidation || !!usernameValidation){
             return;
         }
+        setRegisterLoading(true);
         try{
             //AJAX POST Request
-            window.location.href = "/login";
+            setTimeout(() => {
+                setRegisterLoading(false);                
+                window.location.href = "/login";
+            }, 2000)
         }
         catch(e){
 
@@ -84,7 +90,10 @@ const RegisterPage = () => {
                     }
                     setPassword(e.target.value);
                 }}/>
-                <button onClick={registerRequest} className='btn btn-outline'>Register</button>
+                <div className='flex gap-4 justify-center items-center'>
+                    <button disabled={registerLoading} onClick={registerRequest} className='btn btn-outline w-2/3'>Register</button>
+                    {registerLoading && <CircularProgress/>}
+                </div>
                 <a href='/login' className='text-center font-semibold'><u>Login</u></a>
             </div>
         </div>

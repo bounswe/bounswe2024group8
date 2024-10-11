@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import styles from "./LoginPage.module.css";
-import { TextField } from '@mui/material';
+import { CircularProgress, TextField } from '@mui/material';
 const Login = () => {
     const [email,setEmail] = useState("");
     const [emailError, setEmailError] = useState("");
 
     const [password,setPassword] = useState("");
     const [passwordError, setPasswordError] = useState("");
+
+    const [loginLoading, setLoginLoading] = useState(false);
 
     const validatePassword = () => {
         if (!password){
@@ -37,9 +39,13 @@ const Login = () => {
         if (!!emailValidation || !!passwordValidation){
             return;
         }
+        setLoginLoading(true);
         try{
             //AJAX POST Request
-            window.location.href = "home";
+            setTimeout(() => {
+                setLoginLoading(false);
+                window.location.href = "home";
+            }, 2000)
         }
         catch(e){
 
@@ -61,7 +67,10 @@ const Login = () => {
                     }
                     setPassword(e.target.value);
                 }}/>
-                <button onClick={loginRequest} className='btn btn-outline'>Login</button>
+                <div className='flex gap-4 justify-center items-center'>
+                    <button disabled={loginLoading} onClick={loginRequest} className='btn btn-outline w-2/3'>Login</button>
+                    {loginLoading && <CircularProgress/>}
+                </div>
                 <a href='/register' className='text-center font-semibold'><u>Create a new account.</u></a>
             </div>
         </div>
