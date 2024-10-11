@@ -59,12 +59,14 @@ const Login = () => {
                     if (e.target.value.length > 128){
                         return;
                     }
+                    setEmailError("");
                     setEmail(e.target.value);
                 }}/>
                 <TextField type='password' label="Password" error={!!passwordError} helperText={passwordError} value={password} onChange={(e) => {
                     if (e.target.value.length > 128){
                         return;
                     }
+                    setPasswordError("");
                     setPassword(e.target.value);
                 }}/>
                 <div className='flex gap-4 justify-center items-center'>
