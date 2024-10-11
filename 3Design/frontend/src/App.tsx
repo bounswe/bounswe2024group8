@@ -2,8 +2,9 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from './components/Login/Login';
-import Home from './components/Home/Home';
+import LoginPage from './components/Login/LoginPage';
+import HomePage from './components/HomePage/HomePage';
+import RegisterPage from './components/RegisterPage/RegisterPage';
 
 function App() {
   return (
@@ -13,13 +14,19 @@ function App() {
         <Route
           path="/login"
           element={
-            <Login/>
+            <LoginPage/>
           }
         />
         <Route
           path="/home"
           element={
-            <Home/>
+            <HomePage/>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <RegisterPage/>
           }
         />
       </Routes>
