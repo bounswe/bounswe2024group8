@@ -1,14 +1,14 @@
-# node installation
+# Node Installation
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
 nvm install v20.18.0
 
-# install current front-main branch
+# Install Current front-main Branch
 cd <installation-path>
 git clone https://github.com/bounswe/bounswe2024group8.git
 git fetch
-git checkout -b 3design_frontend origin/3design_frontend
+git checkout -b <current-frontend-branch> origin/<current-frontend-branch>
 
-# setup/run
+# Setup/Run
 npm install
 npm start
 
