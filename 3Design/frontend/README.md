@@ -1,10 +1,17 @@
-# Getting Started with Create React App
+# node installation
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+nvm install v20.18.0
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# install current front-main branch
+cd <installation-path>
+git clone https://github.com/bounswe/bounswe2024group8.git
+git fetch
+git checkout -b 3design_frontend origin/3design_frontend
 
-## Available Scripts
+# setup/run
+npm install
+npm start
 
-In the project directory, you can run:
 
 ### `npm start`
 
