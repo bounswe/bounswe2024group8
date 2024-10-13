@@ -14,44 +14,70 @@ import {
 import { Colors } from '../constants/Colors';
 import axios from 'axios';
 
-export default function LoginScreen({ navigation }) {
+export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  const ref_username = useRef();
   const ref_password = useRef();
 
   const clearError = () => {
     setError('');
   };
 
-  const onLoginClick = () => {
+  const validateCredentials = () => {
+    // prettier-ignore
+    if (!email) {
+      return 'Enter your email to create your account.';
+    } 
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return 'Invalid email format.';
+    } 
+    else if (!username) {
+      return 'Enter your username to create your account.';
+    } 
+    else if (username.length < 5) {
+      return 'The username has to be at least 5 characters.';
+    } 
+    else if (!password){
+      return "Enter your password to create your account.";
+    }
+    else if (password.length < 3) {
+      return 'The password has to be at least 3 characters.';
+    } 
+    else {
+      return '';
+    }
+  };
+
+  const onSignupClick = () => {
     const userParams = {
       email: email,
+      username: username,
       password: password,
     };
 
     Keyboard.dismiss();
 
-    console.log('login clicked');
-    navigation.replace('Home', userParams);
+    const tempError = validateCredentials();
+    setError(tempError);
 
-    /*
-    axios
-      .post(
-        `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/auth/authenticate`,
-        userParams
-      )
+    if (tempError) {
+      return;
+    }
+
+    console.log('Sign up clicked');
+
+    /*axios
+      .post(`${process.env.EXPO_PUBLIC_VITE_API_URL}`, userParams)
       .then((response) => {
         console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
       });*/
-  };
-
-  const onSignupClick = () => {
-    navigation.navigate('Register');
   };
 
   return (
@@ -61,7 +87,7 @@ export default function LoginScreen({ navigation }) {
     >
       <View style={styles.container}>
         <View style={styles.headerContainer}>
-          <Text style={styles.header}>Login</Text>
+          <Text style={styles.header}>Sign Up</Text>
         </View>
         <View style={styles.inputContainer}>
           <TextInput
@@ -71,7 +97,18 @@ export default function LoginScreen({ navigation }) {
             placeholder='Email'
             autoCapitalize='none'
             value={email}
+            onSubmitEditing={() => ref_username.current.focus()}
+            blurOnSubmit={false}
+          />
+          <TextInput
+            style={styles.inputText}
+            onChangeText={setUsername}
+            onFocus={clearError}
+            placeholder='Username'
+            autoCapitalize='none'
+            value={username}
             onSubmitEditing={() => ref_password.current.focus()}
+            ref={ref_username}
             blurOnSubmit={false}
           />
           <TextInput
@@ -89,9 +126,6 @@ export default function LoginScreen({ navigation }) {
           {error && <Text style={styles.errorText}>{error}</Text>}
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={onLoginClick} style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Login</Text>
-          </TouchableOpacity>
           <TouchableOpacity onPress={onSignupClick} style={styles.signupButton}>
             <Text style={styles.signupButtonText}>Sign Up</Text>
           </TouchableOpacity>
@@ -105,7 +139,7 @@ const styles = StyleSheet.create({
   body: {
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     minHeight:
-      Math.round(Dimensions.get('window').height * 0.8) +
+      Math.round(Dimensions.get('window').height * 0.7) +
       (Platform.OS === 'android' ? StatusBar.currentHeight : 0),
     flex: 1,
     display: 'flex',
@@ -130,17 +164,16 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   inputContainer: {
-    height: '34%',
+    height: '50%',
     width: '100%',
     paddingHorizontal: '5%',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
   },
   inputText: {
-    height: '35%',
+    height: '25%',
     width: '100%',
     borderWidth: 2,
-    marginTop: '8%',
     paddingLeft: '5%',
     borderRadius: 5,
     borderColor: Colors.dark,
@@ -149,7 +182,7 @@ const styles = StyleSheet.create({
   errorContainer: {
     height: '7%',
     width: '100%',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
   errorText: {
@@ -163,7 +196,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: '10%',
   },
-  loginButton: {
+  signupButton: {
     height: '45%',
     width: '100%',
     backgroundColor: Colors.dark,
@@ -172,22 +205,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: '5%',
   },
-  loginButtonText: {
-    color: Colors.light,
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  signupButton: {
-    height: '45%',
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5,
-    borderColor: Colors.dark,
-    borderWidth: 2,
-  },
   signupButtonText: {
-    color: Colors.dark,
+    color: Colors.light,
     fontSize: 20,
     fontWeight: '600',
   },
