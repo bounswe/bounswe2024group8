@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styles from "./LoginPage.module.css";
 import { CircularProgress, TextField } from '@mui/material';
+import { message } from 'antd';
 const Login = () => {
     const [email,setEmail] = useState("");
     const [emailError, setEmailError] = useState("");
@@ -9,6 +10,8 @@ const Login = () => {
     const [passwordError, setPasswordError] = useState("");
 
     const [loginLoading, setLoginLoading] = useState(false);
+
+    const [alert, alertContext] = message.useMessage();
 
     const validatePassword = () => {
         if (!password){
@@ -31,7 +34,6 @@ const Login = () => {
     }
 
     const loginRequest = async () => {
-        let errors = false;
         const emailValidation = validateEmail();
         const passwordValidation = validatePassword();
         setEmailError(emailValidation);
@@ -43,16 +45,23 @@ const Login = () => {
         try{
             //AJAX POST Request
             setTimeout(() => {
-                setLoginLoading(false);
+            
                 window.location.href = "home";
             }, 2000)
         }
         catch(e){
-
+            alert.open({
+                type: "error",
+                content: "Username or password wrong."
+            });
+        }
+        finally{
+            setLoginLoading(false);
         }
     }
     return (
         <div className={styles.mainContainer}>
+            {alertContext}
             <div className={styles.loginCard}>
                 <h2 className='font-extrabold'>Login</h2>
                 <TextField label="Email" value={email} error={!!emailError} helperText={emailError} onChange={(e) => {
