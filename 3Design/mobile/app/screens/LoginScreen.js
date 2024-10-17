@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -12,6 +12,8 @@ import {
   Keyboard,
 } from 'react-native';
 import { Colors } from '../constants/Colors';
+import { CategoryContext } from '../context/CategoryContext';
+
 import axios from 'axios';
 
 export default function LoginScreen({ navigation }) {
@@ -34,7 +36,7 @@ export default function LoginScreen({ navigation }) {
     Keyboard.dismiss();
 
     console.log('login clicked');
-    navigation.replace('Home', userParams);
+    navigation.navigate('Home');
 
     /*
     axios
