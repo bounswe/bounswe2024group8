@@ -17,8 +17,11 @@ const Login = () => {
         if (!password){
             return "This field is required.";
         }
-        if (password.length < 3){
+        if (password.length < 6){
             return "The password has to be at least 3 characters.";
+        }
+        if (!(/[A-Z]/.test(password)) || !(/[a-z]/.test(password)) || !(/\d/.test(password))){
+            return "The password has to have at least 1 uppercase, 1 lowercase and 1 number.";
         }
         return "";
     }
