@@ -1,13 +1,5 @@
 import React, { useContext } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Platform,
-  StatusBar,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Colors } from '../constants/Colors';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { CategoryContext } from '../context/CategoryContext';

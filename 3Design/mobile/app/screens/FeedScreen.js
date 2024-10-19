@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, Platform, StatusBar } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Colors } from '../constants/Colors';
 
-export default function FeedScreen({ navigation, route }) {
+export default function FeedScreen() {
   return (
     <View style={styles.body}>
       <Text>Feed Screen</Text>

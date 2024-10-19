@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Colors } from '../constants/Colors';
 import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -22,6 +23,8 @@ export default function RegisterScreen({ navigation }) {
 
   const ref_username = useRef();
   const ref_password = useRef();
+
+  const { setUser } = useContext(AuthContext);
 
   const clearError = () => {
     setError('');
@@ -68,16 +71,18 @@ export default function RegisterScreen({ navigation }) {
       return;
     }
 
-    console.log('Sign up clicked');
-
-    /*axios
-      .post(`${process.env.EXPO_PUBLIC_VITE_API_URL}`, userParams)
+    axios
+      .post(
+        `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/auth/register`,
+        userParams
+      )
       .then((response) => {
-        console.log(response.data);
+        setUser(response.data);
+        navigation.replace('Home');
       })
       .catch((error) => {
-        console.log(error);
-      });*/
+        setError(email + ' already in use.');
+      });
   };
 
   return (
@@ -120,6 +125,7 @@ export default function RegisterScreen({ navigation }) {
             secureTextEntry
             value={password}
             ref={ref_password}
+            onSubmitEditing={onSignupClick}
           />
         </View>
         <View style={styles.errorContainer}>

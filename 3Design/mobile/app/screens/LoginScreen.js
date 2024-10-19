@@ -12,7 +12,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { Colors } from '../constants/Colors';
-import { CategoryContext } from '../context/CategoryContext';
+import { AuthContext } from '../context/AuthContext';
 
 import axios from 'axios';
 
@@ -22,6 +22,8 @@ export default function LoginScreen({ navigation }) {
   const [error, setError] = useState('');
 
   const ref_password = useRef();
+
+  const { setUser } = useContext(AuthContext);
 
   const clearError = () => {
     setError('');
@@ -35,21 +37,18 @@ export default function LoginScreen({ navigation }) {
 
     Keyboard.dismiss();
 
-    console.log('login clicked');
-    navigation.navigate('Home');
-
-    /*
     axios
       .post(
         `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/auth/authenticate`,
         userParams
       )
       .then((response) => {
-        console.log(response.data);
+        setUser(response.data);
+        navigation.navigate('Home');
       })
       .catch((error) => {
-        console.log(error);
-      });*/
+        setError('Incorrect e-mail or password!');
+      });
   };
 
   const onSignupClick = () => {
@@ -85,6 +84,7 @@ export default function LoginScreen({ navigation }) {
             secureTextEntry
             value={password}
             ref={ref_password}
+            onSubmitEditing={onLoginClick}
           />
         </View>
         <View style={styles.errorContainer}>
