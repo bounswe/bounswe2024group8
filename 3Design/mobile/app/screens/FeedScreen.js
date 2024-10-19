@@ -48,6 +48,7 @@ export default function FeedScreen() {
             disableScroll={disableScroll}
           />
         )}
+        removeClippedSubviews={false}
       />
     </View>
   );
