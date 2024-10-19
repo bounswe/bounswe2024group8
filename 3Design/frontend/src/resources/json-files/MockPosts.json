@@ -1,0 +1,34 @@
+[
+    {
+        "id": 4,
+        "title": "Human Model",
+        "body": "Check out this human model",
+        "memberId": 2,
+        "tags": [],
+        "category": "Human",
+        "visual": true,
+        "challangeTo": null,
+        "fileUrl": "3d.glb",
+        "likeCount": 62,
+        "dislikeCount": 129,
+        "liked": true,
+        "disliked": false,
+        "bookmark":true
+    },
+    {
+        "id": 21,
+        "title": "Car Model",
+        "body": "Check out this car model",
+        "memberId": 2,
+        "tags": [],
+        "category": "Car",
+        "visual": true,
+        "challangeTo": null,
+        "fileUrl": "mug.fbx",
+        "likeCount": 1,
+        "dislikeCount": 2000,
+        "liked": false,
+        "disliked": true,
+        "bookmark":false
+    }
+]
