@@ -62,10 +62,10 @@ const Feed = () => {
             ) : 
             feedType ? 
                     postData.map((item, index) => (
-                        <GalleryPost index={index} key={item.id} postData={item} changePostData={changePostData}/>
+                        <GalleryPost key={item.id} postData={item}/>
                     )) : 
                     postData.map((item, index) => (
-                        <DiscussionPost index={index} key={item.id} postData={item} changePostData={changePostData}/>
+                        <DiscussionPost key={item.id} postData={item}/>
                     ))
             }
             

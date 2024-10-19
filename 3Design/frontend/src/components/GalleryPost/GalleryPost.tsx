@@ -5,58 +5,76 @@ import DViewer from '../DViewer/DViewer'
 import { Bookmark, BookmarkBorderOutlined, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined } from '@mui/icons-material'
 interface Props{
   postData: DPost,
-  index : number,
-  changePostData: (newData: DPost,index: number) => void
+
 }
 
-const GalleryPost = ({postData, index, changePostData} : Props) => {
+const GalleryPost = ({postData} : Props) => {
 
+  const [data, setData] = useState<DPost>(postData);
+
+  const likeClicked = async () =>{
+    if (data.disliked){
+      setData((prev) => ({...prev, disliked: false, liked: true, likeCount: prev.likeCount + 1, dislikeCount: prev.dislikeCount - 1}));
+      return;
+    }
+    if (data.liked){
+      setData((prev) => ({...prev,  liked: false, likeCount: prev.likeCount - 1}));
+      return;
+    }
+    setData((prev) => ({...prev, disliked: false, liked: true, likeCount: prev.likeCount + 1}));
+  }
+
+  const dislikeClicked = async () =>{
+    if (data.liked){
+      setData((prev) => ({...prev, liked: false, disliked: true, dislikeCount: prev.dislikeCount + 1, likeCount: prev.likeCount - 1}));
+      return;
+    }
+    if (data.disliked){
+      setData((prev) => ({...prev,  disliked: false, dislikeCount: prev.dislikeCount - 1}));
+      return;
+    }
+    setData((prev) => ({...prev, liked: false, disliked: true, dislikeCount: prev.dislikeCount + 1}));
+  }
 
   return (
       <div className={styles.postCard}>
         <div className='flex flex-col gap-2'>
           <div className='border-gray-500 border-2'>
-            <DViewer filePath={postData.fileUrl!}/>
+            <DViewer filePath={data.fileUrl!}/>
 
           </div>
-          <p className='font-bold text-lg'>{postData.title}</p>
-          <p>{postData.body}</p>
+          <p className='font-bold text-lg'>{data.title}</p>
+          <p>{data.body}</p>
         </div>
         <div className='flex gap-6'>
           <div className='flex items-center'>
-            <button onClick={() => {
-              changePostData({...postData, liked: !postData.liked, likeCount: postData.likeCount + 1}, index);
-
-            }} className='btn btn-ghost'>
+            <button onClick={likeClicked} className='btn btn-ghost'>
             {
-                postData.liked ?
+                data.liked ?
                 <ThumbUp/>:
                 <ThumbUpOutlined/>
               }
             </button>
-            <p>{postData.likeCount}</p>
+            <p>{data.likeCount}</p>
           </div>
           <div className="flex items-center">
-            <button onClick={() => {
-              changePostData({...postData, disliked: !postData.disliked, dislikeCount: postData.dislikeCount  +1}, index);
-            }} className='btn btn-ghost'>
+            <button onClick={dislikeClicked} className='btn btn-ghost'>
               {
-                postData.disliked ?
+                data.disliked ?
                 <ThumbDown/>:
                 <ThumbDownOutlined/>
               }
               
             </button>
-            <p>{postData.dislikeCount}</p>
+            <p>{data.dislikeCount}</p>
           </div>
           <button
             onClick={() => {
-              changePostData({...postData, bookmark: !postData.bookmark}, index);
-
+              setData((prev) => ({...prev, bookmark: !prev.bookmark}))
             }}
           className='btn btn-ghost'>
             {
-              postData.bookmark ?
+              data.bookmark ?
               <Bookmark/>:
               <BookmarkBorderOutlined/>
             }
