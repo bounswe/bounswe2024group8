@@ -8,15 +8,18 @@ import { Dialog, TextField } from '@mui/material'
 import CreatePost from '../CreatePost/CreatePost'
 import GalleryPost from '../GalleryPost/GalleryPost'
 import Feed from '../Feed/Feed'
+import { useParams } from 'react-router-dom'
 const HomePage = () => {
     const [createPost, setPostDialog] = useState(false);
+    const { id } = useParams();
 
+    const passedId = id || "";
 
     return (
         <>
             <PageHeader/>
             <div className='flex'>
-                <SideBar/>
+                <SideBar active={passedId}/>
                 <Feed/>
             </div>
             <Button onClick={() => setPostDialog(true)} style={{position: "fixed", bottom: "20px", right: "20px"}} type="primary" shape="round" icon={<Add />} size={'large'}>
