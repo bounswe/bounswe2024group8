@@ -18,7 +18,7 @@ const Login = () => {
             return "This field is required.";
         }
         if (password.length < 6){
-            return "The password has to be at least 3 characters.";
+            return "The password has to be at least 6 characters.";
         }
         if (!(/[A-Z]/.test(password)) || !(/[a-z]/.test(password)) || !(/\d/.test(password))){
             return "The password has to have at least 1 uppercase, 1 lowercase and 1 number.";
@@ -57,9 +57,8 @@ const Login = () => {
                 type: "error",
                 content: "Username or password wrong."
             });
-        }
-        finally{
             setLoginLoading(false);
+
         }
     }
     return (
