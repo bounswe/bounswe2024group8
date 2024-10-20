@@ -62,11 +62,11 @@ const RegisterPage = () => {
         try{
             //AJAX POST Request
             setTimeout(() => {
-                setRegisterLoading(false);                
                 window.location.href = "/login";
             }, 2000)
         }
         catch(e){
+            setRegisterLoading(false);                
 
         }
     }

@@ -24,6 +24,12 @@ function App() {
           }
         />
         <Route
+          path="/home/:id"
+          element={
+            <HomePage/>
+          }
+        />
+        <Route
           path="/register"
           element={
             <RegisterPage/>

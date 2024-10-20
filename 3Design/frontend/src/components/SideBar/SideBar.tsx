@@ -1,20 +1,25 @@
 import React, { useState } from 'react'
 import styles from "./SideBar.module.css";
 import { Category } from '../interfaces';
-const SideBar = () => {
+
+interface Props{
+    active: string
+}
+
+const SideBar = ({active} : Props) => {
     const [categories, setCategories] = useState<Category[]>([
-        {text: "Characters", url: "/home/characters"},
-        {text: "Enviroments", url: "/home/enviroments"},
-        {text: "Props", url: "/home/props"},
-        {text: "Vehicles", url: "/home/vehicles"},
-        {text: "Animations", url: "/home/animations"},
+        {text: "Characters", id: "characters"},
+        {text: "Enviroments", id: "enviroments"},
+        {text: "Props", id: "props"},
+        {text: "Vehicles", id: "vehicles"},
+        {text: "Animations", id: "animations"},
     ])
     return (
         <div className={styles.mainContainer}>
             <p className={styles.categoriesText}>Categories</p>
             <div className={styles.categoryContainer}>
                 {categories.map((item, index) => (
-                    <button className={styles.categoryButton} onClick={() => window.location.href = item.url} key={`${item.url}_${index}`}>{item.text}</button>
+                    <button className={active == item.id ? styles.activeCategoryButton : styles.categoryButton } onClick={() => window.location.href = `/home/${item.id}`} key={`${item.id}_${index}`}>{item.text}</button>
                 ))}
             </div>
         </div>
