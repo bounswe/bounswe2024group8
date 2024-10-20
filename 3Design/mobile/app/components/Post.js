@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text} from "react-native";
 import OBJViewer from '../components/ObjectViewer';
-import objFile from '../assets/Hamburger.obj';
 
 class Post extends Component {
   constructor(props) {
@@ -12,20 +11,30 @@ class Post extends Component {
   }
 
   render() {
-    const { title, content, disableScroll } = this.props;
+    const { title, content, model, disableScroll } = this.props;
 
-    return (
-      <View style={styles.postContainer}>
-        <View
-        >
-          <Text style={styles.postTitle}>{title}</Text>
-          <Text style={styles.postContent}>{content}</Text>
+    if(model) {
+      return (
+        <View style={styles.postContainer}>
+          <View>
+            <Text style={styles.postTitle}>{title}</Text>
+            <Text style={styles.postContent}>{content}</Text>
+          </View>
+          <View style={styles.modelView}>
+            <OBJViewer objFilePath={model} />
+          </View>
         </View>
-        <View>
-          <OBJViewer objFilePath={objFile} />
+      );
+    } else {
+      return (
+        <View style={styles.postContainer}>
+          <View>
+            <Text style={styles.postTitle}>{title}</Text>
+            <Text style={styles.postContent}>{content}</Text>
+          </View>
         </View>
-      </View>
-    );
+      );
+    }
   }
 }
 
