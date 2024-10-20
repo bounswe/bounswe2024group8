@@ -18,10 +18,14 @@ import { AuthContext } from '../context/AuthContext';
 export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const ref_username = useRef();
+  const ref_firstName = useRef();
+  const ref_lastName = useRef();
   const ref_password = useRef();
 
   const { setUser } = useContext(AuthContext);
@@ -59,6 +63,8 @@ export default function RegisterScreen({ navigation }) {
     const userParams = {
       email: email,
       username: username,
+      firstName: firstName,
+      lastName: lastName,
       password: password,
     };
 
@@ -78,6 +84,7 @@ export default function RegisterScreen({ navigation }) {
       )
       .then((response) => {
         setUser(response.data);
+        console.log(response.data);
         navigation.replace('Home');
       })
       .catch((error) => {
@@ -112,8 +119,30 @@ export default function RegisterScreen({ navigation }) {
             placeholder='Username'
             autoCapitalize='none'
             value={username}
-            onSubmitEditing={() => ref_password.current.focus()}
+            onSubmitEditing={() => ref_firstName.current.focus()}
             ref={ref_username}
+            blurOnSubmit={false}
+          />
+          <TextInput
+            style={styles.inputText}
+            onChangeText={setFirstName}
+            onFocus={clearError}
+            placeholder='First Name'
+            autoCapitalize='words'
+            value={firstName}
+            onSubmitEditing={() => ref_lastName.current.focus()}
+            ref={ref_firstName}
+            blurOnSubmit={false}
+          />
+          <TextInput
+            style={styles.inputText}
+            onChangeText={setLastName}
+            onFocus={clearError}
+            placeholder='Last Name'
+            autoCapitalize='words'
+            value={lastName}
+            onSubmitEditing={() => ref_password.current.focus()}
+            ref={ref_lastName}
             blurOnSubmit={false}
           />
           <TextInput
@@ -145,7 +174,7 @@ const styles = StyleSheet.create({
   body: {
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     minHeight:
-      Math.round(Dimensions.get('window').height * 0.7) +
+      Math.round(Dimensions.get('window').height * 0.8) +
       (Platform.OS === 'android' ? StatusBar.currentHeight : 0),
     flex: 1,
     display: 'flex',
@@ -154,13 +183,13 @@ const styles = StyleSheet.create({
   },
   container: {
     display: 'flex',
-    height: Math.round(Dimensions.get('window').height * 0.7),
+    height: Math.round(Dimensions.get('window').height * 0.8),
     width: '100%',
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
   headerContainer: {
-    height: '20%',
+    height: '10%',
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
@@ -170,14 +199,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   inputContainer: {
-    height: '50%',
+    height: '60%',
     width: '100%',
     paddingHorizontal: '5%',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   inputText: {
-    height: '25%',
+    height: '17%',
     width: '100%',
     borderWidth: 2,
     paddingLeft: '5%',
@@ -188,7 +217,7 @@ const styles = StyleSheet.create({
   errorContainer: {
     height: '7%',
     width: '100%',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   errorText: {
