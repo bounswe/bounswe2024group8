@@ -42,6 +42,7 @@ export default function TabNavigator({ navigation, route }) {
                 />
               );
             },
+            unmountOnBlur: true,
           }}
           listeners={{ focus: () => setPostScreen('Feed') }}
         />
