@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
-    "version": "1.0.0",
+    "name": "3Design",
+    "slug": "3Design",
+    "version": "0.0.0",
     "orientation": "portrait",
     "icon": "./app/assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,10 +18,32 @@
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "INTERNET"
+      ],
+      "package": "com.onurcerli.ThreeDesign"
     },
     "web": {
       "favicon": "./app/assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b7f9f8c1-944b-488c-b640-b9c0d50edefd"
+      }
+    },
+    "assetBundlePatterns": [
+      "app/assets/*"
+    ]
   }
 }
