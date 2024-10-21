@@ -19,6 +19,7 @@
     "antd": "^5.21.4",
     "axios": "^1.7.7",
     "daisyui": "^4.12.13",
+    "dotenv": "^16.4.5",
     "online-3d-viewer": "^0.15.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

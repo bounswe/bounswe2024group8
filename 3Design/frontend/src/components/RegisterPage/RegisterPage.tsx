@@ -1,6 +1,8 @@
 import React, {useState} from 'react'
 import styles from "./RegisterPage.module.css"
 import { CircularProgress, TextField } from '@mui/material'
+import axios from 'axios';
+import { message } from 'antd';
 const RegisterPage = () => {
     const [email,setEmail] = useState("");
     const [emailError, setEmailError] = useState("");
@@ -61,13 +63,12 @@ const RegisterPage = () => {
         setRegisterLoading(true);
         try{
             //AJAX POST Request
-            setTimeout(() => {
-                window.location.href = "/login";
-            }, 2000)
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/register`,{email:email,password:password,firstName:username,lastName:""});
+            window.location.href = "/login";
         }
         catch(e){
-            setRegisterLoading(false);                
-
+            setRegisterLoading(false);
+            message.error("User already exists with this email");           
         }
     }
 

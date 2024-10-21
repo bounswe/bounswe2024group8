@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import styles from "./HomePage.module.css"
 import PageHeader from '../PageHeader/PageHeader'
 import SideBar from '../SideBar/SideBar'
@@ -14,6 +14,12 @@ const HomePage = () => {
     const { id } = useParams();
 
     const passedId = id || "";
+
+    useLayoutEffect(() => {
+        if (!localStorage.getItem("jwt_token")) {
+            window.location.href = "/login";
+        }
+    },[])
 
     return (
         <>
