@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import styles from "./LoginPage.module.css";
 import { CircularProgress, TextField } from '@mui/material';
 import { message } from 'antd';
+import axios from 'axios';
+
+
 const Login = () => {
     const [email,setEmail] = useState("");
     const [emailError, setEmailError] = useState("");
@@ -47,10 +50,11 @@ const Login = () => {
         setLoginLoading(true);
         try{
             //AJAX POST Request
-            setTimeout(() => {
-            
-                window.location.href = "home";
-            }, 2000)
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/authenticate`,{email:email,password:password});
+            localStorage.setItem("username",`${response.data.firstName} ${response.data.lastName}`);
+            localStorage.setItem("user_id",response.data.userId);
+            localStorage.setItem("jwt_token",response.data.accessToken);
+            window.location.href = "/home";
         }
         catch(e){
             alert.open({

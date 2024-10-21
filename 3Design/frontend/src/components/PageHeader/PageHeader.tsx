@@ -1,4 +1,4 @@
-import { Person } from '@mui/icons-material'
+import { Logout, Person } from '@mui/icons-material'
 import React, { useEffect, useRef, useState } from 'react'
 import styles from "./PageHeader.module.css";
 import { Avatar, Dialog } from '@mui/material';
@@ -14,6 +14,13 @@ const PageHeader = () => {
         setProfileInfo({profilePhoto: "/logo192.png", tournamentPoints: "1500", username: "User62"})
     }, [])
 
+    const logout=() => {
+        localStorage.removeItem("jwt_token");
+        localStorage.removeItem("user_id");
+        localStorage.removeItem("username");
+        window.location.href = "/login";
+    }
+    
     return (
         <div className={styles.headerContainer}>
             <div className="w-1/6">
@@ -22,10 +29,13 @@ const PageHeader = () => {
             <div className='w-4/6 flex justify-center'>
                 <input type="text" placeholder="Search..." className="input input-bordered w-5/6"/>
             </div>
-            <div className='ml-auto mr-0 w-1/6 flex justify-end'>
+            <div className='ml-auto mr-0 w-1/6 flex justify-end gap-2'>
                 <button onClick={() => setProfileDialog(true)} className='btn btn-ghost'>
                     <Person sx={{color: "white"}}/>
                     <p className='font-bold text-white'>Profile</p>
+                </button>
+                <button onClick={logout} className='btn btn-ghost'>
+                    <Logout sx={{color:"white"}}/>
                 </button>
             </div>
             <Dialog maxWidth="sm" fullWidth open={profileDialog} onClose={() => setProfileDialog(false)}>
