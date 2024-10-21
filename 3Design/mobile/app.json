@@ -2,7 +2,7 @@
   "expo": {
     "name": "3Design",
     "slug": "3Design",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./app/assets/icon.png",
     "userInterfaceStyle": "light",
