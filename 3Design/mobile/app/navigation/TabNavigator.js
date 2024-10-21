@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useContext } from 'react';
-import { StyleSheet, View, Platform, StatusBar } from 'react-native';
+import { StyleSheet, Platform, StatusBar, SafeAreaView } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { Colors } from '../constants/Colors';
@@ -15,7 +15,7 @@ const Tab = createBottomTabNavigator();
 export default function TabNavigator({ navigation, route }) {
   const { setPostScreen } = useContext(PostScreenContext);
   return (
-    <View style={styles.body}>
+    <SafeAreaView style={styles.body}>
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
@@ -116,13 +116,12 @@ export default function TabNavigator({ navigation, route }) {
           }}
         />
       </Tab.Navigator>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   body: {
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     flex: 1,
     backgroundColor: Colors.light,
   },

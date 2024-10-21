@@ -52,7 +52,7 @@ const ObjViewer = ({ objFilePath }) => {
     await asset.downloadAsync();
 
     loader.load(
-      asset.uri,
+      asset.localUri,
       (object) => {
         object.traverse((child) => {
           if (child.isMesh) {
@@ -111,21 +111,21 @@ const ObjViewer = ({ objFilePath }) => {
 
   return (
     <View style={{ height: 300 }}>
-        <PanGestureHandler onGestureEvent={handlePan}>
-          <PinchGestureHandler onGestureEvent={handlePinch}>
-            <GLView
-              style={{
-                height: 300,
-                borderColor: '#000',
-                borderWidth: 2,
-                borderRadius: 10,
-              }}
-              onContextCreate={onContextCreate}
-              enableDepth={true}
-              enableStencil={true}
-            />
-          </PinchGestureHandler>
-        </PanGestureHandler>
+      <PanGestureHandler onGestureEvent={handlePan}>
+        <PinchGestureHandler onGestureEvent={handlePinch}>
+          <GLView
+            style={{
+              height: 300,
+              borderColor: '#000',
+              borderWidth: 2,
+              borderRadius: 10,
+            }}
+            onContextCreate={onContextCreate}
+            enableDepth={true}
+            enableStencil={true}
+          />
+        </PinchGestureHandler>
+      </PanGestureHandler>
     </View>
   );
 };

@@ -19,9 +19,7 @@
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": [
-        "INTERNET"
-      ],
+      "permissions": ["INTERNET"],
       "package": "com.onurcerli.ThreeDesign"
     },
     "web": {
@@ -42,8 +40,6 @@
         "projectId": "b7f9f8c1-944b-488c-b640-b9c0d50edefd"
       }
     },
-    "assetBundlePatterns": [
-      "app/assets/*"
-    ]
+    "assetBundlePatterns": ["app/assets/*"]
   }
 }
