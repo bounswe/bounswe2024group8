@@ -37,6 +37,9 @@ const Feed = () => {
     }
     
     const changeFeedType = (x : boolean) => {
+        if (x == feedType){
+            return;
+        }
         setFeedLoading(true);
         setFeedType(x);
     }

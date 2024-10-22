@@ -81,6 +81,10 @@ const CreatePost = ({dialogFunction, category} : Props) => {
                     message.error("You can only upload up to 1 file.");
                     return false; 
                 }
+                if (file.size > 10 * 1024 * 1024){
+                    message.error(`You can only upload up to 10 MBs`);
+                    return false; 
+                }
                 const fileExtension = file.name.split('.').pop();
                 const allowedExtensions = ["obj", "dae"];
                 if (!allowedExtensions.includes(fileExtension ?? "")){
