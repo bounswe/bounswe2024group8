@@ -73,8 +73,6 @@ Based on our experience during the design phase of the project, we have decided 
 ## 2.2 Evaluation of the status of deliverables
 Although we were very quick and coordinated in the design phase, we slowed down a bit in the development phase. We concur that this is caused by communication issues and insufficient planning. Still, we have managed to complete all the significant deliverables during the time until the first customer milestone.
 
-To be filled
-
 
 
 
