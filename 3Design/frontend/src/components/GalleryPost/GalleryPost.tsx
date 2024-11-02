@@ -11,6 +11,7 @@ interface Props{
 const GalleryPost = ({postData} : Props) => {
 
   const [data, setData] = useState<DPost>(postData);
+  const [modelAppearence, setModelAppearence] = useState<boolean>(false);
 
   const likeClicked = async () =>{
     if (data.disliked){
@@ -39,10 +40,15 @@ const GalleryPost = ({postData} : Props) => {
   return (
       <div className={styles.postCard}>
         <div className='flex flex-col gap-2'>
+          {modelAppearence ?
           <div className='border-gray-500 border-2'>
-            <DViewer filePath={data.fileUrl!}/>
-
+            <DViewer filePath={data.fileUrl!}/> 
+          </div> 
+          :
+          <div className={`flex justify-center items-center ${styles.previewContainer}`} style={{backgroundImage: "url(/previewmodel.jpg)"}} >
+              <button onClick={() => setModelAppearence(true)} className={`btn ${styles.viewModelBtn}`}>View Model</button>
           </div>
+          }
           <p className='font-bold text-lg'>{data.title}</p>
           <p>{data.body}</p>
         </div>

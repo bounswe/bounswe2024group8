@@ -9,3 +9,14 @@
     flex-direction: column;
     gap: 20px;
 }
+
+.previewContainer{
+    height: 211px;
+    background-position: center;
+}
+
+.viewModelBtn{
+    background: #202c34 ;
+    border: #202c34 ;
+    color:  white 
+}
