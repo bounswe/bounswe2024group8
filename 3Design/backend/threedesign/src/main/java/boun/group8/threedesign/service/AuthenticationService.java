@@ -37,8 +37,7 @@ public class AuthenticationService {
         }
 
         user = User.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+                .userName(request.getUserName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
@@ -57,8 +56,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .userId(savedUser.getId())
                 .email(savedUser.getEmail())
-                .firstName(savedUser.getFirstName())
-                .lastName(savedUser.getLastName())
+                .userName(savedUser.getUsername())
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
@@ -81,8 +79,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .userId(user.getId())
                 .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
+                .userName(user.getUsername())
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();

@@ -48,9 +48,8 @@ public class User implements UserDetails {
     @JoinColumn(name = "community_id", nullable = false)
     Community community;
 
-    @Lob
-    @Column(name = "profile_picture")
-    byte[] profilePicture;
+    @Column(name = "profile_picture_url")
+    String profilePictureUrl;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

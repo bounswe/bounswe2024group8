@@ -16,11 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserService {
 
 
-    //Dependency Injection
     final UserRepository userRepository;
-    final PasswordEncoder passwordEncoder;
-
-
 
     public User getUserByEmail(String email) {
 
