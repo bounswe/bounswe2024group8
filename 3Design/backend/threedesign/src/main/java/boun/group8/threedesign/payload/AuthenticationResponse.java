@@ -15,9 +15,7 @@ public class AuthenticationResponse {
 
     String email;
 
-    String firstName;
-
-    String lastName;
+    String userName;
 
     String accessToken;
 
