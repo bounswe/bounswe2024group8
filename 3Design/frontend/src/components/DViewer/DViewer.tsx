@@ -1,16 +1,29 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import * as OV from "online-3d-viewer"
-
+import styles from "./DViewer.module.css"
+import { CircularProgress } from '@mui/material'
+import { Spin } from 'antd'
 interface Props{
     filePath: string
 }
 
+const loadingStyle: React.CSSProperties = {
+    padding: 50,
+    borderRadius: 4,
+  };
+  
+  const loading = <div style={loadingStyle} />;
+
 const DViewer = ({filePath}: Props) => {
     const divRef = useRef<HTMLDivElement | null>(null);
     const viewerRef = useRef<OV.EmbeddedViewer | null>(null);
-
+    const [modelLoading, setModelLoading] = useState(true);
     useEffect(() => {
         let parentDiv = divRef.current;
+
+        if (viewerRef.current != null){
+            return;
+        }
 
         let viewer = new OV.EmbeddedViewer (parentDiv!, {
         camera: new OV.Camera(
@@ -30,6 +43,13 @@ const DViewer = ({filePath}: Props) => {
         viewer.LoadModelFromUrlList([
             filePath
         ]);
+        const checkModelLoad = setInterval(() => {
+            if (viewer.GetModel()) {
+                setModelLoading(false);
+                clearInterval(checkModelLoad); 
+            }
+        }, 100);
+        
         return () => {
             // ! We need to correctly clean up our viewer, it's listeners and related model data to ensure memory leaks don't occur
             // ! If you want to see what can happen if this isn't here, comment out this code and repeatedly spin up multiple viewers and then do a heap snapshot with chrome and you will see a massive amount of data that isn't being cleaned up by the garbage collector
@@ -60,9 +80,19 @@ const DViewer = ({filePath}: Props) => {
 
     }, [])
     return (
-        <div className='w-full' ref={divRef}>
-
+        <div className={styles.mainContainer}>
+            {modelLoading && 
+            <div className={styles.loadBlocker}>
+                <Spin tip="Model Loading" size='large'>
+                    {loading}
+                </Spin>
+            </div>
+            }
+            <div className={`${styles.viewerContainer} ${modelLoading && styles.hiddenModel}`} ref={divRef}>
+            
+            </div>
         </div>
+        
     )
 }
 
