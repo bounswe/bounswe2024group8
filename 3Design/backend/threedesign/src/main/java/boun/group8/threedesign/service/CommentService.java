@@ -20,25 +20,25 @@ import java.util.List;
 public class CommentService {
 
     final CommentRepository commentRepository;
-    final ReactionRepository reactionRepository;
-    final PostRepository postRepository;
+    //final ReactionRepository reactionRepository;
+    //final PostRepository postRepository;
 
     public Comment createComment(User user, CommentCreateRequest request) {
 
-        Post post = postRepository.findPostById(request.getPostId());
+        //Post post = postRepository.findPostById(request.getPostId());
 
         Comment comment = Comment.builder()
                 .text(request.getText())
                 .user(user)
-                .post(post)
+              //  .post(post)
                 .likes(0)
                 .dislikes(0)
                 .build();
 
         try {
             commentRepository.save(comment);
-            post.setComments(post.getComments() + 1);
-            postRepository.save(post);
+            //post.setComments(post.getComments() + 1);
+            //postRepository.save(post);
         }
         catch (Exception e) {
             throw new ThreeDesignDatabaseException("Comment could not be saved");
@@ -48,10 +48,10 @@ public class CommentService {
 
     public List<CommentResponse> getCommentsByPostId(User user, Long postId) {
 
-        Post post = postRepository.findPostById(postId);
+        //Post post = postRepository.findPostById(postId);
 
-        if (post == null)
-            throw new ThreeDesignDatabaseException("Post not found");
+        //if (post == null)
+         //   throw new ThreeDesignDatabaseException("Post not found");
 
         return commentRepository.findAllCommentsAndReactionsByPostAndUser(user.getId(), postId);
     }
