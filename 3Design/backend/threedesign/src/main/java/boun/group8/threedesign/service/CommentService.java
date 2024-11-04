@@ -27,11 +27,6 @@ public class CommentService {
 
         Post post = postRepository.findPostById(request.getPostId());
 
-        //TODO Allow global post reaction
-        if (!post.getPostedAt().equals(user.getCommunity().getTeam()) && !post.getPostedAt().equals(Team.GLOBAL)) {
-            throw new ThreeDesignDatabaseException("User is not allowed to comment on this post");
-        }
-
         Comment comment = Comment.builder()
                 .text(request.getText())
                 .user(user)
