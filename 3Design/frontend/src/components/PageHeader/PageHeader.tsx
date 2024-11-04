@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import styles from "./PageHeader.module.css";
 import { Avatar, Dialog } from '@mui/material';
 import { CustomProfile } from '../interfaces';
+import Search from 'antd/es/input/Search';
 const PageHeader = () => {
     const [profileDialog, setProfileDialog] = useState(false);
     const [profileInfo, setProfileInfo] = useState<CustomProfile>({profilePhoto: "", tournamentPoints: "", username: ""});
@@ -26,8 +27,14 @@ const PageHeader = () => {
             <div className="w-1/6">
                 <button onClick={() => window.location.href = "/home"} className='btn btn-ghost text-white font-extrabold'>3Design</button>
             </div>
-            <div className='w-4/6 flex justify-center'>
-                <input type="text" placeholder="Search..." className="input input-bordered w-5/6"/>
+            <div className='w-4/6 flex justify-center items-center'>
+                <Search 
+                size='large'
+                style={{width: "80%"}}
+                placeholder='Search...'
+                onSearch={(val) => window.location.href = `/search/${val}`}
+                />
+                
             </div>
             <div className='ml-auto mr-0 w-1/6 flex justify-end gap-2'>
                 <button onClick={() => setProfileDialog(true)} className='btn btn-ghost'>
