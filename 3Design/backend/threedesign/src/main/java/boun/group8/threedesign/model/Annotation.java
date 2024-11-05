@@ -3,6 +3,9 @@ package boun.group8.threedesign.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -35,5 +38,9 @@ public class Annotation {
 
         @Column(name = "user_id", nullable = false)
         Long userId;
+
+        @CreationTimestamp
+        @Column(name = "created", nullable = false)
+        Timestamp created;
 
 }
