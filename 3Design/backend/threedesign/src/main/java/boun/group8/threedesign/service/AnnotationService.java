@@ -11,5 +11,5 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AnnotationService {
 
-    final AnnotationRepository annotationRepository
+    final AnnotationRepository annotationRepository;
 }
