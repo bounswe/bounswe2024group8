@@ -1,6 +1,7 @@
 package boun.group8.threedesign.config;
 
 import boun.group8.threedesign.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -18,6 +19,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.TimeZone;
+
 @Configuration
 @EnableAsync
 @RequiredArgsConstructor
@@ -25,6 +28,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableCaching
 public class ApplicationConfiguration {
     final UserRepository userRepository;
+
+    @PostConstruct
+    void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

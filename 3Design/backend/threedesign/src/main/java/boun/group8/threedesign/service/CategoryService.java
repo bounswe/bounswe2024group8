@@ -3,16 +3,14 @@ package boun.group8.threedesign.service;
 import boun.group8.threedesign.model.Category;
 import boun.group8.threedesign.repository.CategoryRepository;
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -20,12 +18,15 @@ public class CategoryService {
 
     final CategoryRepository categoryRepository;
 
+    List<Category> categories;
+
     public CategoryService(final CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
         initializeCategories();
     }
 
-    private void initializeCategories() {
+    @Transactional
+    public void initializeCategories() {
         List<Category> dbCategories = categoryRepository.findAll();
 
         List<Long> enumIds = Arrays.stream(boun.group8.threedesign.model.enums.Category.values())
@@ -73,6 +74,12 @@ public class CategoryService {
 
         categoryRepository.saveAll(addOrUpdateCategories);
         categoryRepository.deleteAll(deleteCategories);
+
+        categories = categoryRepository.findAll();
+    }
+
+    public List<Category> getCategories() {
+        return new ArrayList<>(categories);
     }
 }
 
