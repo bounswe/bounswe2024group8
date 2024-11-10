@@ -32,3 +32,18 @@ export interface Tag{
     value: string
 }
 
+export interface SendAnnotationData{
+    target: SendAnnotationTarget,
+    body: string
+}
+
+
+export interface SendAnnotationTarget{
+    selector: SendAnnotationTargetSelector,
+    source: number
+}
+
+export interface SendAnnotationTargetSelector{
+    start: number | null,
+    end: number | null
+}
