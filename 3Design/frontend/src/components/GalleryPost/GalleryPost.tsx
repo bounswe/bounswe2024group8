@@ -1,8 +1,9 @@
-import React, { memo, SetStateAction, useEffect, useState } from 'react'
-import { DPost } from '../interfaces'
+import React, { memo, SetStateAction, useEffect, useRef, useState } from 'react'
+import { DPost, SendAnnotationData } from '../interfaces'
 import styles from "./GalleryPost.module.css"
 import DViewer from '../DViewer/DViewer'
-import { Bookmark, BookmarkBorderOutlined, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined } from '@mui/icons-material'
+import { Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined } from '@mui/icons-material'
+import { IconButton, Menu, MenuItem } from '@mui/material'
 interface Props{
   postData: DPost,
 
@@ -12,6 +13,12 @@ const GalleryPost = ({postData} : Props) => {
 
   const [data, setData] = useState<DPost>(postData);
   const [modelAppearence, setModelAppearence] = useState<boolean>(false);
+  const bodyRef = useRef<HTMLParagraphElement | null>(null);
+    const [annotationData, setAnnotationData] = useState<SendAnnotationData>(
+      {body: "", target:{selector: {end: null, start: null}, source: postData.id}}
+    );
+
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const likeClicked = async () =>{
     if (data.disliked){
@@ -37,8 +44,47 @@ const GalleryPost = ({postData} : Props) => {
     setData((prev) => ({...prev, liked: false, disliked: true, dislikeCount: prev.dislikeCount + 1}));
   }
 
+  const setAnnotation = () =>{
+    const selection = window.getSelection();
+    if (!selection){
+      return;
+    }
+    const selectedText = selection.toString();
+
+    if (selectedText && selection.anchorNode && bodyRef.current!.contains(selection.anchorNode)) {
+      const startI = selection.anchorOffset;
+      const endI = selection.focusOffset;
+      setAnnotationData(prev => ({...prev, target:{selector: {end: startI, start: endI}, source: postData.id}}) );
+    } else {
+      setAnnotationData(prev => ({...prev, target:{selector: {end: null, start: null}, source: postData.id}}) );
+    }
+  }
+
   return (
-      <div className={styles.postCard}>
+      <div onMouseOut={setAnnotation} className={styles.postCard}>
+        <div className='flex'>
+            {/* Profile picture and username div here */}
+            <div className='mr-0 ml-auto'>
+                <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                    <MoreVert/>
+                </IconButton>
+                <Menu open={!!anchorEl} anchorEl={anchorEl} onClose={() => setAnchorEl(null)}>
+                    <MenuItem className='gap-2'>
+                        <Download/>
+                        Download Model
+                    </MenuItem>
+                    <MenuItem className='gap-2'>
+                        <Shield/>
+                        Challenge Post
+                    </MenuItem>
+                    <MenuItem disabled={!annotationData.target.selector.start} className='gap-2'>
+                        <BorderColor/>
+                        Annotate
+                    </MenuItem>
+                    
+                </Menu>
+            </div>
+        </div>
         <div className='flex flex-col gap-2'>
           {modelAppearence ?
           <div className='border-gray-500 border-2'>
@@ -50,7 +96,7 @@ const GalleryPost = ({postData} : Props) => {
           </div>
           }
           <p className='font-bold text-lg'>{data.title}</p>
-          <p>{data.body}</p>
+          <p ref={bodyRef} onMouseUp={setAnnotation}>{data.body}</p>
         </div>
         <div className='flex gap-6'>
           <div className='flex items-center'>

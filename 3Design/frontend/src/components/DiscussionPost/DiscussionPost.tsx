@@ -2,7 +2,8 @@ import React, { memo, SetStateAction, useEffect, useRef, useState } from 'react'
 import { DPost, SendAnnotationData } from '../interfaces'
 import styles from "./DiscussionPost.module.css"
 import DViewer from '../DViewer/DViewer'
-import { Bookmark, BookmarkBorderOutlined, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined } from '@mui/icons-material'
+import { Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined } from '@mui/icons-material'
+import { IconButton, Menu, MenuItem } from '@mui/material'
 interface Props{
     postData: DPost,
 }
@@ -13,6 +14,8 @@ const DiscussionPost = ({postData} : Props) => {
     const [annotationData, setAnnotationData] = useState<SendAnnotationData>(
       {body: "", target:{selector: {end: null, start: null}, source: postData.id}}
     );
+
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
     const likeClicked = async () =>{
         if (data.disliked){
@@ -59,10 +62,33 @@ const DiscussionPost = ({postData} : Props) => {
     },[annotationData]) 
 
     return (
-            <div className={styles.postCard}>
+            <div onMouseOut={setAnnotation} className={styles.postCard}>
+                <div className='flex'>
+                    {/* Profile picture and username div here */}
+                    <div className='mr-0 ml-auto'>
+                        <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                            <MoreVert/>
+                        </IconButton>
+                        <Menu open={!!anchorEl} anchorEl={anchorEl} onClose={() => setAnchorEl(null)}>
+                            {/* <MenuItem className='gap-2'>
+                                <Download/>
+                                Download Model
+                            </MenuItem> 
+                            <MenuItem className='gap-2'>
+                                <Shield/>
+                                Challenge Post
+                            </MenuItem>*/}
+                            <MenuItem disabled={!annotationData.target.selector.start} className='gap-2'>
+                                <BorderColor/>
+                                Annotate
+                            </MenuItem>
+                            
+                        </Menu>
+                    </div>
+                </div>
                 <div className='flex flex-col gap-2'>
                     <p className='font-bold text-lg'>{data.title}</p>
-                    <p ref={bodyRef} onMouseUp={setAnnotation}>{data.body}</p>
+                    <p ref={bodyRef} onMouseUp={setAnnotation} >{data.body}</p>
                 </div>
                 <div className='flex gap-6'>
                     <div className='flex items-center'>
