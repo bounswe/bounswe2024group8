@@ -37,8 +37,8 @@ const GenericFeed = () => {
             ) : 
                 postData.map((item, index) => (
                     item.visual ?
-                    <GalleryPost key={item.id} postData={item}/> :
-                    <DiscussionPost key={item.id} postData={item} />
+                    <GalleryPost key={`g_${item.id}`} postData={item}/> :
+                    <DiscussionPost key={`d_${item.id}`} postData={item} />
                 )) 
             }
             
