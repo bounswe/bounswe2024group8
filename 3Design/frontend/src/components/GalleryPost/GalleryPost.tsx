@@ -4,6 +4,7 @@ import styles from "./GalleryPost.module.css"
 import DViewer from '../DViewer/DViewer'
 import { Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined } from '@mui/icons-material'
 import { IconButton, Menu, MenuItem } from '@mui/material'
+import { formatInteractions } from '../tsfunctions'
 interface Props{
   postData: DPost,
 
@@ -14,11 +15,12 @@ const GalleryPost = ({postData} : Props) => {
   const [data, setData] = useState<DPost>(postData);
   const [modelAppearence, setModelAppearence] = useState<boolean>(false);
   const bodyRef = useRef<HTMLParagraphElement | null>(null);
-    const [annotationData, setAnnotationData] = useState<SendAnnotationData>(
-      {body: "", target:{selector: {end: null, start: null}, source: postData.id}}
-    );
+  const [annotationData, setAnnotationData] = useState<SendAnnotationData>(
+    {body: "", target:{selector: {end: null, start: null}, source: postData.id}}
+  );
 
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [downloadStatus, setDownloadStatus] = useState(false);
 
   const likeClicked = async () =>{
     if (data.disliked){
@@ -60,6 +62,18 @@ const GalleryPost = ({postData} : Props) => {
     }
   }
 
+  const downloadModel = () => {
+    setDownloadStatus(true);
+    const lnk = document.createElement("a");
+    lnk.href = postData.fileUrl!;
+    lnk.download = `model_${postData.id}.${postData.fileUrl!.split(".").slice(-1)}`;
+    lnk.click();
+    lnk.remove();
+    setTimeout(() => {
+      setDownloadStatus(false);
+    }, 5000);
+  }
+
   return (
       <div onMouseOut={setAnnotation} className={styles.postCard}>
         <div className='flex'>
@@ -69,7 +83,7 @@ const GalleryPost = ({postData} : Props) => {
                     <MoreVert/>
                 </IconButton>
                 <Menu open={!!anchorEl} anchorEl={anchorEl} onClose={() => setAnchorEl(null)}>
-                    <MenuItem className='gap-2'>
+                    <MenuItem disabled={downloadStatus} onClick={downloadModel} className='gap-2'>
                         <Download/>
                         Download Model
                     </MenuItem>
@@ -107,7 +121,7 @@ const GalleryPost = ({postData} : Props) => {
                 <ThumbUpOutlined/>
               }
             </button>
-            <p>{data.likeCount}</p>
+            <p className={styles.interactionCount}>{formatInteractions(data.likeCount)}</p>
           </div>
           <div className="flex items-center">
             <button onClick={dislikeClicked} className='btn btn-ghost'>
@@ -118,7 +132,7 @@ const GalleryPost = ({postData} : Props) => {
               }
               
             </button>
-            <p>{data.dislikeCount}</p>
+            <p className={styles.interactionCount}>{formatInteractions(data.dislikeCount)}</p>
           </div>
           <button
             onClick={() => {

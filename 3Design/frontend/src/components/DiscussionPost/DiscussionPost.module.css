@@ -9,3 +9,7 @@
     flex-direction: column;
     gap: 20px;
 }
+
+.interactionCount{
+    min-width: 39px;
+}
