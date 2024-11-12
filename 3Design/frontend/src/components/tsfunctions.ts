@@ -20,3 +20,19 @@ export function formatInteractions(num: number): string {
     }
     return num.toString();
 }
+
+export function getPostFromId(id: string | undefined){
+    if (!id){
+        return null;
+    }
+    const intId = parseInt(id);
+    const posts = require("../resources/json-files/MockGenericPosts.json");
+    for (let i = 0; i < posts.length; i++) {
+        const element = posts[i];
+        if (element.id == intId){
+            return element;
+        }
+        
+    }
+    return null;
+}

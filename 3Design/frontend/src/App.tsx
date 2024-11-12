@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import LoginPage from './components/Login/LoginPage';
 import HomePage from './components/HomePage/HomePage';
 import RegisterPage from './components/RegisterPage/RegisterPage';
+import PostPage from './components/PostPage/PostPage';
 
 function App() {
   return (
@@ -27,6 +28,12 @@ function App() {
           path="/home/:id"
           element={
             <HomePage/>
+          }
+        />
+        <Route
+          path="/post/:id"
+          element={
+            <PostPage/>
           }
         />
         <Route
