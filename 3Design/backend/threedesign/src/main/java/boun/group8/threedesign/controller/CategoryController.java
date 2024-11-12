@@ -21,28 +21,23 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<Category>> getAllCategories() {
+
         List<Category> categories = categoryService.getAllCategories();
+
+        if (categories.isEmpty())
+            return ResponseEntity.noContent().build();
+
         return ResponseEntity.ok(categories);
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+
         Category category = categoryService.getCategoryById(id);
+
         return ResponseEntity.ok(category);
     }
-
-
-//    @PutMapping("/change-password")
-//    public ResponseEntity<Boolean> updatePassword(
-//            @AuthenticationPrincipal User user,
-//            @PathVariable Long userId,
-//            @RequestParam String password) {
-//
-//        Boolean result = userService.updatePassword(user, userId, password);
-//
-//        return ResponseEntity.ok(result);
-//    }
 
 
 
