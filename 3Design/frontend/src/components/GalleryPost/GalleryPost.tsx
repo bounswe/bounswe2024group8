@@ -111,7 +111,9 @@ const GalleryPost = ({postData} : Props) => {
           </div> 
           :
           <div className={`flex justify-center items-center ${styles.previewContainer}`} style={{backgroundImage: "url(/previewmodel.jpg)"}} >
-              <button onClick={() => setModelAppearence(true)} className={`btn ${styles.viewModelBtn}`}>View Model</button>
+              <button onClick={(event) => {
+                event.stopPropagation();
+                setModelAppearence(true)}} className={`btn ${styles.viewModelBtn}`}>View Model</button>
           </div>
           }
           <p className='font-bold text-lg'>{data.title}</p>

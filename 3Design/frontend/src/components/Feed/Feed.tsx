@@ -7,10 +7,11 @@ import { Skeleton } from 'antd';
 import { getCategoryById } from '../tsfunctions';
 
 interface Props{
-    category: string
+    category: string,
+    pageNumber: number
 }
 
-const Feed = ({category}: Props) => {
+const Feed = ({category, pageNumber}: Props) => {
     const [postData, setPostData] = useState<DPost[]>([]);
     const [feedType, setFeedType] = useState(true);
     const [feedLoading, setFeedLoading] = useState(true);
@@ -28,8 +29,8 @@ const Feed = ({category}: Props) => {
             setFeedLoading(false);
             return;
         }
-        const data = require("../../resources/json-files/MockDiscussions.json");
-        setPostData(data);
+        const data : DPost[] = require("../../resources/json-files/MockDiscussions.json");
+        setPostData(data.slice(2*(pageNumber-1), 2*pageNumber));
         setFeedLoading(false);
 
     }

@@ -4,7 +4,11 @@ import GalleryPost from '../GalleryPost/GalleryPost';
 import { Skeleton } from 'antd';
 import DiscussionPost from '../DiscussionPost/DiscussionPost';
 import styles from "./GenericFeed.module.css";
-const GenericFeed = () => {
+interface Props{
+pageNumber: number
+}
+
+const GenericFeed = ({pageNumber}:Props) => {
     const [postData, setPostData] = useState<DPost[]>([]);
     const [feedLoading, setFeedLoading] = useState(true);
 
@@ -16,7 +20,7 @@ const GenericFeed = () => {
         // AJAX Request
 
         const data = require("../../resources/json-files/MockGenericPosts.json");
-        setPostData(data);
+        setPostData(data.slice(2*(pageNumber-1), 2*pageNumber));
         setFeedLoading(false);
 
     }
