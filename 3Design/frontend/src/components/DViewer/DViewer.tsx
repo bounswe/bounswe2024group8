@@ -80,7 +80,7 @@ const DViewer = ({filePath}: Props) => {
 
     }, [])
     return (
-        <div className={styles.mainContainer}>
+        <div onClick={(event)=>event.stopPropagation()} className={styles.mainContainer}>
             {modelLoading && 
             <div className={styles.loadBlocker}>
                 <Spin tip="Model Loading" size='large'>
