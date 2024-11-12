@@ -5,10 +5,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { Colors } from '../constants/Colors';
 import FeedScreen from '../screens/FeedScreen';
-import CreatePostScreen from '../screens/CreatePostScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import DrawerNavigator from './DrawerNavigator';
 import { PostScreenContext } from '../context/PostScreenContext';
+import PostCreationScreen from '../screens/CreatePostScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -48,7 +48,7 @@ export default function TabNavigator({ navigation, route }) {
         />
         <Tab.Screen
           name='CreatePost'
-          component={CreatePostScreen}
+          component={PostCreationScreen}
           options={{
             tabBarIcon: ({ focused, color }) => {
               return (
