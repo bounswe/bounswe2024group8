@@ -1,8 +1,10 @@
-import React, { memo, SetStateAction, useEffect, useState } from 'react'
-import { DPost } from '../interfaces'
+import React, { memo, SetStateAction, useEffect, useRef, useState } from 'react'
+import { DPost, SendAnnotationData } from '../interfaces'
 import styles from "./GalleryPost.module.css"
 import DViewer from '../DViewer/DViewer'
-import { Bookmark, BookmarkBorderOutlined, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined } from '@mui/icons-material'
+import { Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined } from '@mui/icons-material'
+import { IconButton, Menu, MenuItem } from '@mui/material'
+import { formatInteractions } from '../tsfunctions'
 interface Props{
   postData: DPost,
 
@@ -11,6 +13,14 @@ interface Props{
 const GalleryPost = ({postData} : Props) => {
 
   const [data, setData] = useState<DPost>(postData);
+  const [modelAppearence, setModelAppearence] = useState<boolean>(false);
+  const bodyRef = useRef<HTMLParagraphElement | null>(null);
+  const [annotationData, setAnnotationData] = useState<SendAnnotationData>(
+    {body: "", target:{selector: {end: null, start: null}, source: postData.id}}
+  );
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [downloadStatus, setDownloadStatus] = useState(false);
 
   const likeClicked = async () =>{
     if (data.disliked){
@@ -36,15 +46,71 @@ const GalleryPost = ({postData} : Props) => {
     setData((prev) => ({...prev, liked: false, disliked: true, dislikeCount: prev.dislikeCount + 1}));
   }
 
-  return (
-      <div className={styles.postCard}>
-        <div className='flex flex-col gap-2'>
-          <div className='border-gray-500 border-2'>
-            <DViewer filePath={data.fileUrl!}/>
+  const setAnnotation = () =>{
+    const selection = window.getSelection();
+    if (!selection){
+      return;
+    }
+    const selectedText = selection.toString();
 
+    if (selectedText && selection.anchorNode && bodyRef.current!.contains(selection.anchorNode)) {
+      const startI = selection.anchorOffset;
+      const endI = selection.focusOffset;
+      setAnnotationData(prev => ({...prev, target:{selector: {end: startI, start: endI}, source: postData.id}}) );
+    } else {
+      setAnnotationData(prev => ({...prev, target:{selector: {end: null, start: null}, source: postData.id}}) );
+    }
+  }
+
+  const downloadModel = () => {
+    setDownloadStatus(true);
+    const lnk = document.createElement("a");
+    lnk.href = postData.fileUrl!;
+    lnk.download = `model_${postData.id}.${postData.fileUrl!.split(".").slice(-1)}`;
+    lnk.click();
+    lnk.remove();
+    setTimeout(() => {
+      setDownloadStatus(false);
+    }, 5000);
+  }
+
+  return (
+      <div onMouseOut={setAnnotation} className={styles.postCard}>
+        <div className='flex'>
+            {/* Profile picture and username div here */}
+            <div className='mr-0 ml-auto'>
+                <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                    <MoreVert/>
+                </IconButton>
+                <Menu open={!!anchorEl} anchorEl={anchorEl} onClose={() => setAnchorEl(null)}>
+                    <MenuItem disabled={downloadStatus} onClick={downloadModel} className='gap-2'>
+                        <Download/>
+                        Download Model
+                    </MenuItem>
+                    <MenuItem className='gap-2'>
+                        <Shield/>
+                        Challenge Post
+                    </MenuItem>
+                    <MenuItem disabled={!annotationData.target.selector.start} className='gap-2'>
+                        <BorderColor/>
+                        Annotate
+                    </MenuItem>
+                    
+                </Menu>
+            </div>
+        </div>
+        <div className='flex flex-col gap-2'>
+          {modelAppearence ?
+          <div className='border-gray-500 border-2'>
+            <DViewer filePath={data.fileUrl!}/> 
+          </div> 
+          :
+          <div className={`flex justify-center items-center ${styles.previewContainer}`} style={{backgroundImage: "url(/previewmodel.jpg)"}} >
+              <button onClick={() => setModelAppearence(true)} className={`btn ${styles.viewModelBtn}`}>View Model</button>
           </div>
+          }
           <p className='font-bold text-lg'>{data.title}</p>
-          <p>{data.body}</p>
+          <p ref={bodyRef} onMouseUp={setAnnotation}>{data.body}</p>
         </div>
         <div className='flex gap-6'>
           <div className='flex items-center'>
@@ -55,7 +121,7 @@ const GalleryPost = ({postData} : Props) => {
                 <ThumbUpOutlined/>
               }
             </button>
-            <p>{data.likeCount}</p>
+            <p className={styles.interactionCount}>{formatInteractions(data.likeCount)}</p>
           </div>
           <div className="flex items-center">
             <button onClick={dislikeClicked} className='btn btn-ghost'>
@@ -66,7 +132,7 @@ const GalleryPost = ({postData} : Props) => {
               }
               
             </button>
-            <p>{data.dislikeCount}</p>
+            <p className={styles.interactionCount}>{formatInteractions(data.dislikeCount)}</p>
           </div>
           <button
             onClick={() => {

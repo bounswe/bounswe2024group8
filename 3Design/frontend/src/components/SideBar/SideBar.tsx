@@ -7,13 +7,7 @@ interface Props{
 }
 
 const SideBar = ({active} : Props) => {
-    const [categories, setCategories] = useState<Category[]>([
-        {text: "Characters", id: "characters"},
-        {text: "Enviroments", id: "enviroments"},
-        {text: "Props", id: "props"},
-        {text: "Vehicles", id: "vehicles"},
-        {text: "Animations", id: "animations"},
-    ])
+    const [categories, setCategories] = useState<Category[]>(require("../../resources/json-files/Categories.json"));
     return (
         <div className={styles.mainContainer}>
             <p className={styles.categoriesText}>Categories</p>

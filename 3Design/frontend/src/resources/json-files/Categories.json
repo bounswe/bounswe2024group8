@@ -1,0 +1,7 @@
+[
+    {"text": "Characters", "id": "characters"},
+    {"text": "Enviroments", "id": "enviroments"},
+    {"text": "Props", "id": "props"},
+    {"text": "Vehicles", "id": "vehicles"},
+    {"text": "Animations", "id": "animations"}
+]

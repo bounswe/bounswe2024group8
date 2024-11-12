@@ -3,6 +3,9 @@ package boun.group8.threedesign.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -27,10 +30,17 @@ public class Annotation {
         @Column(name = "content", nullable = false)
         String content;
 
-        @Column(name = "post_id", nullable = false)
+        @Column(name = "post_id", nullable = true)
         Long postId;
 
-//        @Column(name = "user_id", nullable = false)
-//        Long userId;
+        @Column(name = "comment_id", nullable = true)
+        Long commentId;
+
+        @Column(name = "user_id", nullable = false)
+        Long userId;
+
+        @CreationTimestamp
+        @Column(name = "created", nullable = false)
+        Timestamp created;
 
 }

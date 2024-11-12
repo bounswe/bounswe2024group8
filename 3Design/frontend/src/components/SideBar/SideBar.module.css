@@ -5,8 +5,10 @@
     gap: 16px;
     padding: 1%;
     background-color: #f8f4f4;
-    min-height: 100vh;
-    height: auto;
+    position: sticky;
+    top: 80px;
+    height: calc(100vh - 80px);
+    overflow-y: scroll;
 }
 
 .categoriesText{
