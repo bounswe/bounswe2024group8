@@ -26,8 +26,12 @@ public class PostService {
     final UserRepository userRepository;
 
     public Post createPost(Long userId, PostCreateRequest request) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ThreeDesignDatabaseException("User not found with ID: " + userId));
+        User user = userRepository.findUserById(userId);
+
+        if (user == null) {
+            throw new ThreeDesignDatabaseException("User not found with ID: " + userId);
+        }
+
         Post post = Post.builder()
                 .title(request.getTitle())
                 .text(request.getText())
@@ -52,7 +56,13 @@ public class PostService {
 
 
     public Post getPostByIdElseThrow(Long id) {
-        return postRepository.findById(id)
-                .orElseThrow(() -> new ThreeDesignDatabaseException("Post not found with ID: " + id));
+        var post = postRepository.getPostById(id);
+
+        if (post == null) {
+            throw new ThreeDesignDatabaseException("Post not found with ID: " + id);
+        }
+
+        return post;
+
     }
 }

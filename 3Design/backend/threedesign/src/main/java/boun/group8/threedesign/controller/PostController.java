@@ -21,13 +21,17 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<Post> createPost(@RequestBody PostCreateRequest request) {
+
         Post createdPost = postService.createPost(request.getUserId(), request);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Post> getPostById(@PathVariable Long id) {
+
         Post post = postService.getPostByIdElseThrow(id);
+
         return ResponseEntity.ok(post);
     }
 }
