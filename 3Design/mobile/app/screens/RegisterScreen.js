@@ -16,16 +16,13 @@ import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 
 export default function RegisterScreen({ navigation }) {
-  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const ref_username = useRef();
-  const ref_firstName = useRef();
-  const ref_lastName = useRef();
+  const ref_email = useRef();
   const ref_password = useRef();
 
   const { setUser } = useContext(AuthContext);
@@ -35,18 +32,17 @@ export default function RegisterScreen({ navigation }) {
   };
 
   const validateCredentials = () => {
-    // prettier-ignore
-    if (!email) {
-      return 'Enter your email to create your account.';
-    } 
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return 'Invalid email format.';
-    } 
-    else if (!username) {
+    if (!username) {
       return 'Enter your username to create your account.';
     } 
     else if (username.length < 5) {
       return 'The username has to be at least 5 characters.';
+    } 
+    else if (!email) {
+      return 'Enter your email to create your account.';
+    } 
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return 'Invalid email format.';
     } 
     else if (!password){
       return "Enter your password to create your account.";
@@ -61,10 +57,8 @@ export default function RegisterScreen({ navigation }) {
 
   const onSignupClick = () => {
     const userParams = {
-      email: email,
       username: username,
-      firstName: firstName,
-      lastName: lastName,
+      email: email,
       password: password,
     };
 
@@ -104,46 +98,25 @@ export default function RegisterScreen({ navigation }) {
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputText}
-            onChangeText={setEmail}
-            onFocus={clearError}
-            placeholder='Email'
-            autoCapitalize='none'
-            value={email}
-            onSubmitEditing={() => ref_username.current.focus()}
-            blurOnSubmit={false}
-          />
-          <TextInput
-            style={styles.inputText}
             onChangeText={setUsername}
             onFocus={clearError}
             placeholder='Username'
             autoCapitalize='none'
             value={username}
-            onSubmitEditing={() => ref_firstName.current.focus()}
+            onSubmitEditing={() => ref_email.current.focus()}
+            blurOnSubmit={false}
             ref={ref_username}
-            blurOnSubmit={false}
           />
           <TextInput
             style={styles.inputText}
-            onChangeText={setFirstName}
+            onChangeText={setEmail}
             onFocus={clearError}
-            placeholder='First Name'
-            autoCapitalize='words'
-            value={firstName}
-            onSubmitEditing={() => ref_lastName.current.focus()}
-            ref={ref_firstName}
-            blurOnSubmit={false}
-          />
-          <TextInput
-            style={styles.inputText}
-            onChangeText={setLastName}
-            onFocus={clearError}
-            placeholder='Last Name'
-            autoCapitalize='words'
-            value={lastName}
+            placeholder='Email'
+            autoCapitalize='none'
+            value={email}
             onSubmitEditing={() => ref_password.current.focus()}
-            ref={ref_lastName}
             blurOnSubmit={false}
+            ref={ref_email}
           />
           <TextInput
             style={styles.inputText}
@@ -177,21 +150,15 @@ const styles = StyleSheet.create({
       Math.round(Dimensions.get('window').height * 0.8) +
       (Platform.OS === 'android' ? StatusBar.currentHeight : 0),
     flex: 1,
-    display: 'flex',
     justifyContent: 'center',
     backgroundColor: Colors.light,
   },
   container: {
-    display: 'flex',
-    height: Math.round(Dimensions.get('window').height * 0.8),
     width: '100%',
-    justifyContent: 'flex-start',
     alignItems: 'center',
   },
   headerContainer: {
-    height: '10%',
-    width: '100%',
-    justifyContent: 'center',
+    marginBottom: 20,
     alignItems: 'center',
   },
   header: {
@@ -199,50 +166,43 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   inputContainer: {
-    height: '60%',
-    width: '100%',
-    paddingHorizontal: '5%',
-    justifyContent: 'space-between',
+    width: '90%',
     alignItems: 'center',
   },
   inputText: {
-    height: '17%',
     width: '100%',
     borderWidth: 2,
-    paddingLeft: '5%',
+    paddingLeft: 15,
     borderRadius: 5,
     borderColor: Colors.dark,
-    fontSize: 20,
+    fontSize: 18,
+    marginBottom: 15,
+    paddingVertical: 10,
   },
   errorContainer: {
-    height: '7%',
-    width: '100%',
-    justifyContent: 'center',
+    marginVertical: 10,
     alignItems: 'center',
   },
   errorText: {
     color: Colors.red,
     textAlign: 'center',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '500',
   },
   buttonContainer: {
-    height: '25%',
-    width: '100%',
-    paddingHorizontal: '10%',
+    width: '90%',
+    marginTop: 20,
   },
   signupButton: {
-    height: '45%',
-    width: '100%',
     backgroundColor: Colors.dark,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
-    marginBottom: '5%',
+    paddingVertical: 15,
   },
   signupButtonText: {
     color: Colors.light,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
   },
 });

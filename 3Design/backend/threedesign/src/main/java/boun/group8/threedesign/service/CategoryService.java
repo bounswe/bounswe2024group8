@@ -1,5 +1,6 @@
 package boun.group8.threedesign.service;
 
+import boun.group8.threedesign.exception.custom.ThreeDesignDatabaseException;
 import boun.group8.threedesign.model.Category;
 import boun.group8.threedesign.repository.CategoryRepository;
 import lombok.AccessLevel;
@@ -74,5 +75,22 @@ public class CategoryService {
         categoryRepository.saveAll(addOrUpdateCategories);
         categoryRepository.deleteAll(deleteCategories);
     }
+
+    public List<Category> getAllCategories() {
+
+        return categoryRepository.findAll();
+    }
+
+    public Category getCategoryById(Long id) {
+        Category category =  categoryRepository.getCategoryById(id);
+
+        if (category == null) {
+            throw new ThreeDesignDatabaseException("Category not found with id: " + id);
+        }
+
+        return category;
+    }
+
 }
+
 

@@ -18,7 +18,8 @@ const DiscussionPost = ({postData} : Props) => {
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-    const likeClicked = async () =>{
+    const likeClicked = async (event:any) =>{
+        event.stopPropagation();
         if (data.disliked){
             setData((prev) => ({...prev, disliked: false, liked: true, likeCount: prev.likeCount + 1, dislikeCount: prev.dislikeCount - 1}));
             return;
@@ -30,7 +31,8 @@ const DiscussionPost = ({postData} : Props) => {
         setData((prev) => ({...prev, disliked: false, liked: true, likeCount: prev.likeCount + 1}));
     }
 
-    const dislikeClicked = async () =>{
+    const dislikeClicked = async (event:any) =>{
+        event.stopPropagation();
         if (data.liked){
             setData((prev) => ({...prev, liked: false, disliked: true, dislikeCount: prev.dislikeCount + 1, likeCount: prev.likeCount - 1}));
             return;
@@ -63,11 +65,13 @@ const DiscussionPost = ({postData} : Props) => {
     },[annotationData]) 
 
     return (
-            <div onMouseOut={setAnnotation} className={styles.postCard}>
+            <div onMouseOut={setAnnotation} className={styles.postCard} onClick={() => {window.location.href = `/post/${postData.id}`}}>
                 <div className='flex'>
                     {/* Profile picture and username div here */}
                     <div className='mr-0 ml-auto'>
-                        <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                        <IconButton onClick={(e) => {
+                            e.stopPropagation();
+                            setAnchorEl(e.currentTarget)}}>
                             <MoreVert/>
                         </IconButton>
                         <Menu open={!!anchorEl} anchorEl={anchorEl} onClose={() => setAnchorEl(null)}>
@@ -114,7 +118,8 @@ const DiscussionPost = ({postData} : Props) => {
                         <p className={styles.interactionCount}>{formatInteractions(data.dislikeCount)}</p>
                     </div>
                     <button
-                        onClick={() => {
+                        onClick={(event) => {
+                            event.stopPropagation();
                             setData((prev) => ({...prev, bookmark: !prev.bookmark}))
 
 
