@@ -3,11 +3,11 @@ import { useParams } from "react-router-dom";
 import { getPostFromId } from "../tsfunctions";
 import { useState } from "react";
 import { DPost } from "../interfaces";
-import GalleryPost from "../GalleryPost/GalleryPost";
-import DiscussionPost from "../DiscussionPost/DiscussionPost";
+import GalleryPost from "../GalleryPost/Page/GalleryPost";
+import DiscussionPost from "../DiscussionPost/Page/DiscussionPost";
 import SideBar from "../SideBar/SideBar";
 import PageHeader from "../PageHeader/PageHeader";
-
+import styles from "./PostPage.module.css"
 
 
 const PostPage = () => {
@@ -32,7 +32,14 @@ const PostPage = () => {
             <PageHeader/>
             <div className='flex'>
                 <SideBar active={""}/>
-                {postData.visual ? <GalleryPost postData={postData}/> : <DiscussionPost postData={postData}/> }
+                <div className={styles.mainContainer}>
+                    {postData.visual ? 
+                    
+                        <GalleryPost  postData={postData}/>
+                    :
+                        <DiscussionPost postData={postData}/> 
+                    }
+                </div> 
                 
             </div>
 

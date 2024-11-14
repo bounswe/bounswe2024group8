@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { DPost } from '../interfaces'
-import GalleryPost from '../GalleryPost/GalleryPost';
+import GalleryPost from '../GalleryPost/Clickable/GalleryPost';
 import styles from "./Feed.module.css"
-import DiscussionPost from '../DiscussionPost/DiscussionPost';
+import DiscussionPost from '../DiscussionPost/Clickable/DiscussionPost';
 import { Skeleton } from 'antd';
 import { getCategoryById } from '../tsfunctions';
 
@@ -72,10 +72,10 @@ const Feed = ({category, pageNumber}: Props) => {
             ) : 
             feedType ? 
                     postData.map((item, index) => (
-                        <GalleryPost key={item.id} postData={item}/>
+                        <GalleryPost  key={item.id} postData={item}/>
                     )) : 
                     postData.map((item, index) => (
-                        <DiscussionPost key={item.id} postData={item}/>
+                        <DiscussionPost  key={item.id} postData={item}/>
                     ))
             }
             
