@@ -19,5 +19,6 @@ public class PostCreateRequest {
     Long challengedPostId;
     Set<String> tags;
     MultipartFile file;
+    Boolean joinToTournament;
 
 }

@@ -15,14 +15,11 @@ import boun.group8.threedesign.repository.CategoryRepository;
 
 import boun.group8.threedesign.payload.PostCreateRequest;
 import boun.group8.threedesign.repository.PostRepository;
+import boun.group8.threedesign.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,15 +42,13 @@ public class PostService {
     //TODO getbookmarkedposts
 
     final CategoryRepository categoryRepository;
+    final UserRepository userRepository;
+    final TournamentService tournamentService;
 
     @Transactional
     public Post createPost(User user, PostCreateRequest request) throws IOException {
 
         validatePostRequest(request);
-
-        if (user == null) {
-            throw new ThreeDesignDatabaseException("User not found");
-        }
 
         String fileUrl = null;
         if (request.getIsVisualPost()) {
@@ -75,8 +70,15 @@ public class PostService {
                 .challengedPostId(request.getChallengedPostId())
                 .build();
 
-        // Save the post to the repository
-        return postRepository.save(post);
+        Post created;
+        try {
+            created = postRepository.save(post);
+        } catch (Exception e) {
+            throw new ThreeDesignDatabaseException("Error while saving post");
+        }
+
+        tournamentService.enterTournament(user, created);
+        return created;
     }
 
     private void validatePostRequest(PostCreateRequest request) {
