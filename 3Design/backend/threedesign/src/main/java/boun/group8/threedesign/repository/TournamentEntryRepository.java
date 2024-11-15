@@ -7,4 +7,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TournamentEntryRepository extends JpaRepository<TournamentEntry, Long> {
+
+    TournamentEntry findByUserIdAndTournamentId(Long userId, Long tournamentId);
+
+    TournamentEntry findByPostIdAndTournamentId(Long postId, Long tournamentId);
 }

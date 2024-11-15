@@ -1,7 +1,10 @@
 package boun.group8.threedesign.service;
 
 import boun.group8.threedesign.exception.custom.ThreeDesignDatabaseException;
+import boun.group8.threedesign.model.Post;
 import boun.group8.threedesign.model.Tournament;
+import boun.group8.threedesign.model.TournamentEntry;
+import boun.group8.threedesign.model.User;
 import boun.group8.threedesign.repository.TournamentEntryRepository;
 import boun.group8.threedesign.repository.TournamentRepository;
 import lombok.AccessLevel;
@@ -106,6 +109,64 @@ public class TournamentService {
         SetTournaments();
     }
 
+    public Tournament getCurrentTournamentByCategoryId(Long categoryId){
+        Tournament tournament = tournaments.stream().filter(t -> t.getCategoryId().equals(categoryId) && !t.getIsFinished()).findFirst().orElse(null);
+
+        return tournament;
+    }
 
 
+    @Transactional
+    public void enterTournament(User user, Post post) {
+        var categoryId = post.getCategoryId();
+
+        Tournament currentTournament = getCurrentTournamentByCategoryId(categoryId);
+
+        if (currentTournament == null) {
+            throw new ThreeDesignDatabaseException("No active tournament for categoryId: " + categoryId);
+        }
+
+        var entry = tournamentEntryRepository.findByUserIdAndTournamentId(user.getId(), currentTournament.getId());
+
+        if (entry != null) {
+            throw new ThreeDesignDatabaseException("User already entered the tournament for categoryId: " + categoryId);
+        }
+
+        var tournamentEntry = new TournamentEntry();
+        tournamentEntry.setTournament(currentTournament);
+        tournamentEntry.setUser(user);
+        tournamentEntry.setPostId(post.getId());
+        tournamentEntry.setScore(0);
+
+        try {
+            tournamentEntryRepository.save(tournamentEntry);
+        } catch (Exception e) {
+            throw new ThreeDesignDatabaseException("Failed to enter the tournament", e);
+        }
+    }
+
+    //Should call this method whenever there is a possible interaction with any post.
+    @Transactional
+    public void updatePostScoreIfPossible(Post post, int additionalScore){
+        var categoryId = post.getCategoryId();
+        var currentTournament = getCurrentTournamentByCategoryId(categoryId);
+
+        if (currentTournament == null) {
+            return;
+        }
+
+        var entry = tournamentEntryRepository.findByPostIdAndTournamentId(post.getId(), currentTournament.getId());
+
+        if (entry == null) {
+            return;
+        }
+
+        entry.setScore(entry.getScore() + additionalScore);
+
+        try {
+            tournamentEntryRepository.save(entry);
+        } catch (Exception e) {
+            throw new ThreeDesignDatabaseException("Failed to update tournament score", e);
+        }
+    }
 }
