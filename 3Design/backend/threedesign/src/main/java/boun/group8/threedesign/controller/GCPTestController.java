@@ -23,10 +23,10 @@ public class GCPTestController {
 
         try {
             var url = fileService.uploadFile(file);
+            return ResponseEntity.ok(url);
         } catch (IOException e) {
             return ResponseEntity.badRequest().body("Error while uploading photo.");
         }
-        return ResponseEntity.ok("Photo uploaded successfully.");
 
     }
 }
