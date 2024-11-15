@@ -10,7 +10,9 @@ import org.apache.jena.query.ResultSet;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -21,20 +23,47 @@ public class WikidataService {
     // Star -> Constellation
     // Lion -> Bee
 
-    public List<String> searchSiblings(String keyword) {
+
+    public Map<String, String> fetchParentClasses(String keyword) {
         String sparqlQuery = "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n" +
                 "PREFIX wd: <http://www.wikidata.org/entity/>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "SELECT DISTINCT ?searchedItem ?parentClass ?parentLabel ?sibling ?siblingLabel WHERE {\n" +
+                "SELECT DISTINCT ?parentClass ?parentLabel WHERE {\n" +
                 "  ?searchedItem rdfs:label \"" + keyword + "\"@en;\n" +
                 "                wdt:P279 ?parentClass.\n" +
                 "  ?parentClass rdfs:label ?parentLabel.\n" +
-                "  ?sibling wdt:P279 ?parentClass;\n" +
-                "           rdfs:label ?siblingLabel.\n" +
                 "  FILTER(lang(?parentLabel) = \"en\")\n" +
+                "}";
+
+        // Execute SPARQL query
+        QueryExecution queryExec = QueryExecutionFactory.sparqlService("https://qlever.cs.uni-freiburg.de/api/wikidata", sparqlQuery);
+        ResultSet resultSet = queryExec.execSelect();
+
+        // Process results
+        Map<String, String> parentClasses = new HashMap<>();
+        while (resultSet.hasNext()) {
+            QuerySolution solution = resultSet.nextSolution();
+            if (solution.contains("parentClass") && solution.contains("parentLabel")) {
+                parentClasses.put(solution.get("parentClass").toString(), solution.get("parentLabel").toString());
+            }
+        }
+
+        // Close query execution
+        queryExec.close();
+
+        return parentClasses;
+    }
+
+    public List<String> fetchSiblings(String parentClass) {
+        String sparqlQuery = "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n" +
+                "PREFIX wd: <http://www.wikidata.org/entity/>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "SELECT DISTINCT ?sibling ?siblingLabel WHERE {\n" +
+                "  ?sibling wdt:P279 <" + parentClass + ">;\n" +
+                "           rdfs:label ?siblingLabel.\n" +
                 "  FILTER(lang(?siblingLabel) = \"en\")\n" +
-                "  FILTER(?sibling != ?searchedItem)\n" +
-                "} LIMIT 10";
+                "  FILTER(?sibling != <" + parentClass + ">)\n" +
+                "} LIMIT 5";
 
         // Execute SPARQL query
         QueryExecution queryExec = QueryExecutionFactory.sparqlService("https://qlever.cs.uni-freiburg.de/api/wikidata", sparqlQuery);
@@ -53,5 +82,17 @@ public class WikidataService {
         queryExec.close();
 
         return siblingLabels;
+    }
+
+    public List<String> searchSiblings(String keyword) {
+        Map<String, String> parentClasses = fetchParentClasses(keyword);
+        List<String> allSiblings = new ArrayList<>();
+
+        for (String parentClass : parentClasses.keySet()) {
+            List<String> siblings = fetchSiblings(parentClass);
+            allSiblings.addAll(siblings);
+        }
+
+        return allSiblings;
     }
 }
