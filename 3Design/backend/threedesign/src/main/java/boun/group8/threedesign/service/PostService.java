@@ -42,7 +42,6 @@ public class PostService {
     //TODO getbookmarkedposts
 
     final CategoryRepository categoryRepository;
-    final UserRepository userRepository;
     final TournamentService tournamentService;
 
     @Transactional
