@@ -23,7 +23,6 @@ public class WikidataService {
     // Star -> Constellation
     // Lion -> Bee
 
-
     public Map<String, String> fetchParentClasses(String keyword) {
         String sparqlQuery = "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n" +
                 "PREFIX wd: <http://www.wikidata.org/entity/>\n" +
@@ -54,7 +53,7 @@ public class WikidataService {
         return parentClasses;
     }
 
-    public List<String> fetchSiblings(String parentClass) {
+    public List<String> fetchSiblings(String parentClass, String keyword) {
         String sparqlQuery = "PREFIX wdt: <http://www.wikidata.org/prop/direct/>\n" +
                 "PREFIX wd: <http://www.wikidata.org/entity/>\n" +
                 "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
@@ -62,7 +61,7 @@ public class WikidataService {
                 "  ?sibling wdt:P279 <" + parentClass + ">;\n" +
                 "           rdfs:label ?siblingLabel.\n" +
                 "  FILTER(lang(?siblingLabel) = \"en\")\n" +
-                "  FILTER(?sibling != <" + parentClass + ">)\n" +
+                "  FILTER(?siblingLabel != \"" + keyword + "\"@en)\n" +
                 "} LIMIT 5";
 
         // Execute SPARQL query
@@ -84,12 +83,12 @@ public class WikidataService {
         return siblingLabels;
     }
 
-    public List<String> searchSiblings(String keyword) {
+    public List<String> getAllSiblings(String keyword) {
         Map<String, String> parentClasses = fetchParentClasses(keyword);
         List<String> allSiblings = new ArrayList<>();
 
         for (String parentClass : parentClasses.keySet()) {
-            List<String> siblings = fetchSiblings(parentClass);
+            List<String> siblings = fetchSiblings(parentClass, keyword);
             allSiblings.addAll(siblings);
         }
 

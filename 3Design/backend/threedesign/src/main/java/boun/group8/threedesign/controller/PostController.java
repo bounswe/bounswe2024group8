@@ -16,9 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -27,9 +30,6 @@ import java.io.IOException;
 public class PostController {
     final PostService postService;
     final CommentService commentService;
-
-
-    //TODO getpostsof category, getpostsofuser, getpostsusersreactedto, getbookmarkedposts, getfeed
 
 
     @PostMapping
@@ -48,6 +48,20 @@ public class PostController {
         Post post = postService.getPostByIdElseThrow(id);
 
         return ResponseEntity.ok(post);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<PostResponse>> search(
+            @AuthenticationPrincipal User user,
+            @RequestParam String param) {
+
+        var result = postService.searchPosts(user, param);
+
+        if (result.isEmpty() ) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/{postId}/react")
@@ -83,6 +97,89 @@ public class PostController {
 
         return ResponseEntity.ok(result);
 
+    }
+
+    @GetMapping("/feed")
+    public ResponseEntity<List<PostResponse>> getFeed(
+            @AuthenticationPrincipal User user) {
+
+        List<PostResponse> posts = postService.getFeed((user));
+
+        if (posts.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/category/{categoryId}/visual")
+    public ResponseEntity<List<PostResponse>> getVisualPostsByCategory(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long categoryId) {
+
+        List<PostResponse> posts = postService.getVisualPostsByCategory(user, categoryId);
+
+        if (posts.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/category/{categoryId}/nonvisual")
+    public ResponseEntity<List<PostResponse>> getNonVisualPostsByCategory(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long categoryId) {
+
+        List<PostResponse> posts = postService.getNonVisualPostsByCategory(user, categoryId);
+
+        if (posts.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<PostResponse>> getPostsOfUser(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long userId) {
+
+        List<PostResponse> posts = postService.getPostsByUser(user, userId);
+
+        if (posts.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/user/{userId}/reacted")
+    public ResponseEntity<List<PostResponse>> getPostsUserReactedTo(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long userId) {
+
+        List<PostResponse> posts = postService.getPostsUserReactedTo(user, userId);
+
+        if (posts.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/user/{userId}/bookmarked")
+    public ResponseEntity<List<PostResponse>> getBookmarkedPosts(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long userId) {
+
+        List<PostResponse> posts = postService.getBookmarkedPosts(user, userId);
+
+        if (posts.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(posts);
     }
 
 }
