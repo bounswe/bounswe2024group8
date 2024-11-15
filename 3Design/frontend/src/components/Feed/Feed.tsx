@@ -7,10 +7,11 @@ import { Skeleton } from 'antd';
 import { getCategoryById } from '../tsfunctions';
 
 interface Props{
-    category: string
+    category: string,
+    pageNumber: number
 }
 
-const Feed = ({category}: Props) => {
+const Feed = ({category, pageNumber}: Props) => {
     const [postData, setPostData] = useState<DPost[]>([]);
     const [feedType, setFeedType] = useState(true);
     const [feedLoading, setFeedLoading] = useState(true);
@@ -28,8 +29,8 @@ const Feed = ({category}: Props) => {
             setFeedLoading(false);
             return;
         }
-        const data = require("../../resources/json-files/MockDiscussions.json");
-        setPostData(data);
+        const data : DPost[] = require("../../resources/json-files/MockDiscussions.json");
+        setPostData(data.slice(2*(pageNumber-1), 2*pageNumber));
         setFeedLoading(false);
 
     }
@@ -59,8 +60,8 @@ const Feed = ({category}: Props) => {
                     <p className='font-bold text-xl'>{getCategoryById(category)} - {feedType ? "Gallery" : "Discussion"}</p>
                 </div>
                 <div className='flex gap-8 justify-start'> 
-                    <button className='btn btn-neutral' style={!feedType ? {background: "#f8f4f4", color: "black"} : {}} onClick={() => changeFeedType(true)}>Gallery</button>
-                    <button className='btn btn-neutral' style={feedType ? {background: "#f8f4f4", color: "black"} : {}} onClick={() => changeFeedType(false)}>Discussion</button>
+                    <button className='btn btn-neutral' style={!feedType ? {background: "#ffffff", color: "black"} : {background: "#d0d0d0", color: "black"}} onClick={() => changeFeedType(true)}>Gallery</button>
+                    <button className='btn btn-neutral' style={feedType ? {background: "#ffffff", color: "black"} : {background: "#d0d0d0", color: "black"}} onClick={() => changeFeedType(false)}>Discussion</button>
                 </div>         
             </div>
             { feedLoading ? 

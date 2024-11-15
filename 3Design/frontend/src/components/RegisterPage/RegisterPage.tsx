@@ -98,10 +98,10 @@ const RegisterPage = () => {
                     setPassword(e.target.value);
                 }}/>
                 <div className='flex gap-4 justify-center items-center'>
-                    <button disabled={registerLoading} onClick={registerRequest} className='btn btn-outline w-2/3'>Register</button>
+                    <button disabled={registerLoading} onClick={registerRequest} className='btn btn-outline w-2/3 bg-black text-white hover:bg-gray-600 hover:text-white'>Register</button>
                     {registerLoading && <CircularProgress/>}
                 </div>
-                <a href='/login' className='text-center font-semibold'><u>Login</u></a>
+                <a href='/login' className='text-center font-semibold'><u>Back to Login</u></a>
             </div>
         </div>
     )
