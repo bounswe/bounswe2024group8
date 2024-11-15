@@ -42,7 +42,6 @@ public class PostService {
     //TODO getbookmarkedposts
 
     final CategoryRepository categoryRepository;
-    final UserRepository userRepository;
     final TournamentService tournamentService;
 
     @Transactional
@@ -76,21 +75,14 @@ public class PostService {
         } catch (Exception e) {
             throw new ThreeDesignDatabaseException("Error while saving post");
         }
-
-        tournamentService.enterTournament(user, created);
+        if(request.getJoinToTournament()) {
+            tournamentService.enterTournament(user, created);
+        }
         return created;
     }
 
     private void validatePostRequest(PostCreateRequest request) {
-        if (request.getTitle() == null || request.getTitle().isBlank()) {
-            throw new ThreeDesignDatabaseException("Title not found");
-        }
-        if (request.getText() == null || request.getText().isBlank()) {
-            throw new ThreeDesignDatabaseException("Text not found");
-        }
-        if (request.getIsVisualPost() == null) {
-            throw new ThreeDesignDatabaseException("Select post type");
-        }
+
         if (!categoryRepository.existsById(request.getCategoryId())) {
             throw new ThreeDesignDatabaseException("Category does not exist");
         }
