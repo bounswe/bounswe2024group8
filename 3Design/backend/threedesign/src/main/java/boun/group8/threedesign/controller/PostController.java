@@ -15,7 +15,10 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -30,9 +33,11 @@ public class PostController {
 
 
     @PostMapping
-    public ResponseEntity<Post> createPost(@RequestBody PostCreateRequest request) {
+    public ResponseEntity<Post> createPost(
+            @AuthenticationPrincipal User user,
+            @ModelAttribute PostCreateRequest request) throws IOException {
 
-        Post createdPost = postService.createPost(request.getUserId(), request);
+        Post createdPost = postService.createPost(user, request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }

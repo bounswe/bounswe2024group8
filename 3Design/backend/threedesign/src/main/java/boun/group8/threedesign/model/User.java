@@ -34,7 +34,7 @@ public class User implements UserDetails {
     @Column(name = "user_name", nullable = false)
     String userName;
 
-    @Column(name = "profile_picture_url", nullable = false)
+    @Column(name = "profile_picture_url", nullable = true)
     String profilePictureUrl;
 
     @Enumerated(EnumType.STRING)

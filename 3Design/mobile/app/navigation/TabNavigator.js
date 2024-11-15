@@ -5,10 +5,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { Colors } from '../constants/Colors';
 import FeedScreen from '../screens/FeedScreen';
-import CreatePostScreen from '../screens/CreatePostScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import DrawerNavigator from './DrawerNavigator';
+import CategoriesScreen from '../screens/CategoriesScreen';
 import { PostScreenContext } from '../context/PostScreenContext';
+import PostCreationScreen from '../screens/CreatePostScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -48,7 +48,7 @@ export default function TabNavigator({ navigation, route }) {
         />
         <Tab.Screen
           name='CreatePost'
-          component={CreatePostScreen}
+          component={PostCreationScreen}
           options={{
             tabBarIcon: ({ focused, color }) => {
               return (
@@ -69,36 +69,19 @@ export default function TabNavigator({ navigation, route }) {
           }}
         />
         <Tab.Screen
-          name='Gallery'
-          component={DrawerNavigator}
+          name='Categories'
+          component={CategoriesScreen}
           options={{
             tabBarIcon: ({ focused, color }) => {
               return (
                 <Ionicons
-                  name={focused ? 'image' : 'image-outline'}
-                  size={40}
+                  name={focused ? 'grid' : 'grid-outline'}
+                  size={37}
                   color={color}
                 />
               );
             },
           }}
-          listeners={{ focus: () => setPostScreen('Gallery') }}
-        />
-        <Tab.Screen
-          name='Discussion'
-          component={DrawerNavigator}
-          options={{
-            tabBarIcon: ({ focused, color }) => {
-              return (
-                <Ionicons
-                  name={focused ? 'chatbubbles' : 'chatbubbles-outline'}
-                  size={40}
-                  color={color}
-                />
-              );
-            },
-          }}
-          listeners={{ focus: () => setPostScreen('Discussion') }}
         />
         <Tab.Screen
           name='Profile'

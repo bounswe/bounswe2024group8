@@ -85,10 +85,10 @@ const Login = () => {
                     setPassword(e.target.value);
                 }}/>
                 <div className='flex gap-4 justify-center items-center'>
-                    <button disabled={loginLoading} onClick={loginRequest} className='btn btn-outline w-2/3'>Login</button>
+                    <button disabled={loginLoading} onClick={loginRequest} className='btn btn-outline w-2/3 bg-black text-white hover:bg-gray-600 hover:text-white'>Login</button>
                     {loginLoading && <CircularProgress/>}
                 </div>
-                <a href='/register' className='text-center font-semibold'><u>Create a new account.</u></a>
+                <a href='/register' className='text-center font-semibold'><u>Create an account.</u></a>
             </div>
         </div>
     )
