@@ -270,7 +270,7 @@ public class PostService {
 
     public List<PostResponse> getFeed(User user) {
 
-        return postRepository.findAllPostsAndUserReactionsByUserDefault(user);
+        return postRepository.findAllPostsAndUserReactionsByUserDefault(user, user.getId());
     }
 
     public List<PostResponse> getVisualPostsByCategory(User user, Long categoryId) {

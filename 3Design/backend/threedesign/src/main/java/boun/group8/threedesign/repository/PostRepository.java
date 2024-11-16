@@ -27,9 +27,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT new boun.group8.threedesign.payload.PostResponse(p.id, p.text, p.user, p.title, p.likes, p.dislikes, p.comments, p.categoryId, p.isVisualPost, p.fileUrl, p.challengedPostId, p.tags, p.createdAt, " +
             "COALESCE(r.id, -1L), COALESCE(r.reactionType, boun.group8.threedesign.model.enums.ReactionType.NONE), COALESCE(r.bookmark, false)) " +
             "FROM Post p LEFT JOIN Reaction r ON p.id = r.post.id AND r.user = :user " +
-            "WHERE p.category.id IN (SELECT uc.categoryId FROM UserCategory uc WHERE uc.userId = :user.id) "  +
+            "WHERE p.category.id IN (SELECT uc.categoryId FROM UserCategory uc WHERE uc.userId = :userId) "  +
             "ORDER BY p.id DESC")
-    List<PostResponse> findAllPostsAndUserReactionsByUserDefault(@Param("user") User user);
+    List<PostResponse> findAllPostsAndUserReactionsByUserDefault(@Param("user") User user, @Param("userId") Long userId);
 
 
     @Query("SELECT new boun.group8.threedesign.payload.PostResponse(p.id, p.text, p.user, p.title, p.likes, p.dislikes, p.comments, p.categoryId, p.isVisualPost, p.fileUrl, p.challengedPostId, p.tags, p.createdAt, " +
