@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { DPost } from '../interfaces';
-import GalleryPost from '../GalleryPost/GalleryPost';
+import GalleryPost from '../GalleryPost/Clickable/GalleryPost';
 import { Skeleton } from 'antd';
-import DiscussionPost from '../DiscussionPost/DiscussionPost';
+import DiscussionPost from '../DiscussionPost/Clickable/DiscussionPost';
 import styles from "./GenericFeed.module.css";
 interface Props{
 pageNumber: number
@@ -41,8 +41,9 @@ const GenericFeed = ({pageNumber}:Props) => {
             ) : 
                 postData.map((item, index) => (
                     item.visual ?
-                    <GalleryPost key={`g_${item.id}`} postData={item}/> :
-                    <DiscussionPost key={`d_${item.id}`} postData={item} />
+                    <GalleryPost  key={`g_${item.id}`} postData={item}/> 
+                    :
+                    <DiscussionPost  key={`d_${item.id}`} postData={item} />
                 )) 
             }
             

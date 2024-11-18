@@ -1,0 +1,22 @@
+.clickable-post {
+    padding: 20px;
+    background-color: #fff;
+    transition: background-color 0.3s;
+    cursor: pointer;
+}
+
+.clickable-post:hover {
+    background-color: #f0f0f0;
+  }
+
+
+.clickable-post button:hover,
+.clickable-post .non-clickable-div:hover {
+    .clickable-post{
+        background-color: transparent;
+    }  
+}
+
+.non-clickable-div:hover{
+cursor: auto;
+}
