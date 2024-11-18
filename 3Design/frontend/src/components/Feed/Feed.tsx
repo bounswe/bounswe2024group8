@@ -25,7 +25,7 @@ const Feed = ({category, pageNumber}: Props) => {
         // AJAX Request with category
         if (feedType){
             const data = require("../../resources/json-files/MockPosts.json");
-            setPostData(data);
+            setPostData(data.slice(2*(pageNumber-1), 2*pageNumber));
             setFeedLoading(false);
             return;
         }
