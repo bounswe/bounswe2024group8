@@ -270,24 +270,48 @@ public class PostService {
 
     public List<PostResponse> getFeed(User user) {
 
-        return postRepository.findAllPostsAndUserReactionsByUserDefault(user, user.getId());
+        List<Post> posts = postRepository.findAllPostsByUserDefault(user.getId());
+
+        if (posts.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return convertPostsToPostResponses(user, posts);
     }
 
     public List<PostResponse> getVisualPostsByCategory(User user, Long categoryId) {
 
-        return postRepository.findVisualPostsAndUserReactionsByUserAndByCategory(user, categoryId);
+        List<Post> visualPosts = postRepository.findVisualPostsByCategory(categoryId);
+
+        if (visualPosts.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return convertPostsToPostResponses(user, visualPosts);
     }
 
     public List<PostResponse> getNonVisualPostsByCategory(User user, Long categoryId) {
 
-        return postRepository.findnonVisualPostsAndUserReactionsByUserAndByCategory(user, categoryId);
+        List<Post> nonVisualPosts = postRepository.findNonVisualPostsByCategory(categoryId);
+
+        if (nonVisualPosts.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return convertPostsToPostResponses(user, nonVisualPosts);
+
     }
 
     public List<PostResponse> getPostsByUser(User user, Long userId) {
 
-        userService.getUserById(userId);
 
-        return postRepository.findAllPostsAndUserReactionsByUserAndPostedByAUser(user, userId);
+        List<Post> posts = postRepository.findAllPostsByAUser(userId);
+
+        if (posts.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return convertPostsToPostResponses(user, posts);
 
     }
 
@@ -310,8 +334,13 @@ public class PostService {
             throw new ThreeDesignDatabaseException("You can only view your own bookmarked posts");
         }
 
-        List<PostResponse> bookmarkedPosts = postRepository.findAllBookmarkedPosts(userId);
+        //List<PostResponse> bookmarkedPosts = postRepository.findAllBookmarkedPosts(userId);
+        List<Post> bookmarkedPosts = postRepository.findAllBookmarkedPosts(userId);
 
-        return bookmarkedPosts;
+        if (bookmarkedPosts.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return convertPostsToPostResponses(user, bookmarkedPosts);
     }
 }
