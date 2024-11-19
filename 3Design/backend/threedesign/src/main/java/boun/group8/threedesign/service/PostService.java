@@ -39,11 +39,11 @@ public class PostService {
     final WikidataService wikidataService;
     final UserService userService;
     final CommentService commentService;
+    final TournamentService tournamentService;
 
 
 
     final CategoryRepository categoryRepository;
-    final TournamentService tournamentService;
 
     @Transactional
     public Post createPost(User user, PostCreateRequest request) throws IOException {
@@ -206,7 +206,8 @@ public class PostService {
         if (reaction != null) {
 
             ReactionType oldReactionType = reaction.getReactionType();
-            reaction.setBookmark(bookmark);
+            boolean oldBookmark = reaction.getBookmark();
+            int oldReactionScore = tournamentService.calculateReactionScore(oldReactionType, oldBookmark);
 
             if (oldReactionType.equals(ReactionType.LIKE)) {
                 if (reactionType.equals(ReactionType.DISLIKE)) {
@@ -231,6 +232,12 @@ public class PostService {
             }
 
             reaction.setReactionType(reactionType);
+            reaction.setBookmark(bookmark);
+
+            int newReactionScore = tournamentService.calculateReactionScore(reactionType, bookmark);
+
+            tournamentService.updatePostScoreIfPossible(post, newReactionScore - oldReactionScore);
+
             reactionRepository.save(reaction);
             postRepository.save(post);
         } else {
@@ -248,6 +255,8 @@ public class PostService {
             } else if (reactionType.equals(ReactionType.DISLIKE)) {
                 post.setDislikes(post.getDislikes() + 1);
             }
+
+            tournamentService.updatePostScoreIfPossible(post, tournamentService.calculateReactionScore(reactionType, bookmark));
             postRepository.save(post);
         }
 

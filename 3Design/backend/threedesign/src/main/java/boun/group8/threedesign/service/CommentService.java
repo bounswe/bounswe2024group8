@@ -27,6 +27,7 @@ public class CommentService {
     final CommentRepository commentRepository;
     final ReactionRepository reactionRepository;
     final PostRepository postRepository;
+    final TournamentService tournamentService;
 
 
     public CommentReactionResponse reactToComment(User user, ReactionType reactionType, Long commentId) {
@@ -98,6 +99,11 @@ public class CommentService {
 
         Post post = postRepository.getPostById(request.getPostId());
 
+        Comment oldComment = commentRepository.findByPostIdAndUserId(post.getId(), user.getId());
+        if (oldComment == null) {
+            tournamentService.updatePostScoreIfPossible(post, 3);
+        }
+
         Comment comment = Comment.builder()
                 .text(request.getText())
                 .user(user)
@@ -134,9 +140,5 @@ public class CommentService {
             throw new ThreeDesignDatabaseException("Post not found");
 
         return commentRepository.findAllCommentsAndReactionsByPostAndUser(user.getId(), postId);
-    }
-
-    public List<Comment> getCommentsByPostAndUser(Long userId, Long postId) {
-        return commentRepository.findCommentsByPostAndUser(userId, postId);
     }
 }

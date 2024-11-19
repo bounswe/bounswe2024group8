@@ -1,10 +1,8 @@
 package boun.group8.threedesign.service;
 
 import boun.group8.threedesign.exception.custom.ThreeDesignDatabaseException;
-import boun.group8.threedesign.model.Post;
-import boun.group8.threedesign.model.Tournament;
-import boun.group8.threedesign.model.TournamentEntry;
-import boun.group8.threedesign.model.User;
+import boun.group8.threedesign.model.*;
+import boun.group8.threedesign.model.enums.ReactionType;
 import boun.group8.threedesign.repository.TournamentEntryRepository;
 import boun.group8.threedesign.repository.TournamentRepository;
 import lombok.AccessLevel;
@@ -179,5 +177,20 @@ public class TournamentService {
         }
 
         return tournamentEntryRepository.findByTournamentOrderByScoreDesc(currentTournament);
+    }
+
+    public int calculateReactionScore(ReactionType reactionType, boolean bookmark){
+        int reactionScore = 0;
+
+        if(reactionType == ReactionType.LIKE){
+            reactionScore = 1;
+        } else if(reactionType == ReactionType.DISLIKE){
+            reactionScore = -1;
+        }
+
+        if (bookmark)
+            reactionScore += 2;
+
+        return reactionScore;
     }
 }
