@@ -9,6 +9,19 @@ export interface Category{
     id: string
 }
 
+
+export interface DComment{
+    id: number,
+    user:CustomProfile,
+    body: string,
+    memberId: number,
+    postId: number,
+    likeCount: number,
+    dislikeCount: number,
+    liked: boolean,
+    disliked: boolean
+}
+
 export interface DPost{
     id: number,
     title: string,

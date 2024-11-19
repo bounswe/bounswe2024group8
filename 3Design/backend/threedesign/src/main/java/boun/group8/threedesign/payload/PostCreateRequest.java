@@ -2,6 +2,7 @@ package boun.group8.threedesign.payload;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
@@ -11,13 +12,13 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PostCreateRequest {
-    private Long userId;
-    private String title;
-    private String text;
-    private Long categoryId;
-    private Boolean isVisualPost;
-    private String fileUrl;
-    private Long challengedPostId;
-    private Set<String> tags;
+    String title;
+    String text;
+    Long categoryId;
+    Boolean isVisualPost;
+    Long challengedPostId;
+    Set<String> tags;
+    MultipartFile file;
+    Boolean joinToTournament;
 
 }
