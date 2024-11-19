@@ -38,7 +38,7 @@ const HomePage = () => {
                 Create Post
             </Button>
             <Dialog maxWidth="sm" fullWidth open={createPost} onClose={() => setPostDialog(false)}>
-                <CreatePost dialogFunction={setPostDialog} category=''/>
+                <CreatePost dialogFunction={setPostDialog}/>
             </Dialog>
         </>
     )

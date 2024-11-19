@@ -1,7 +1,9 @@
 package boun.group8.threedesign.service;
 
 import boun.group8.threedesign.exception.custom.ThreeDesignDatabaseException;
+import boun.group8.threedesign.model.Following;
 import boun.group8.threedesign.model.User;
+import boun.group8.threedesign.repository.FollowingRepository;
 import boun.group8.threedesign.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -17,6 +21,8 @@ public class UserService {
 
 
     final UserRepository userRepository;
+
+    final FollowingRepository followingRepository;
 
     public User getUserByEmail(String email) {
 
@@ -35,6 +41,59 @@ public class UserService {
         }
 
         return user;
+    }
+
+    public Following followUser(Long followerUserId, Long followedUserId) {
+        if (followerUserId.equals(followedUserId)) {
+            throw new IllegalArgumentException("Users cannot follow themselves.");
+        }
+
+        var followedUser = userRepository.findUserById(followedUserId);
+
+        if (followedUser == null) {
+            throw new ThreeDesignDatabaseException("User not found with id: " + followedUserId);
+        }
+
+        Following existingFollow = followingRepository.findByFollowerUserIdAndFollowedUserId(followerUserId, followedUserId);
+
+        if (existingFollow != null) {
+            throw new IllegalStateException("You are already following this user.");
+        }
+
+        Following follow = new Following();
+        follow.setFollowerUserId(followerUserId);
+        follow.setFollowedUserId(followedUserId);
+        return followingRepository.save(follow);
+    }
+
+    public void unfollowUser(Long followerUserId, Long followedUserId) {
+
+        var followedUser = userRepository.findUserById(followedUserId);
+
+        if (followedUser == null) {
+            throw new ThreeDesignDatabaseException("User not found with id: " + followedUserId);
+        }
+
+        var following = followingRepository.findByFollowerUserIdAndFollowedUserId(followerUserId, followedUserId);
+
+        if (following == null) {
+            throw new IllegalStateException("You are not following this user.");
+        }
+
+        try {
+            followingRepository.delete(following);
+        } catch (Exception e) {
+            throw new ThreeDesignDatabaseException("Error while deleting following");
+        }
+
+    }
+
+    public List<Long> getFollowers(Long userId) {
+        return followingRepository.findAllByFollowedUserId(userId).stream().map(Following::getFollowerUserId).toList();
+    }
+
+    public List<Long> getFollowing(Long userId) {
+        return followingRepository.findAllByFollowerUserId(userId).stream().map(Following::getFollowedUserId).toList();
     }
 
 
