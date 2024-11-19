@@ -1,16 +1,19 @@
 import React, { memo, SetStateAction, useEffect, useRef, useState } from 'react'
-import { DPost, SendAnnotationData } from '../../interfaces'
+import { DPost, SendAnnotationData, DComment } from '../../interfaces'
 import styles from "../GalleryPost.module.css"
 import DViewer from '../../DViewer/DViewer'
-import { Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined } from '@mui/icons-material'
+import { Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined } from '@mui/icons-material'
 import { IconButton, Menu, MenuItem } from '@mui/material'
 import { formatInteractions } from '../../tsfunctions'
+import Comment from '../../Comment/Comment'
+import MockComments from '../../../resources/json-files/Comments.json'
 interface Props{
   postData: DPost,
 }
 
 const GalleryPost = ({postData} : Props) => {
 
+  const comments: DComment[] = JSON.parse(localStorage.getItem("comments") || "[]") as DComment[];
   const [data, setData] = useState<DPost>(postData);
   const [modelAppearence, setModelAppearence] = useState<boolean>(false);
   const bodyRef = useRef<HTMLParagraphElement | null>(null);
@@ -20,6 +23,16 @@ const GalleryPost = ({postData} : Props) => {
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [downloadStatus, setDownloadStatus] = useState(false);
+  const [comment, setComment] = useState("");
+
+  const handleComment = async (newComment: DComment) => {
+    if(newComment.body !== ""){
+    comments.push(newComment);
+    console.log(comments);
+    localStorage.setItem("comments", JSON.stringify(comments));
+    }
+    setComment("");
+  }
 
   const likeClicked = async (event:any) =>{
     event.stopPropagation();
@@ -141,6 +154,14 @@ const GalleryPost = ({postData} : Props) => {
             </button>
             <p className={styles.interactionCount}>{formatInteractions(data.dislikeCount)}</p>
           </div>
+          <div className='flex items-center'>
+            <button className='btn btn-ghost'>
+            {
+                <InsertCommentOutlined/>
+              }
+            </button>
+            <p>{1453 /*comment sayısı buraya gelecek */}</p> 
+          </div>
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -153,6 +174,35 @@ const GalleryPost = ({postData} : Props) => {
               <BookmarkBorderOutlined/>
             }
           </button>
+        </div>
+        <div className='flex gap-2'>
+            <input type="text" placeholder="Write your comment..." value={comment} onChange={(e) => setComment(e.target.value)} className='w-full border border-gray-300 rounded-lg p-2'/>
+            <button className='btn' onClick={(commentText) => {
+          const newComment: DComment = {
+            "id": comments.length + 1,
+            "user": {
+              username: localStorage.getItem("username") || "Anonymous",
+              profilePhoto: "",
+              tournamentPoints: "1000",
+            },
+            "body": comment,
+            "memberId": 1,
+            "postId": data.id,
+            "likeCount": 0,
+            "dislikeCount": 0,
+            "liked": false,
+            "disliked": false,
+          };
+          handleComment(newComment);
+        }}>Comment</button>
+        </div>
+        <div className='h-80 overflow-y-scroll'>
+                {comments.map((item, index) => (
+                    item.postId === data.id ?
+                    <Comment key={`g_${item.id}`} commentData={item}/> 
+                    :
+                    null
+                )) }
         </div>
       </div>
   )

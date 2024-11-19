@@ -1,0 +1,33 @@
+[
+    {
+      "id": 1,
+      "user": {
+        "username": "erselcanakcili",
+        "profilePhoto": "",
+        "tournamentPoints" : "1500"
+      },
+      "body": "This is a great post! Thanks for sharing.",
+      "memberId": 1,
+      "postId": 4,
+      "likeCount":10,
+      "dislikeCount": 2,
+      "liked": true,
+      "disliked": false
+      
+    },
+    {
+        "id": 2,
+        "user": {
+        "username": "oguzkagnici",
+        "profilePhoto": "",
+        "tournamentPoints" : "1500"
+        },
+        "body": "Inspiring.",
+        "memberId": 1,
+        "postId": 4,
+        "likeCount":10,
+        "dislikeCount": 200,
+        "liked": false,
+        "disliked": true 
+      }
+  ]
