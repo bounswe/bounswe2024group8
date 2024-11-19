@@ -2,7 +2,11 @@ package boun.group8.threedesign.service;
 
 import boun.group8.threedesign.exception.custom.ThreeDesignDatabaseException;
 import boun.group8.threedesign.model.Category;
+import boun.group8.threedesign.model.User;
+import boun.group8.threedesign.model.UserCategory;
+import boun.group8.threedesign.payload.GetCategoryResponse;
 import boun.group8.threedesign.repository.CategoryRepository;
+import boun.group8.threedesign.repository.UserCategoryRepository;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
@@ -19,10 +23,13 @@ public class CategoryService {
 
     final CategoryRepository categoryRepository;
 
+    final UserCategoryRepository userCategoryRepository;
     List<Category> categories;
 
-    public CategoryService(final CategoryRepository categoryRepository) {
+    public CategoryService(final CategoryRepository categoryRepository,
+                           final UserCategoryRepository userCategoryRepository) {
         this.categoryRepository = categoryRepository;
+        this.userCategoryRepository = userCategoryRepository;
         initializeCategories();
     }
 
@@ -76,20 +83,19 @@ public class CategoryService {
         categoryRepository.saveAll(addOrUpdateCategories);
         categoryRepository.deleteAll(deleteCategories);
 
-        categories = categoryRepository.findAll();
+        updateCategories();
     }
 
     public List<Category> getCategories() {
         return new ArrayList<>(categories);
     }
 
-    public List<Category> getAllCategories() {
-
-        return categoryRepository.findAll();
-    }
 
     public Category getCategoryById(Long id) {
-        Category category =  categoryRepository.getCategoryById(id);
+        Category category =  categories.stream()
+                .filter(c -> c.getId().equals(id))
+                .findFirst()
+                .orElse(null);
 
         if (category == null) {
             throw new ThreeDesignDatabaseException("Category not found with id: " + id);
@@ -98,6 +104,64 @@ public class CategoryService {
         return category;
     }
 
+    @Transactional
+    public void followCategory(User user, Long categoryId){
+
+        UserCategory followExists = userCategoryRepository.findByUserIdAndCategoryId(user.getId(), categoryId);
+
+        if(followExists != null){
+            throw new ThreeDesignDatabaseException("User already follows this category");
+        }
+
+        Category category = getCategoryById(categoryId);
+
+        UserCategory userCategory = UserCategory.builder()
+                .userId(user.getId())
+                .categoryId(category.getId())
+                .build();
+
+        userCategoryRepository.save(userCategory);
+
+        category.setFollowerCount(category.getFollowerCount() + 1);
+
+        categoryRepository.save(category);
+
+        updateCategories();
+    }
+
+    @Transactional
+    public void unfollowCategory(User user, Long categoryId){
+        UserCategory followExists = userCategoryRepository.findByUserIdAndCategoryId(user.getId(), categoryId);
+
+        if(followExists == null){
+            throw new ThreeDesignDatabaseException("User does not follow this category");
+        }
+
+        userCategoryRepository.delete(followExists);
+
+        Category category = getCategoryById(categoryId);
+
+        category.setFollowerCount(category.getFollowerCount() - 1);
+
+        categoryRepository.save(category);
+
+        updateCategories();
+    }
+
+    private void updateCategories(){
+        categories = categoryRepository.findAll();
+    }
+
+    public GetCategoryResponse getCategoryByIdWithFollowInfo(User user, Long id) {
+        Category category = getCategoryById(id);
+
+        UserCategory followExists = userCategoryRepository.findByUserIdAndCategoryId(user.getId(), id);
+
+        return GetCategoryResponse.builder()
+                .category(category)
+                .isFollowed(followExists != null)
+                .build();
+    }
 }
 
 
