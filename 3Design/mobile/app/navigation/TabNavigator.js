@@ -9,6 +9,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import CategoriesScreen from '../screens/CategoriesScreen';
 import { PostScreenContext } from '../context/PostScreenContext';
 import PostCreationScreen from '../screens/CreatePostScreen';
+import SearchScreen from '../screens/SearchScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -63,6 +64,21 @@ export default function TabNavigator({ navigation, route }) {
                     borderRadius: 10,
                     borderColor: focused ? Colors.dark : Colors.grey,
                   }}
+                />
+              );
+            },
+          }}
+        />
+        <Tab.Screen
+          name='Search'
+          component={SearchScreen}
+          options={{
+            tabBarIcon: ({ focused, color }) => {
+              return (
+                <Ionicons
+                  name={focused ? "search-circle" : "search-circle-outline"}
+                  size={40}
+                  color={color}
                 />
               );
             },
