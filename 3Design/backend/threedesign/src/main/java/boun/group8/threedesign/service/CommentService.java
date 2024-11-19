@@ -100,7 +100,7 @@ public class CommentService {
         Post post = postRepository.getPostById(request.getPostId());
 
         Comment oldComment = commentRepository.findByPostIdAndUserId(post.getId(), user.getId());
-        if (oldComment == null) {
+        if (oldComment == null && !post.getUser().getId().equals(user.getId())) {
             tournamentService.updatePostScoreIfPossible(post, 3);
         }
 

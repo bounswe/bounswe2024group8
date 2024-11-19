@@ -207,7 +207,6 @@ public class PostService {
 
             ReactionType oldReactionType = reaction.getReactionType();
             boolean oldBookmark = reaction.getBookmark();
-            int oldReactionScore = tournamentService.calculateReactionScore(oldReactionType, oldBookmark);
 
             if (oldReactionType.equals(ReactionType.LIKE)) {
                 if (reactionType.equals(ReactionType.DISLIKE)) {
@@ -234,9 +233,14 @@ public class PostService {
             reaction.setReactionType(reactionType);
             reaction.setBookmark(bookmark);
 
-            int newReactionScore = tournamentService.calculateReactionScore(reactionType, bookmark);
 
-            tournamentService.updatePostScoreIfPossible(post, newReactionScore - oldReactionScore);
+            if (!post.getUser().getId().equals(user.getId())) {
+                int oldReactionScore = tournamentService.calculateReactionScore(oldReactionType, oldBookmark);
+                int newReactionScore = tournamentService.calculateReactionScore(reactionType, bookmark);
+
+                tournamentService.updatePostScoreIfPossible(post, newReactionScore - oldReactionScore);
+            }
+
 
             reactionRepository.save(reaction);
             postRepository.save(post);
@@ -256,7 +260,9 @@ public class PostService {
                 post.setDislikes(post.getDislikes() + 1);
             }
 
-            tournamentService.updatePostScoreIfPossible(post, tournamentService.calculateReactionScore(reactionType, bookmark));
+            if (!post.getUser().equals(user)) {
+                tournamentService.updatePostScoreIfPossible(post, tournamentService.calculateReactionScore(reactionType, bookmark));
+            }
             postRepository.save(post);
         }
 
