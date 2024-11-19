@@ -17,7 +17,7 @@ import boun.group8.threedesign.repository.CategoryRepository;
 
 import boun.group8.threedesign.payload.PostCreateRequest;
 import boun.group8.threedesign.repository.PostRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -190,7 +190,7 @@ public class PostService {
         return result;
     }
 
-
+    @Transactional
     public ReactionResponse reactToPost(User user, ReactionRequest request, Long postId) {
 
         Long userId = user.getId();

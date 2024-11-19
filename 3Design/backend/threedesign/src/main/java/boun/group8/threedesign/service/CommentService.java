@@ -16,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -94,13 +95,13 @@ public class CommentService {
     }
 
 
-
+    @Transactional
     public Comment createComment(User user, CommentCreateRequest request) {
 
         Post post = postRepository.getPostById(request.getPostId());
 
-        Comment oldComment = commentRepository.findByPostIdAndUserId(post.getId(), user.getId());
-        if (oldComment == null && !post.getUser().getId().equals(user.getId())) {
+        List<Comment> oldComments = commentRepository.findByPostIdAndUserId(post.getId(), user.getId());
+        if (oldComments.isEmpty() && !post.getUser().getId().equals(user.getId())) {
             tournamentService.updatePostScoreIfPossible(post, 3);
         }
 
