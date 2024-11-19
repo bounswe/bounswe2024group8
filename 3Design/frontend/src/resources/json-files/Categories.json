@@ -1,6 +1,6 @@
 [
-    {"text": "Characters", "id": "characters"},
-    {"text": "Enviroments", "id": "enviroments"},
+    {"text": "Characters", "id": "1"},
+    {"text": "Enviroments", "id": "4"},
     {"text": "Props", "id": "props"},
     {"text": "Vehicles", "id": "vehicles"},
     {"text": "Animations", "id": "animations"}
