@@ -135,4 +135,8 @@ public class CommentService {
 
         return commentRepository.findAllCommentsAndReactionsByPostAndUser(user.getId(), postId);
     }
+
+    public List<Comment> getCommentsByPostAndUser(Long userId, Long postId) {
+        return commentRepository.findCommentsByPostAndUser(userId, postId);
+    }
 }
