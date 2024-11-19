@@ -1,17 +1,20 @@
-import { UploadOutlined } from '@mui/icons-material'
-import { TextField } from '@mui/material'
+import { UploadOutlined,AddCircleOutline,Clear } from '@mui/icons-material'
+import { FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 import { Button, message, Upload, UploadFile } from 'antd'
 import React, { SetStateAction, useEffect, useState } from 'react'
+import { Category } from '../interfaces'
 
+const categories:Category[] = require('../../resources/json-files/Categories.json');
 interface Props{
-    dialogFunction: React.Dispatch<SetStateAction<boolean>>,
-    category: string
-
+    dialogFunction: React.Dispatch<SetStateAction<boolean>>
 }
 
-const CreatePost = ({dialogFunction, category} : Props) => {
+const CreatePost = ({dialogFunction} : Props) => {
     const [title, setTitle] = useState("");
     const [titleError, setTitleError] = useState("");
+    const [category, setCategory] = useState(categories[0].id);
+    const [tags, setTags] = useState<string[]>([]);
+    const [currentTag, setCurrentTag] = useState("");
 
     const [content, setContent] = useState("");
     const [contentError, setContentError] = useState("");
@@ -63,6 +66,12 @@ const CreatePost = ({dialogFunction, category} : Props) => {
                 setTitleError("");
                 setTitle(e.target.value);
             }}/>
+            <FormControl>
+                <InputLabel id="categoryLabel">Category</InputLabel>
+                <Select label='Category' labelId='categoryLabel' value={category} onChange={e => setCategory(e.target.value)}>
+                    {categories.map((c) => <MenuItem key={c.id} value={c.id}>{c.text}</MenuItem>)}
+                </Select>
+            </FormControl>
             <TextField minRows={4} multiline label="Content" error={!!contentError} helperText={contentError} value={content} onChange={(e) => {
                 if (e.target.value.length > 512){
                     return;
@@ -70,6 +79,34 @@ const CreatePost = ({dialogFunction, category} : Props) => {
                 setContentError("");
                 setContent(e.target.value);
             }}/>
+            <div>
+                <div className='flex gap-2'>
+                    <TextField value={currentTag} onKeyDown={(e) =>
+                    {
+                        if (e.key === "Enter"){
+                            if (currentTag.length > 0){
+                                setTags([...tags, currentTag]);
+                                setCurrentTag("");
+                            }
+                        }
+                    }} label="Add Tag" onChange={(e) => {
+                        if(e.target.value.length > 20){
+                            return;
+                        }
+                       setCurrentTag(e.target.value);
+                    }}/>
+                    <div className='flex flex-col gap-2 overflow-y-scroll max-h-40 w-60 items-end'>
+                        {tags.map((tag,index) => <div key={index} className='flex items-center gap-2'>
+                            <p>{tag}</p>
+                            <IconButton onClick={() => setTags(prev=>{
+                                const clone = [...prev];
+                                clone.splice(index,1);
+                                return clone;
+                            })} className='btn btn-outline'><Clear fontSize='small'></Clear></IconButton>
+                        </div>)}
+                    </div>
+                </div>
+            </div>
             <Upload accept='.obj,.dae' fileList={fileList} onRemove={(file) => {
                 const index = fileList.indexOf(file);
                 const newFileList = fileList.slice();
