@@ -20,14 +20,14 @@ public class TournamentEntry {
     @Column(name = "id", nullable = false, updatable = false, unique = true)
     Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id",  nullable = false)
     User user;
 
     @Column(name = "post_id",nullable = false)
     Long postId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tournament_id", referencedColumnName = "id", nullable = false)
     Tournament tournament;
 

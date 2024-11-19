@@ -169,4 +169,15 @@ public class TournamentService {
             throw new ThreeDesignDatabaseException("Failed to update tournament score", e);
         }
     }
+
+    public List<TournamentEntry> getLeaderboardOfCurrentTournamentByCategoryId(Long categoryId){
+
+        var currentTournament = getCurrentTournamentByCategoryId(categoryId);
+
+        if (currentTournament == null) {
+            throw new ThreeDesignDatabaseException("No active tournament for categoryId: " + categoryId);
+        }
+
+        return tournamentEntryRepository.findByTournamentOrderByScoreDesc(currentTournament);
+    }
 }
