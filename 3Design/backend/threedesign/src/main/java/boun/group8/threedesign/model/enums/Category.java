@@ -10,9 +10,9 @@ public enum Category {
 
     //Naming convention: ALL_CAPS_WITH_UNDERSCORES
 
-//    TEST_1(1L,"Testing","This is a test category"),
+    TEST_1(1L,"Testing","This is a test category"),
 
-//    TEST_3(4L,"Testing7","This is a test category 2")
+    TEST_3(4L,"Testing7","This is a test category 2")
 
 
 
