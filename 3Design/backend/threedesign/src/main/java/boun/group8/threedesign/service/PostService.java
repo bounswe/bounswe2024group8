@@ -141,24 +141,15 @@ public class PostService {
             results.addAll(postRepository.findByTextLikeIgnoreCase(sibling));
         }
         // Use a map to count occurrences of each post
-        Map<Long, Post> postMap = new HashMap<>();
-        Map<Long, Integer> postCount = new HashMap<>();
+        Set<Post> postSet = new HashSet<>();
 
-        for (Post post : results) {
-            postMap.put(post.getId(), post);
-            postCount.put(post.getId(), postCount.getOrDefault(post.getId(), 0) + 1);
-        }
+        postSet.addAll(results);
 
-        // Filter out posts that appear more than once
-        List<Post> duplicatePosts = postCount.entrySet().stream()
-                .filter(entry -> entry.getValue() > 1)
-                .map(entry -> postMap.get(entry.getKey()))
+        List<Post> sortedPosts = postSet.stream()
+                .sorted(Comparator.comparing(Post::getId).reversed())
                 .collect(Collectors.toList());
 
-        // Sort the filtered list by createdAt in descending order
-        duplicatePosts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
-
-        return convertPostsToPostResponses(user, duplicatePosts);
+        return convertPostsToPostResponses(user, sortedPosts);
 
     }
 
