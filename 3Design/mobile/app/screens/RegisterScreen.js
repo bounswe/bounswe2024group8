@@ -34,22 +34,22 @@ export default function RegisterScreen({ navigation }) {
   const validateCredentials = () => {
     if (!username) {
       return 'Enter your username to create your account.';
-    } 
+    }
     else if (username.length < 5) {
       return 'The username has to be at least 5 characters.';
-    } 
+    }
     else if (!email) {
       return 'Enter your email to create your account.';
-    } 
+    }
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return 'Invalid email format.';
-    } 
+    }
     else if (!password){
       return "Enter your password to create your account.";
     }
     else if (password.length < 3) {
       return 'The password has to be at least 3 characters.';
-    } 
+    }
     else {
       return '';
     }
@@ -137,6 +137,12 @@ export default function RegisterScreen({ navigation }) {
           <TouchableOpacity onPress={onSignupClick} style={styles.signupButton}>
             <Text style={styles.signupButtonText}>Sign Up</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Login')}
+            style={styles.returnButton}
+          >
+            <Text style={styles.returnButtonText}>Return to Login</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </KeyboardAvoidingView>
@@ -199,9 +205,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 5,
     paddingVertical: 15,
+    marginBottom: 15,
   },
   signupButtonText: {
     color: Colors.light,
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  returnButton: {
+    backgroundColor: Colors.light,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: Colors.dark,
+    paddingVertical: 15,
+  },
+  returnButtonText: {
+    color: Colors.dark,
     fontSize: 18,
     fontWeight: '600',
   },
