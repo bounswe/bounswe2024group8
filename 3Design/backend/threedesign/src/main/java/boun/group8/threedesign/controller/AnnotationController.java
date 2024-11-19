@@ -46,4 +46,9 @@ public class AnnotationController {
 
         return ResponseEntity.ok(annotationService.getAnnotations(postId, commentId));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AnnotationResponse> getAnnotation(@PathVariable Long id) {
+        return ResponseEntity.ok(annotationService.getAnnotationById(id));
+    }
 }
