@@ -77,7 +77,8 @@ public class PostService {
             throw new ThreeDesignDatabaseException("Error while saving post");
         }
 
-        tournamentService.enterTournament(user, created);
+        if (request.getJoinToTournament())
+            tournamentService.enterTournament(user, created);
         return created;
     }
 

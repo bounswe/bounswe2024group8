@@ -43,7 +43,7 @@ public class WikidataService {
         while (resultSet.hasNext()) {
             QuerySolution solution = resultSet.nextSolution();
             if (solution.contains("parentClass") && solution.contains("parentLabel")) {
-                parentClasses.put(solution.get("parentClass").toString(), solution.get("parentLabel").toString());
+                parentClasses.put(solution.get("parentClass").toString(), solution.get("parentLabel").toString().replace("@en", ""));
             }
         }
 
@@ -73,7 +73,7 @@ public class WikidataService {
         while (resultSet.hasNext()) {
             QuerySolution solution = resultSet.nextSolution();
             if (solution.contains("siblingLabel")) {
-                siblingLabels.add(solution.get("siblingLabel").toString());
+                siblingLabels.add(solution.get("siblingLabel").toString().replace("@en", ""));
             }
         }
 
