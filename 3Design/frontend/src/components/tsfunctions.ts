@@ -1,4 +1,4 @@
-import { Category } from "./interfaces";
+import { Category, DPost } from "./interfaces";
 
 export function getCategoryById(id: string){
     const categories = require("../resources/json-files/Categories.json") as Category[];
@@ -13,6 +13,9 @@ export function getCategoryById(id: string){
 }
 
 export function formatInteractions(num: number): string {
+    if (!num){
+        return "0";
+    }
     if (num >= 1_000_000) {
         return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
     } else if (num >= 1_000) {
@@ -28,8 +31,8 @@ export function getPostFromId(id: string | undefined){
     const intId = parseInt(id);
     const posts = require("../resources/json-files/MockGenericPosts.json");
     for (let i = 0; i < posts.length; i++) {
-        const element = posts[i];
-        if (element.id == intId){
+        const element: DPost = posts[i];
+        if (element.postId == intId){
             return element;
         }
         

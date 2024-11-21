@@ -1,32 +1,28 @@
 [
     {
-      "id": 1,
+      "commentId": 1,
       "user": {
         "username": "erselcanakcili",
-        "profilePhoto": "",
-        "tournamentPoints" : "1500"
+        "profilePictureUrl": null,
+        "id" : 1500
       },
-      "body": "This is a great post! Thanks for sharing.",
-      "memberId": 1,
-      "postId": 4,
-      "likeCount":10,
-      "dislikeCount": 2,
+      "text": "This is a great post! Thanks for sharing.",
+      "likes":10,
+      "dislikes": 2,
       "liked": true,
       "disliked": false
       
     },
     {
-        "id": 2,
+        "commentId": 2,
         "user": {
-        "username": "oguzkagnici",
-        "profilePhoto": "",
-        "tournamentPoints" : "1500"
+          "username": "oguzkagnici",
+          "profilePictureUrl": null,
+          "id" : 1500
         },
-        "body": "Inspiring.",
-        "memberId": 1,
-        "postId": 4,
-        "likeCount":10,
-        "dislikeCount": 200,
+        "text": "Inspiring.",
+        "likes":10,
+        "dislikes": 200,
         "liked": false,
         "disliked": true 
       }

@@ -6,6 +6,7 @@ import LoginPage from './components/Login/LoginPage';
 import HomePage from './components/HomePage/HomePage';
 import RegisterPage from './components/RegisterPage/RegisterPage';
 import PostPage from './components/PostPage/PostPage';
+import SearchResults from './components/SearchResults/SearchResults';
 
 function App() {
   return (
@@ -40,6 +41,18 @@ function App() {
           path="/register"
           element={
             <RegisterPage/>
+          }
+        />
+        <Route
+          path="/search/:query"
+          element={
+            <SearchResults/>
+          }
+        />
+        <Route
+          path="/search"
+          element={
+            <SearchResults/>
           }
         />
       </Routes>

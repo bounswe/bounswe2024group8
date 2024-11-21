@@ -15,7 +15,7 @@ const GalleryPost = ({postData} : Props) => {
   const [modelAppearence, setModelAppearence] = useState<boolean>(false);
   const bodyRef = useRef<HTMLParagraphElement | null>(null);
   const [annotationData, setAnnotationData] = useState<SendAnnotationData>(
-    {body: "", target:{selector: {end: null, start: null}, source: postData.id}}
+    {body: "", target:{selector: {end: null, start: null}, source: postData.postId}}
   );
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -24,27 +24,27 @@ const GalleryPost = ({postData} : Props) => {
   const likeClicked = async (event:any) =>{
     event.stopPropagation();
     if (data.disliked){
-      setData((prev) => ({...prev, disliked: false, liked: true, likeCount: prev.likeCount + 1, dislikeCount: prev.dislikeCount - 1}));
+      setData((prev) => ({...prev, disliked: false, liked: true, likeCount: prev.likes + 1, dislikes: prev.dislikes - 1}));
       return;
     }
     if (data.liked){
-      setData((prev) => ({...prev,  liked: false, likeCount: prev.likeCount - 1}));
+      setData((prev) => ({...prev,  liked: false, likes: prev.likes - 1}));
       return;
     }
-    setData((prev) => ({...prev, disliked: false, liked: true, likeCount: prev.likeCount + 1}));
+    setData((prev) => ({...prev, disliked: false, liked: true, likes: prev.likes + 1}));
   }
 
   const dislikeClicked = async (event:any) =>{
     event.stopPropagation();
     if (data.liked){
-      setData((prev) => ({...prev, liked: false, disliked: true, dislikeCount: prev.dislikeCount + 1, likeCount: prev.likeCount - 1}));
+      setData((prev) => ({...prev, liked: false, disliked: true, dislikes: prev.dislikes + 1, likes: prev.likes - 1}));
       return;
     }
     if (data.disliked){
-      setData((prev) => ({...prev,  disliked: false, dislikeCount: prev.dislikeCount - 1}));
+      setData((prev) => ({...prev,  disliked: false, dislikes: prev.dislikes - 1}));
       return;
     }
-    setData((prev) => ({...prev, liked: false, disliked: true, dislikeCount: prev.dislikeCount + 1}));
+    setData((prev) => ({...prev, liked: false, disliked: true, dislikes: prev.dislikes + 1}));
   }
 
   const setAnnotation = () =>{
@@ -57,9 +57,9 @@ const GalleryPost = ({postData} : Props) => {
     if (selectedText && selection.anchorNode && bodyRef.current!.contains(selection.anchorNode)) {
       const startI = selection.anchorOffset;
       const endI = selection.focusOffset;
-      setAnnotationData(prev => ({...prev, target:{selector: {end: startI, start: endI}, source: postData.id}}) );
+      setAnnotationData(prev => ({...prev, target:{selector: {end: startI, start: endI}, source: postData.postId}}) );
     } else {
-      setAnnotationData(prev => ({...prev, target:{selector: {end: null, start: null}, source: postData.id}}) );
+      setAnnotationData(prev => ({...prev, target:{selector: {end: null, start: null}, source: postData.postId}}) );
     }
   }
 
@@ -68,7 +68,7 @@ const GalleryPost = ({postData} : Props) => {
     setDownloadStatus(true);
     const lnk = document.createElement("a");
     lnk.href = postData.fileUrl!;
-    lnk.download = `model_${postData.id}.${postData.fileUrl!.split(".").slice(-1)}`;
+    lnk.download = `model_${postData.postId}.${postData.fileUrl!.split(".").slice(-1)}`;
     lnk.click();
     lnk.remove();
     setTimeout(() => {
@@ -77,7 +77,7 @@ const GalleryPost = ({postData} : Props) => {
   }
 
   return (
-      <div onMouseOut={setAnnotation} className={`clickable-post ${styles.postCard}`} onClick={() => {window.location.href = `/post/${postData.id}`}}>
+      <div onMouseOut={setAnnotation} className={`clickable-post ${styles.postCard}`} onClick={() => {window.location.href = `/post/${postData.postId}`}}>
         <div className='flex'>
             {/* Profile picture and username div here */}
         </div>
@@ -94,7 +94,7 @@ const GalleryPost = ({postData} : Props) => {
           </div>
           }
           <p className='font-bold text-lg'>{data.title}</p>
-          <p ref={bodyRef} onMouseUp={setAnnotation}>{data.body}</p>
+          <p ref={bodyRef} onMouseUp={setAnnotation}>{data.text}</p>
         </div>
         <div className='flex gap-6'>
           <div className='flex items-center'>
@@ -105,7 +105,7 @@ const GalleryPost = ({postData} : Props) => {
                 <ThumbUpOutlined/>
               }
             </button>
-            <p className={styles.interactionCount}>{formatInteractions(data.likeCount)}</p>
+            <p className={styles.interactionCount}>{formatInteractions(data.likes)}</p>
           </div>
           <div className="flex items-center">
             <button onClick={dislikeClicked} className='btn btn-ghost'>
@@ -116,7 +116,7 @@ const GalleryPost = ({postData} : Props) => {
               }
               
             </button>
-            <p className={styles.interactionCount}>{formatInteractions(data.dislikeCount)}</p>
+            <p className={styles.interactionCount}>{formatInteractions(data.dislikes)}</p>
           </div>
           <div className='flex items-center'>
             <button className='btn btn-ghost'>

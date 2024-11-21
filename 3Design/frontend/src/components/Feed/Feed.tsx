@@ -5,6 +5,7 @@ import styles from "./Feed.module.css"
 import DiscussionPost from '../DiscussionPost/Clickable/DiscussionPost';
 import { Skeleton } from 'antd';
 import { getCategoryById } from '../tsfunctions';
+import axios from 'axios';
 
 interface Props{
     category: string,
@@ -23,6 +24,17 @@ const Feed = ({category, pageNumber}: Props) => {
 
     const fetchPostData = async () => {
         // AJAX Request with category
+        try{
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/posts/category/${category}/nonvisual`,
+                {headers: {
+                    Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
+                }}
+            );
+            console.log(res.data);
+        }
+        catch(e){
+            console.log(e);
+        }
         if (feedType){
             const data = require("../../resources/json-files/MockPosts.json");
             setPostData(data.slice(2*(pageNumber-1), 2*pageNumber));
@@ -70,13 +82,17 @@ const Feed = ({category, pageNumber}: Props) => {
                     <Skeleton active avatar paragraph={{ rows: 4 }} />
                 </div>
             ) : 
-            feedType ? 
+            postData.length == 0 ? 
+                <p>There are currently no posts here.</p>
+            :
+            (feedType ? 
                     postData.map((item, index) => (
-                        <GalleryPost  key={item.id} postData={item}/>
+                        <GalleryPost  key={item.postId} postData={item}/>
                     )) : 
                     postData.map((item, index) => (
-                        <DiscussionPost  key={item.id} postData={item}/>
+                        <DiscussionPost  key={item.postId} postData={item}/>
                     ))
+            )        
             }
             
         </div>
