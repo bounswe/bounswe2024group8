@@ -1,26 +1,34 @@
 import { UploadOutlined,AddCircleOutline,Clear } from '@mui/icons-material'
-import { FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material'
-import { Button, message, Upload, UploadFile } from 'antd'
+import { CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material'
+import { Button, GetProp, message, Upload, UploadFile, UploadProps } from 'antd'
 import React, { SetStateAction, useEffect, useState } from 'react'
 import { Category } from '../interfaces'
+import axios, { AxiosError } from 'axios'
 
 const categories:Category[] = require('../../resources/json-files/Categories.json');
 interface Props{
     dialogFunction: React.Dispatch<SetStateAction<boolean>>
 }
 
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
 const CreatePost = ({dialogFunction} : Props) => {
     const [title, setTitle] = useState("");
     const [titleError, setTitleError] = useState("");
+
     const [category, setCategory] = useState(categories[0].id);
+
     const [tags, setTags] = useState<string[]>([]);
     const [currentTag, setCurrentTag] = useState("");
 
     const [content, setContent] = useState("");
     const [contentError, setContentError] = useState("");
 
-
     const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+    const [joinToTournament, setTournament] = useState(false);
+
+    const [creatingPost, setCreating] = useState(false);
 
     const validateTitle = () => {
         if (title.length < 5){
@@ -45,13 +53,36 @@ const CreatePost = ({dialogFunction} : Props) => {
             setTitleError(titleCheck);
             return;
         }
+        setCreating(true);
         try{
-            //AJAX Request
-            message.success("Your post is successfully sent.");
-            dialogFunction(false);
+        
+            const fd = new FormData();
+            const isVisual = fileList.length == 1;
+            const tagString = tags.join(", ");
+            const fixedCategory = category;
+            fd.append("title", title);
+            fd.append("text", content);
+            fd.append("categoryId", fixedCategory);
+            fd.append("isVisualPost", isVisual ? "true" : "false");
+            fd.append("tags", tagString);   
+            isVisual && fd.append("file", fileList[0] as FileType);
+            fd.append("joinToTournament", joinToTournament ? "true": "false");
+            await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/posts`, fd, {
+                headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,}
+            })
+            message.success("Your post is successfully created.");
+            setTimeout(() => {
+                window.location.href = `/home/${fixedCategory}`;
+            }, 500);
         }
         catch(e){
-            message.error("Something went wrong");
+            if (e instanceof AxiosError && e.response && e.response.data && e.response.data.message && e.response.status != 500){
+                message.error(e.response.data.message);
+            }
+            else{
+                message.error("Something went wrong");
+            }
+            setCreating(false);
 
         }
     }
@@ -66,12 +97,19 @@ const CreatePost = ({dialogFunction} : Props) => {
                 setTitleError("");
                 setTitle(e.target.value);
             }}/>
-            <FormControl>
-                <InputLabel id="categoryLabel">Category</InputLabel>
-                <Select label='Category' labelId='categoryLabel' value={category} onChange={e => setCategory(e.target.value)}>
-                    {categories.map((c) => <MenuItem key={c.id} value={c.id}>{c.text}</MenuItem>)}
-                </Select>
-            </FormControl>
+            <div className='flex '>
+                <FormControl className='w-4/6'>
+                    <InputLabel id="categoryLabel">Category</InputLabel>
+                    <Select label='Category' labelId='categoryLabel' value={category} onChange={e => setCategory(e.target.value)}>
+                        {categories.map((c) => <MenuItem key={c.id} value={c.id}>{c.text}</MenuItem>)}
+                    </Select>
+                </FormControl>
+                <div className='w-2/6 flex items-center flex-col'>
+                    <p>Join To Tournament</p>
+                    <input onChange={(e)=>setTournament(e.target.checked)} type='checkbox' checked={joinToTournament} className='checkbox'/>
+                </div>
+            </div>
+            
             <TextField minRows={4} multiline label="Content" error={!!contentError} helperText={contentError} value={content} onChange={(e) => {
                 if (e.target.value.length > 512){
                     return;
@@ -81,7 +119,7 @@ const CreatePost = ({dialogFunction} : Props) => {
             }}/>
             <div>
                 <div className='flex gap-2'>
-                    <TextField value={currentTag} onKeyDown={(e) =>
+                    <TextField sx={{width: "50%"}} value={currentTag} onKeyDown={(e) =>
                     {
                         if (e.key === "Enter"){
                             if (currentTag.length > 0){
@@ -95,7 +133,7 @@ const CreatePost = ({dialogFunction} : Props) => {
                         }
                        setCurrentTag(e.target.value);
                     }}/>
-                    <div className='flex flex-col gap-2 overflow-y-scroll max-h-40 w-60 items-end'>
+                    <div className='flex flex-col gap-2 overflow-y-scroll max-h-40 w-1/2 items-end'>
                         {tags.map((tag,index) => <div key={index} className='flex items-center gap-2'>
                             <p>{tag}</p>
                             <IconButton onClick={() => setTags(prev=>{
@@ -105,6 +143,7 @@ const CreatePost = ({dialogFunction} : Props) => {
                             })} className='btn btn-outline'><Clear fontSize='small'></Clear></IconButton>
                         </div>)}
                     </div>
+                    
                 </div>
             </div>
             <Upload accept='.obj,.dae' fileList={fileList} onRemove={(file) => {
@@ -136,8 +175,8 @@ const CreatePost = ({dialogFunction} : Props) => {
             </Upload>
             <div className='flex gap-2 mr-0 ml-auto'>
                 <button className='btn btn-outline' onClick={() => dialogFunction(false)}>Cancel</button>
-                <button onClick={sendPost} className='btn btn-primary' >Create Post</button>
-
+                <button disabled={creatingPost} onClick={sendPost} className='btn btn-primary' >Create Post</button>
+                {creatingPost && <CircularProgress style={{fontSize: "8px"}}/>}
             </div>
         </div>
 
