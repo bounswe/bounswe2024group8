@@ -11,30 +11,31 @@ export interface Category{
 
 
 export interface DComment{
-    id: number,
-    user:CustomProfile,
-    body: string,
+    commentId: number,
+    user:CustomUser,
+    text: string,
     memberId: number,
     postId: number,
-    likeCount: number,
-    dislikeCount: number,
+    likes: number,
+    dislikes: number,
     liked: boolean,
     disliked: boolean
 }
 
 export interface DPost{
-    id: number,
+    postId: number,
     title: string,
-    body: string,
-    memberId: number,
+    text: string,
+    user: CustomUser,
     tags: Tag[],
-    category: string,
-    visual: boolean,
+    categoryId: number,
+    isVisualPost: boolean,
     //reaction list, bookmark list, comment list
-    challangeTo: number|null,
+    challengedPostId: number|null,
     fileUrl: string|null,
-    likeCount: number,
-    dislikeCount: number,
+    likes: number,
+    dislikes: number,
+    comments: number,
     liked: boolean,
     disliked: boolean,
     bookmark: boolean
@@ -59,4 +60,10 @@ export interface SendAnnotationTarget{
 export interface SendAnnotationTargetSelector{
     start: number | null,
     end: number | null
+}
+
+export interface CustomUser{
+    id : number,
+    profilePictureUrl: string | null,
+    username: string
 }

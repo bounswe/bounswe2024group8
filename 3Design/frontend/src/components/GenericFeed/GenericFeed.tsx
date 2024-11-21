@@ -39,12 +39,16 @@ const GenericFeed = ({pageNumber}:Props) => {
                     <Skeleton active avatar paragraph={{ rows: 4 }} />
                 </div>
             ) : 
-                postData.map((item, index) => (
-                    item.visual ?
-                    <GalleryPost  key={`g_${item.id}`} postData={item}/> 
-                    :
-                    <DiscussionPost  key={`d_${item.id}`} postData={item} />
-                )) 
+            postData.length == 0 ? 
+                <p>There are currently no posts here.</p>
+            :
+            (postData.map((item, index) => (
+                item.isVisualPost ?
+                <GalleryPost  key={`g_${item.postId}`} postData={item}/> 
+                :
+                <DiscussionPost  key={`d_${item.postId}`} postData={item} />
+                ))
+            )
             }
             
         </div>

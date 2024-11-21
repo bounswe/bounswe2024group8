@@ -8,6 +8,7 @@ import DiscussionPost from "../DiscussionPost/Page/DiscussionPost";
 import SideBar from "../SideBar/SideBar";
 import PageHeader from "../PageHeader/PageHeader";
 import styles from "./PostPage.module.css"
+import { Skeleton } from "antd";
 
 
 const PostPage = () => {
@@ -22,23 +23,25 @@ const PostPage = () => {
     if (!id){
         return <div>404</div>;
     }
-    if(!postData){
-        return <div>Loading</div>;   
-    }
     
-
     return (
     <>
             <PageHeader/>
             <div className='flex'>
                 <SideBar active={""}/>
                 <div className={styles.mainContainer}>
-                    {postData.visual ? 
+                    {
+                        postData ? 
+                        (postData.isVisualPost ? 
                     
-                        <GalleryPost  postData={postData}/>
-                    :
-                        <DiscussionPost postData={postData}/> 
+                            <GalleryPost  postData={postData}/>
+                        :
+                            <DiscussionPost postData={postData}/> 
+                        )    
+                        : 
+                        <Skeleton active avatar paragraph={{ rows: 4 }} />
                     }
+                    
                 </div> 
                 
             </div>

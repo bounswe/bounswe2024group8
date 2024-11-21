@@ -32,7 +32,13 @@ const PageHeader = () => {
                 size='large'
                 style={{width: "80%"}}
                 placeholder='Search...'
-                onSearch={(val) => window.location.href = `/search/${val}`}
+                onSearch={(val) => {
+                     if (!val){
+                        return;
+                     }
+                     window.location.href = `/search/${val}`
+                    }
+                }
                 />
                 
             </div>

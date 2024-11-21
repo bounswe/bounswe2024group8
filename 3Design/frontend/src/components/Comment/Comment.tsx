@@ -12,27 +12,27 @@ const Comment = ({commentData} : Props) => {
     const likeClicked = async (event:any) =>{
         event.stopPropagation();
         if (data.disliked){
-          setData((prev) => ({...prev, disliked: false, liked: true, likeCount: prev.likeCount + 1, dislikeCount: prev.dislikeCount - 1}));
+          setData((prev) => ({...prev, disliked: false, liked: true, likeCount: prev.likes + 1, dislikes: prev.dislikes - 1}));
           return;
         }
         if (data.liked){
-          setData((prev) => ({...prev,  liked: false, likeCount: prev.likeCount - 1}));
+          setData((prev) => ({...prev,  liked: false, likes: prev.likes - 1}));
           return;
         }
-        setData((prev) => ({...prev, disliked: false, liked: true, likeCount: prev.likeCount + 1}));
+        setData((prev) => ({...prev, disliked: false, liked: true, likes: prev.likes + 1}));
       }
     
       const dislikeClicked = async (event:any) =>{
         event.stopPropagation();
         if (data.liked){
-          setData((prev) => ({...prev, liked: false, disliked: true, dislikeCount: prev.dislikeCount + 1, likeCount: prev.likeCount - 1}));
+          setData((prev) => ({...prev, liked: false, disliked: true, dislikeCount: prev.dislikes + 1, likes: prev.likes - 1}));
           return;
         }
         if (data.disliked){
-          setData((prev) => ({...prev,  disliked: false, dislikeCount: prev.dislikeCount - 1}));
+          setData((prev) => ({...prev,  disliked: false, dislikes: prev.dislikes - 1}));
           return;
         }
-        setData((prev) => ({...prev, liked: false, disliked: true, dislikeCount: prev.dislikeCount + 1}));
+        setData((prev) => ({...prev, liked: false, disliked: true, dislikes: prev.dislikes + 1}));
       }
 
     return (
@@ -41,7 +41,7 @@ const Comment = ({commentData} : Props) => {
             <AccountCircleOutlined fontSize="large" className="mr-2" /> 
             <p className="font-bold mr-2 mb-2">{data.user.username}</p> 
           </div>
-          <p className="flex items-center ml-11">{data.body}</p>
+          <p className="flex items-center ml-11">{data.text}</p>
           <div className='flex gap-6 mt-1'>
           <div className='flex items-center ml-6'>
             <button onClick={likeClicked} className='btn btn-ghost btn-sm'>
@@ -51,7 +51,7 @@ const Comment = ({commentData} : Props) => {
                 <ThumbUpOutlined fontSize="small"/>
               }
             </button>
-            <p>{formatInteractions(data.likeCount)}</p>
+            <p>{formatInteractions(data.likes)}</p>
           </div>
           <div className="flex items-center">
             <button onClick={dislikeClicked} className='btn btn-ghost btn-sm'>
@@ -62,7 +62,7 @@ const Comment = ({commentData} : Props) => {
               }
               
             </button>
-            <p>{formatInteractions(data.dislikeCount)}</p>
+            <p>{formatInteractions(data.dislikes)}</p>
           </div>
           </div>
         </div>
