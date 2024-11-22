@@ -14,9 +14,11 @@ import { Skeleton } from "antd";
 const PostPage = () => {
     const { id } = useParams();
     const [postData, setPostData] = useState<DPost | null>(null);
+    const [publishedAnnotations, setPublishedAnnotations] = useState([]);
 
     useEffect(() => {
         setPostData(getPostFromId(id)); 
+        setPublishedAnnotations(require("../../resources/json-files/MockAnnotations.json"));
      }, []);
 
 
@@ -34,7 +36,7 @@ const PostPage = () => {
                         postData ? 
                         (postData.isVisualPost ? 
                     
-                            <GalleryPost  postData={postData}/>
+                            <GalleryPost publishedAnnotations={publishedAnnotations} postData={postData}/>
                         :
                             <DiscussionPost postData={postData}/> 
                         )    

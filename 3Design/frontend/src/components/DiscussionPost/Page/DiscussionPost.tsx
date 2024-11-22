@@ -13,7 +13,7 @@ const DiscussionPost = ({postData} : Props) => {
     const [data, setData] = useState<DPost>(postData);
     const bodyRef = useRef<HTMLParagraphElement | null>(null);
     const [annotationData, setAnnotationData] = useState<SendAnnotationData>(
-      {body: "", target:{selector: {end: null, start: null}, source: postData.postId}}
+        {content: "", endIndex: null, postId: postData.postId, startIndex: null, userId: 1}
     );
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -54,10 +54,10 @@ const DiscussionPost = ({postData} : Props) => {
       if (selectedText && selection.anchorNode && bodyRef.current!.contains(selection.anchorNode)) {
         const startI = selection.anchorOffset;
         const endI = selection.focusOffset;
-        setAnnotationData(prev => ({...prev, target:{selector: {end: startI, start: endI}, source: postData.postId}}) );
-      } else {
-        setAnnotationData(prev => ({...prev, target:{selector: {end: null, start: null}, source: postData.postId}}) );
-      }
+        setAnnotationData(prev => ({...prev, startIndex: startI,endIndex: endI}) );
+        } else {
+        setAnnotationData(prev => ({...prev, startIndex: null,endIndex: null}) );
+        }
     }
 
     useEffect(() => {
@@ -84,7 +84,7 @@ const DiscussionPost = ({postData} : Props) => {
                                 <Shield/>
                                 Challenge Post
                             </MenuItem>*/}
-                            <MenuItem disabled={!annotationData.target.selector.start} className='gap-2'>
+                            <MenuItem disabled={!annotationData.startIndex} className='gap-2'>
                                 <BorderColor/>
                                 Annotate
                             </MenuItem>

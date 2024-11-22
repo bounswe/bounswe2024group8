@@ -3,11 +3,11 @@
     "@context": "http://www.w3.org/ns/anno.jsonld",
     "id": "http://example.org/anno6",
     "type": "Annotation",
-    "bodyValue": "This text means absolutely nothing. No one can interpret this in any meaningfull way.",
+    "bodyValue": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
     "creator": {
         "id": "http://example.org/uer1s",
         "type": "Person",
-        "nickname": "Some Guy"
+        "nickname": "User 1"
     },
     "created": "2021-06-01T12:00:00Z",
     "target": {
@@ -27,7 +27,7 @@
     "creator": {
         "id": "http://example.org/uer1s",
         "type": "Person",
-        "nickname": "Some Other Guy"
+        "nickname": "User 2"
     },
     "created": "2021-06-01T12:00:00Z",
     "target": {
@@ -35,7 +35,7 @@
         "selector": {
             "type": "TextPositionSelector",
             "start": 1,
-            "end": 3
+            "end": 20
         }
      }
 }

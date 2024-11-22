@@ -47,20 +47,13 @@ export interface Tag{
 }
 
 export interface SendAnnotationData{
-    target: SendAnnotationTarget,
-    body: string
+    postId : number, 
+    userId : number, 
+    startIndex: number | null, 
+    endIndex: number | null, 
+    content: string,
 }
 
-
-export interface SendAnnotationTarget{
-    selector: SendAnnotationTargetSelector,
-    source: number
-}
-
-export interface SendAnnotationTargetSelector{
-    start: number | null,
-    end: number | null
-}
 
 
 export interface CustomUser{
@@ -71,13 +64,9 @@ export interface CustomUser{
 
 
 export interface DisplayedAnnotationData{
-    userId: number,
+    userId: string,
     username: string,
-    annotation: string
-}
-
-export interface DisplayedAnnotationDataList{
-    annotations: DisplayedAnnotationData[],
+    annotation: string,
     annotatedText : string
 }
 

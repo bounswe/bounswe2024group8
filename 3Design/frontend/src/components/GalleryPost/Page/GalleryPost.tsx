@@ -1,26 +1,27 @@
 import React, { memo, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
-import { DPost, SendAnnotationData, DComment, DisplayedAnnotationDataList } from '../../interfaces'
+import { DPost, SendAnnotationData, DComment, DisplayedAnnotationData, RecievedAnnotationData } from '../../interfaces'
 import styles from "../GalleryPost.module.css"
 import DViewer from '../../DViewer/DViewer'
 import { Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined } from '@mui/icons-material'
-import { Dialog, IconButton, Menu, MenuItem } from '@mui/material'
+import { Dialog, IconButton, Menu, MenuItem, TextField } from '@mui/material'
 import { formatInteractions } from '../../tsfunctions'
 import Comment from '../../Comment/Comment'
 import MockComments from '../../../resources/json-files/Comments.json'
 import ChallengePost from '../../CreatePost/ChallengePost'
+import PostAnnotation from '../../Annotations/PostAnnotation'
+import { message, Switch } from 'antd'
 interface Props{
   postData: DPost,
+  publishedAnnotations: RecievedAnnotationData[]
 }
 
-const GalleryPost = ({postData} : Props) => {
+const GalleryPost = ({postData, publishedAnnotations} : Props) => {
 
   const comments: DComment[] = JSON.parse(localStorage.getItem("comments") || "[]") as DComment[];
   const [data, setData] = useState<DPost>(postData);
   const [modelAppearence, setModelAppearence] = useState<boolean>(false);
   const bodyRef = useRef<HTMLParagraphElement | null>(null);
-  const [annotationData, setAnnotationData] = useState<SendAnnotationData>(
-    {body: "", target:{selector: {end: null, start: null}, source: postData.postId}}
-  );
+  const [annotationData, setAnnotationData] = useState<SendAnnotationData>({content: "", endIndex: null, postId: postData.postId, startIndex: null, userId: 1});
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [downloadStatus, setDownloadStatus] = useState(false);
@@ -28,9 +29,12 @@ const GalleryPost = ({postData} : Props) => {
 
   const [challengeDialog, setChallengeDialog] = useState(false);
 
-  const [currentAnnotations, setCurrentAnnotations] = useState<DisplayedAnnotationDataList>({annotatedText: "", annotations: []});
+  const [currentAnnotations, setCurrentAnnotations] = useState<DisplayedAnnotationData[]>([]);
+  const [annotationsVisible, setAnnotationsVisible] = useState(false);
 
-  const setDisplayedAnnotation = useCallback((x: DisplayedAnnotationDataList) =>{
+  const [annotatedText, setAnnotatedText] = useState("");
+
+  const setDisplayedAnnotation = useCallback((x: DisplayedAnnotationData[]) =>{
     setCurrentAnnotations(x);
   }, []);
 
@@ -79,9 +83,9 @@ const GalleryPost = ({postData} : Props) => {
     if (selectedText && selection.anchorNode && bodyRef.current!.contains(selection.anchorNode)) {
       const startI = selection.anchorOffset;
       const endI = selection.focusOffset;
-      setAnnotationData(prev => ({...prev, target:{selector: {end: startI, start: endI}, source: postData.postId}}) );
+      setAnnotationData(prev => ({...prev, startIndex: Math.min(startI, endI),endIndex: Math.max(endI, startI)}) );
     } else {
-      setAnnotationData(prev => ({...prev, target:{selector: {end: null, start: null}, source: postData.postId}}) );
+      setAnnotationData(prev => ({...prev, startIndex: null,endIndex: null}) );
     }
   }
 
@@ -98,8 +102,23 @@ const GalleryPost = ({postData} : Props) => {
     }, 5000);
   }
 
+  const startAnnotation = () => {
+    console.log(`Start: ${annotationData.startIndex!} End: ${annotationData.endIndex!}`);
+    setAnnotatedText(postData.text.slice(annotationData.startIndex!, annotationData.endIndex!));
+  }
+
+  const postAnnotation = async () => {
+    try{
+
+      message.success("Annotation published successfully.");
+      setAnnotatedText("");
+    }catch(e){
+      message.success("Something went wrong.");
+    }
+  }
+
   return (
-      <div onMouseOut={setAnnotation} className="w-full flex gap-2">
+      <div onMouseOut={ !annotationsVisible ? setAnnotation : () => (null)} className="w-full flex gap-2">
         <div className={styles.postPageCard} >
           <div className='flex'>
               {/* Profile picture and username div here */}
@@ -118,7 +137,7 @@ const GalleryPost = ({postData} : Props) => {
                           <Shield/>
                           Challenge Post
                       </MenuItem>
-                      <MenuItem disabled={!annotationData.target.selector.start} className='gap-2'>
+                      <MenuItem onClick={startAnnotation} disabled={!annotationData.startIndex || annotationsVisible} className='gap-2'>
                           <BorderColor/>
                           Annotate
                       </MenuItem>
@@ -139,7 +158,12 @@ const GalleryPost = ({postData} : Props) => {
             </div>
             }
             <p className='font-bold text-lg'>{data.title}</p>
-            <p ref={bodyRef} onMouseUp={setAnnotation}>{data.text}</p>
+            {
+              annotationsVisible ? 
+              <PostAnnotation annotations={publishedAnnotations} postBody={postData.text} setAnnotationsVisible={setDisplayedAnnotation}/>
+              :
+              <p ref={bodyRef} onMouseUp={!annotationsVisible ? setAnnotation : () => (null)}>{data.text}</p>
+            }
           </div>
           <div className='flex gap-6'>
             <div className='flex items-center'>
@@ -171,6 +195,7 @@ const GalleryPost = ({postData} : Props) => {
               </button>
               <p>{1453 /*comment sayısı buraya gelecek */}</p>
             </div>
+            
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -183,6 +208,9 @@ const GalleryPost = ({postData} : Props) => {
                 <BookmarkBorderOutlined/>
               }
             </button>
+            <div className='flex items-center mr-0 ml-auto'>
+              <Switch checked={annotationsVisible} onChange={(e) => setAnnotationsVisible(e)} checkedChildren="Annotations Visible" unCheckedChildren="Annotations Disabled"/>
+            </div>
           </div>
           <div className='flex gap-2'>
               <input type="text" placeholder="Write your comment..." value={comment} onChange={(e) => setComment(e.target.value)} className='w-full border border-gray-300 rounded-lg p-2'/>
@@ -217,20 +245,38 @@ const GalleryPost = ({postData} : Props) => {
                 <ChallengePost categoryId={postData.categoryId} dialogFunction={setChallengeDialog} challengedPostId={postData.postId}/>
           </Dialog>
         </div>
-        <div className={styles.annotationContainer}>
-            <div className='flex'>
-                <p className='font-semibold text-lg pt-2'>Annotations</p>
-                <button onClick={() => setDisplayedAnnotation({annotatedText: "", annotations: []})} className='btn btn-ghost mr-0 ml-auto'>X</button>
+        {annotationsVisible && currentAnnotations.length != 0 && 
+          <div className={styles.annotationContainer}>
+              <div className='flex'>
+                  <p className='font-semibold text-lg pt-2'>Annotations</p>
+                  <button onClick={() => setDisplayedAnnotation([])} className='btn btn-ghost mr-0 ml-auto'>X</button>
+              </div>
+              <div className={styles.annotationDataContainer}>
+                  {currentAnnotations.map((item, index) => (
+                    <div key={`ant_container_${index}`} className={`flex flex-col gap-2 pb-4 ${styles.singleAnnotationContainer}`}>
+                      <a className='text-blue-600' href={`/profile/${item.userId}`}><u>{item.username}</u></a>
+                      <div className={`${styles.ellipsis} font-bold`} title= {`Annotated text: "${item.annotatedText}"`}>Annotated text: "{item.annotatedText}"</div>
+                      <p>{item.annotation}</p>
+                    </div>
+                  ))}
+              </div>
+          </div>}
+          <Dialog fullWidth maxWidth="sm" open={!!annotatedText} onClose={() => setAnnotatedText("")}>
+            <div className='flex flex-col gap-4 p-4'>
+              <p className={`${styles.ellipsis} font-bold`} title={`Annotating Text: ${annotatedText}`}>Annotating Text: {annotatedText}</p>
+              <TextField label="Your Annotation" multiline minRows={4} value={annotationData.content} onChange={(e) => {
+                if (e.target.value.length > 256){
+                  return;
+                }
+                
+                setAnnotationData(prev => ({...prev, content: e.target.value}))
+              }}/>
+              <div className='flex gap-4 justify-end'>
+                <button onClick={() => setAnnotatedText("")} className='btn btn-error'>Close</button>
+                <button onClick={postAnnotation} className='btn btn-outline'>Publish</button>
+              </div>    
             </div>
-            <div className={styles.annotationDataContainer}>
-                {currentAnnotations.annotations.map((item, index) => (
-                  <div className='flex flex-col gap-2'>
-                    <a href={`/profile/${item.userId}`}>{item.username}</a>
-                    <p>{item.annotation}</p>
-                  </div>
-                ))}
-            </div>
-        </div>
+          </Dialog>
       </div>
   )
 }
