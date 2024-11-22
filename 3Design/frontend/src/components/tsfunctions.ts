@@ -39,3 +39,15 @@ export function getPostFromId(id: string | undefined){
     }
     return null;
 }
+
+export function limitPostBodies(x:string){
+    let count = 0;
+    for (let i = 0; i < x.length; i++) {
+        if (x.charAt(i) == "\n"){
+            count += 50;
+            continue;
+        }
+        count++;
+    }
+    return count > 1024;
+}

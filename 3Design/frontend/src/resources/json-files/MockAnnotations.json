@@ -1,0 +1,42 @@
+[
+{
+    "@context": "http://www.w3.org/ns/anno.jsonld",
+    "id": "http://example.org/anno6",
+    "type": "Annotation",
+    "bodyValue": "This text means absolutely nothing. No one can interpret this in any meaningfull way.",
+    "creator": {
+        "id": "http://example.org/uer1s",
+        "type": "Person",
+        "nickname": "Some Guy"
+    },
+    "created": "2021-06-01T12:00:00Z",
+    "target": {
+        "source": "http://example.org/ebook1", 
+        "selector": {
+            "type": "TextPositionSelector",
+            "start": 5,
+            "end": 10
+        }
+     }
+},
+{
+    "@context": "http://www.w3.org/ns/anno.jsonld",
+    "id": "http://example.org/anno6",
+    "type": "Annotation",
+    "bodyValue": "This text means something.",
+    "creator": {
+        "id": "http://example.org/uer1s",
+        "type": "Person",
+        "nickname": "Some Other Guy"
+    },
+    "created": "2021-06-01T12:00:00Z",
+    "target": {
+        "source": "http://example.org/ebook1", 
+        "selector": {
+            "type": "TextPositionSelector",
+            "start": 1,
+            "end": 3
+        }
+     }
+}
+]

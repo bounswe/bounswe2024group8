@@ -62,8 +62,47 @@ export interface SendAnnotationTargetSelector{
     end: number | null
 }
 
+
 export interface CustomUser{
     id : number,
     profilePictureUrl: string | null,
     username: string
+}
+
+
+export interface DisplayedAnnotationData{
+    userId: number,
+    username: string,
+    annotation: string
+}
+
+export interface DisplayedAnnotationDataList{
+    annotations: DisplayedAnnotationData[],
+    annotatedText : string
+}
+
+export interface RecievedAnnotationData{
+    context: string,
+    id : string,
+    type: string,
+    bodyValue: string,
+    created: string,
+    creator: RecievedAnnotationCreator,
+    target: RecievedAnnotationTarget
+}
+
+interface RecievedAnnotationCreator{
+    id: string,
+    type: string,
+    nickname: string
+}
+
+interface RecievedAnnotationTarget{
+    selector: RecievedAnnotationTargetSelector,
+    source: string
+}
+interface RecievedAnnotationTargetSelector{
+    type: string,
+    start: number,
+    end: number
 }

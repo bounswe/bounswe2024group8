@@ -65,7 +65,7 @@ const DiscussionPost = ({postData} : Props) => {
     },[annotationData]) 
 
     return (
-            <div onMouseOut={setAnnotation} className={styles.postCard} >
+            <div onMouseOut={setAnnotation} className={styles.postPageCard} >
                 <div className='flex'>
                     {/* Profile picture and username div here */}
 

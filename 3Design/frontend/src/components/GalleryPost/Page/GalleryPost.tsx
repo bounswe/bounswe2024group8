@@ -1,12 +1,13 @@
-import React, { memo, SetStateAction, useEffect, useRef, useState } from 'react'
-import { DPost, SendAnnotationData, DComment } from '../../interfaces'
+import React, { memo, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
+import { DPost, SendAnnotationData, DComment, DisplayedAnnotationDataList } from '../../interfaces'
 import styles from "../GalleryPost.module.css"
 import DViewer from '../../DViewer/DViewer'
 import { Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined } from '@mui/icons-material'
-import { IconButton, Menu, MenuItem } from '@mui/material'
+import { Dialog, IconButton, Menu, MenuItem } from '@mui/material'
 import { formatInteractions } from '../../tsfunctions'
 import Comment from '../../Comment/Comment'
 import MockComments from '../../../resources/json-files/Comments.json'
+import ChallengePost from '../../CreatePost/ChallengePost'
 interface Props{
   postData: DPost,
 }
@@ -24,6 +25,14 @@ const GalleryPost = ({postData} : Props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [downloadStatus, setDownloadStatus] = useState(false);
   const [comment, setComment] = useState("");
+
+  const [challengeDialog, setChallengeDialog] = useState(false);
+
+  const [currentAnnotations, setCurrentAnnotations] = useState<DisplayedAnnotationDataList>({annotatedText: "", annotations: []});
+
+  const setDisplayedAnnotation = useCallback((x: DisplayedAnnotationDataList) =>{
+    setCurrentAnnotations(x);
+  }, []);
 
   const handleComment = async (newComment: DComment) => {
     if(newComment.text !== ""){
@@ -90,119 +99,137 @@ const GalleryPost = ({postData} : Props) => {
   }
 
   return (
-      <div onMouseOut={setAnnotation} className={styles.postCard} >
-        <div className='flex'>
-            {/* Profile picture and username div here */}
-
-            <div className='mr-0 ml-auto'>
-                <IconButton onClick={(e) => {
-                  e.stopPropagation();
-                  setAnchorEl(e.currentTarget)}}>
-                    <MoreVert/>
-                </IconButton>
-                <Menu open={!!anchorEl} anchorEl={anchorEl} onClose={() => setAnchorEl(null)}>
-                    <MenuItem disabled={downloadStatus} onClick={downloadModel} className='gap-2'>
-                        <Download/>
-                        Download Model
-                    </MenuItem>
-                    <MenuItem className='gap-2'>
-                        <Shield/>
-                        Challenge Post
-                    </MenuItem>
-                    <MenuItem disabled={!annotationData.target.selector.start} className='gap-2'>
-                        <BorderColor/>
-                        Annotate
-                    </MenuItem>
-                    
-                </Menu>
+      <div onMouseOut={setAnnotation} className="w-full flex gap-2">
+        <div className={styles.postPageCard} >
+          <div className='flex'>
+              {/* Profile picture and username div here */}
+              <div className='mr-0 ml-auto'>
+                  <IconButton onClick={(e) => {
+                    e.stopPropagation();
+                    setAnchorEl(e.currentTarget)}}>
+                      <MoreVert/>
+                  </IconButton>
+                  <Menu open={!!anchorEl} anchorEl={anchorEl} onClose={() => setAnchorEl(null)}>
+                      <MenuItem disabled={downloadStatus} onClick={downloadModel} className='gap-2'>
+                          <Download/>
+                          Download Model
+                      </MenuItem>
+                      <MenuItem onClick={() => setChallengeDialog(true)} className='gap-2'>
+                          <Shield/>
+                          Challenge Post
+                      </MenuItem>
+                      <MenuItem disabled={!annotationData.target.selector.start} className='gap-2'>
+                          <BorderColor/>
+                          Annotate
+                      </MenuItem>
+        
+                  </Menu>
+              </div>
+          </div>
+          <div className='flex flex-col gap-2'>
+            {modelAppearence ?
+            <div className='border-gray-500 border-2 non-clickable-div'>
+              <DViewer filePath={data.fileUrl!}/>
             </div>
-        </div>
-        <div className='flex flex-col gap-2'>
-          {modelAppearence ?
-          <div className='border-gray-500 border-2 non-clickable-div'>
-            <DViewer filePath={data.fileUrl!}/> 
-          </div> 
-          :
-          <div onClick={event => event.stopPropagation() } className={`flex justify-center items-center non-clickable-div ${styles.previewContainer}`} style={{backgroundImage: "url(/previewmodel.jpg)"}} >
-              <button onClick={() => {
-                
-                setModelAppearence(true)}} className={`btn ${styles.viewModelBtn}`}>View Model</button>
-          </div>
-          }
-          <p className='font-bold text-lg'>{data.title}</p>
-          <p ref={bodyRef} onMouseUp={setAnnotation}>{data.text}</p>
-        </div>
-        <div className='flex gap-6'>
-          <div className='flex items-center'>
-            <button onClick={likeClicked} className='btn btn-ghost'>
-            {
-                data.liked ?
-                <ThumbUp/>:
-                <ThumbUpOutlined/>
-              }
-            </button>
-            <p className={styles.interactionCount}>{formatInteractions(data.likes)}</p>
-          </div>
-          <div className="flex items-center">
-            <button onClick={dislikeClicked} className='btn btn-ghost'>
-              {
-                data.disliked ?
-                <ThumbDown/>:
-                <ThumbDownOutlined/>
-              }
-              
-            </button>
-            <p className={styles.interactionCount}>{formatInteractions(data.dislikes)}</p>
-          </div>
-          <div className='flex items-center'>
-            <button className='btn btn-ghost'>
-            {
-                <InsertCommentOutlined/>
-              }
-            </button>
-            <p>{1453 /*comment sayısı buraya gelecek */}</p> 
-          </div>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setData((prev) => ({...prev, bookmark: !prev.bookmark}))
-            }}
-          className='btn btn-ghost'>
-            {
-              data.bookmark ?
-              <Bookmark/>:
-              <BookmarkBorderOutlined/>
+            :
+            <div onClick={event => event.stopPropagation() } className={`flex justify-center items-center non-clickable-div ${styles.previewContainer}`} style={{backgroundImage: "url(/previewmodel.jpg)"}} >
+                <button onClick={() => {
+        
+                  setModelAppearence(true)}} className={`btn ${styles.viewModelBtn}`}>View Model</button>
+            </div>
             }
-          </button>
+            <p className='font-bold text-lg'>{data.title}</p>
+            <p ref={bodyRef} onMouseUp={setAnnotation}>{data.text}</p>
+          </div>
+          <div className='flex gap-6'>
+            <div className='flex items-center'>
+              <button onClick={likeClicked} className='btn btn-ghost'>
+              {
+                  data.liked ?
+                  <ThumbUp/>:
+                  <ThumbUpOutlined/>
+                }
+              </button>
+              <p className={styles.interactionCount}>{formatInteractions(data.likes)}</p>
+            </div>
+            <div className="flex items-center">
+              <button onClick={dislikeClicked} className='btn btn-ghost'>
+                {
+                  data.disliked ?
+                  <ThumbDown/>:
+                  <ThumbDownOutlined/>
+                }
+        
+              </button>
+              <p className={styles.interactionCount}>{formatInteractions(data.dislikes)}</p>
+            </div>
+            <div className='flex items-center'>
+              <button className='btn btn-ghost'>
+              {
+                  <InsertCommentOutlined/>
+                }
+              </button>
+              <p>{1453 /*comment sayısı buraya gelecek */}</p>
+            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setData((prev) => ({...prev, bookmark: !prev.bookmark}))
+              }}
+            className='btn btn-ghost'>
+              {
+                data.bookmark ?
+                <Bookmark/>:
+                <BookmarkBorderOutlined/>
+              }
+            </button>
+          </div>
+          <div className='flex gap-2'>
+              <input type="text" placeholder="Write your comment..." value={comment} onChange={(e) => setComment(e.target.value)} className='w-full border border-gray-300 rounded-lg p-2'/>
+              <button className='btn' onClick={(commentText) => {
+            const newComment: DComment = {
+              commentId: comments.length + 1,
+              user: {
+                username: localStorage.getItem("username") || "Anonymous",
+                profilePictureUrl: "",
+                id: 1000,
+              },
+              "text": comment,
+              "memberId": 1,
+              "postId": data.postId,
+              "likes": 0,
+              "dislikes": 0,
+              "liked": false,
+              "disliked": false,
+            };
+            handleComment(newComment);
+          }}>Comment</button>
+          </div>
+          <div className='h-80 overflow-y-scroll'>
+                  {comments.map((item, index) => (
+                      item.commentId === data.postId ?
+                      <Comment key={`g_${item.commentId}`} commentData={item}/>
+                      :
+                      null
+                  )) }
+          </div>
+          <Dialog maxWidth="sm" fullWidth open={challengeDialog} onClose={() => setChallengeDialog(false)}>
+                <ChallengePost categoryId={postData.categoryId} dialogFunction={setChallengeDialog} challengedPostId={postData.postId}/>
+          </Dialog>
         </div>
-        <div className='flex gap-2'>
-            <input type="text" placeholder="Write your comment..." value={comment} onChange={(e) => setComment(e.target.value)} className='w-full border border-gray-300 rounded-lg p-2'/>
-            <button className='btn' onClick={(commentText) => {
-          const newComment: DComment = {
-            commentId: comments.length + 1,
-            user: {
-              username: localStorage.getItem("username") || "Anonymous",
-              profilePictureUrl: "",
-              id: 1000,
-            },
-            "text": comment,
-            "memberId": 1,
-            "postId": data.postId,
-            "likes": 0,
-            "dislikes": 0,
-            "liked": false,
-            "disliked": false,
-          };
-          handleComment(newComment);
-        }}>Comment</button>
-        </div>
-        <div className='h-80 overflow-y-scroll'>
-                {comments.map((item, index) => (
-                    item.postId === data.postId ?
-                    <Comment key={`g_${item.postId}`} commentData={item}/> 
-                    :
-                    null
-                )) }
+        <div className={styles.annotationContainer}>
+            <div className='flex'>
+                <p className='font-semibold text-lg pt-2'>Annotations</p>
+                <button onClick={() => setDisplayedAnnotation({annotatedText: "", annotations: []})} className='btn btn-ghost mr-0 ml-auto'>X</button>
+            </div>
+            <div className={styles.annotationDataContainer}>
+                {currentAnnotations.annotations.map((item, index) => (
+                  <div className='flex flex-col gap-2'>
+                    <a href={`/profile/${item.userId}`}>{item.username}</a>
+                    <p>{item.annotation}</p>
+                  </div>
+                ))}
+            </div>
         </div>
       </div>
   )
