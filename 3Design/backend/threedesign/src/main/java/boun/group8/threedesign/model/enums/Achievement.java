@@ -11,17 +11,17 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public enum Achievement {
 
-    COMMENTER(1L, "Commenter", "Comment on a design", 10) {
-        @Override
-        public boolean meetsCriteria(User user) {
-            return commentRepository.countByUserId(user.getId()) >= 1;
-        }
-    },
-
-    FRESHMAN(2L, "Freshman", "Create an account", 10) {
+    FRESHMAN(1L, "Freshman", "Create an account", 10) {
         @Override
         public boolean meetsCriteria(User user) {
             return userRepository.findById(user.getId()).isPresent();
+        }
+    },
+
+    COMMENTER(2L, "Commenter", "Comment on a design", 10) {
+        @Override
+        public boolean meetsCriteria(User user) {
+            return commentRepository.countByUserId(user.getId()) >= 1;
         }
     },
 
@@ -29,6 +29,13 @@ public enum Achievement {
         @Override
         public boolean meetsCriteria(User user) {
             return postRepository.countByUserId(user.getId()) >= 1;
+        }
+    },
+
+    REACTOR(4L, "Reactor", "React to a design", 10) {
+        @Override
+        public boolean meetsCriteria(User user) {
+            return reactionRepository.countByUserId(user.getId()) >= 1;
         }
     },
 
