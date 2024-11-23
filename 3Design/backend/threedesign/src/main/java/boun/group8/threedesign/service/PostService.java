@@ -275,7 +275,15 @@ public class PostService {
             return new ArrayList<>();
         }
 
-        return convertPostsToPostResponses(user, posts);
+        Set<Post> postSet = new HashSet<>();
+
+        postSet.addAll(posts);
+
+        List<Post> sortedPosts = postSet.stream()
+                .sorted(Comparator.comparing(Post::getId).reversed())
+                .collect(Collectors.toList());
+
+        return convertPostsToPostResponses(user, sortedPosts);
     }
 
     public List<PostResponse> getVisualPostsByCategory(User user, Long categoryId) {
