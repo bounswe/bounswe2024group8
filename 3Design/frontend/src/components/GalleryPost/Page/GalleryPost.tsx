@@ -265,7 +265,7 @@ const GalleryPost = ({postData, publishedAnnotationsProps} : Props) => {
           </div>
           <div className='h-80 overflow-y-scroll'>
                   {comments.map((item, index) => (
-                      item.commentId === data.postId ?
+                      item.postId === data.postId ?
                       <Comment key={`g_${item.commentId}`} commentData={item}/>
                       :
                       null

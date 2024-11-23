@@ -54,7 +54,7 @@ const PageHeader = () => {
             return;
         }
         const newUrl = URL.createObjectURL(e.target.files[0]);
-        setProfileInfo((prev) =>{ return {...prev!, profilePhoto: newUrl}});
+        setProfileInfo((prev) =>{ return {...prev!, profilePictureUrl: newUrl}});
     }
 
     const changePassword = async () => {
