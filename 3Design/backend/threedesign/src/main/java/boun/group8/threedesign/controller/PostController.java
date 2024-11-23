@@ -35,7 +35,7 @@ public class PostController {
     @PostMapping
     public ResponseEntity<Post> createPost(
             @AuthenticationPrincipal User user,
-            @ModelAttribute PostCreateRequest request) throws IOException {
+            @Valid @ModelAttribute PostCreateRequest request) throws Exception {
 
         Post createdPost = postService.createPost(user, request);
 

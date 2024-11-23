@@ -83,15 +83,7 @@ public class PostService {
     }
 
     private void validatePostRequest(PostCreateRequest request) {
-        if (request.getTitle() == null || request.getTitle().isBlank()) {
-            throw new ThreeDesignDatabaseException("Title not found");
-        }
-        if (request.getText() == null || request.getText().isBlank()) {
-            throw new ThreeDesignDatabaseException("Text not found");
-        }
-        if (request.getIsVisualPost() == null) {
-            throw new ThreeDesignDatabaseException("Select post type");
-        }
+
         if (!categoryRepository.existsById(request.getCategoryId())) {
             throw new ThreeDesignDatabaseException("Category does not exist");
         }
