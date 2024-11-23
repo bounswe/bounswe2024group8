@@ -37,10 +37,11 @@ public class AuthenticationService {
         }
 
         user = User.builder()
-                .userName(request.getUserName())
+                .nickName(request.getUserName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
+                .experience(0L)
                 .build();
 
         User savedUser;
@@ -50,13 +51,14 @@ public class AuthenticationService {
             throw new ThreeDesignDatabaseException("Error while saving user");
         }
 
+
         String jwtToken = jwtService.generateToken(savedUser);
         String refreshToken = jwtService.generateRefreshToken(savedUser);
 
         return AuthenticationResponse.builder()
                 .userId(savedUser.getId())
                 .email(savedUser.getEmail())
-                .userName(savedUser.getUsername())
+                .userName(savedUser.getNickName())
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
@@ -79,7 +81,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .userId(user.getId())
                 .email(user.getEmail())
-                .userName(user.getUsername())
+                .userName(user.getNickName())
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();

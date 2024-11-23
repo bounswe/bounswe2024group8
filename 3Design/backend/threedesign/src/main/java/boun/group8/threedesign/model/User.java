@@ -31,14 +31,17 @@ public class User implements UserDetails {
     @Column(nullable = false)
     String password;
 
-    @Column(name = "user_name", nullable = false)
-    String userName;
+    @Column(name = "nick_name", nullable = false)
+    String nickName;
 
     @Column(name = "profile_picture_url", nullable = true)
     String profilePictureUrl;
 
     @Enumerated(EnumType.STRING)
     Role role;
+
+    @Column(name = "experience", nullable = false, columnDefinition = "bigint default 0")
+    Long experience;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
