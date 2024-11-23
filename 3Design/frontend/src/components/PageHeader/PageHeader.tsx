@@ -118,7 +118,7 @@ const PageHeader = () => {
                     </div>
                 </div>
                 :
-                <div className='flex items-center justify-center'>
+                <div className='flex items-center justify-center py-5 h-60'>
                     <CircularProgress/>
                 </div>
                 }

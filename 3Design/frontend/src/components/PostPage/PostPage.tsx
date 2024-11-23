@@ -38,7 +38,7 @@ const PostPage = () => {
                     
                             <GalleryPost publishedAnnotationsProps={publishedAnnotations} postData={postData}/>
                         :
-                            <DiscussionPost postData={postData}/> 
+                            <DiscussionPost publishedAnnotationsProps={publishedAnnotations} postData={postData}/> 
                         )    
                         : 
                         <Skeleton active avatar paragraph={{ rows: 4 }} />

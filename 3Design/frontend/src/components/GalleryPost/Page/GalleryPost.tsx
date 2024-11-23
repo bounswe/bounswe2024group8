@@ -22,7 +22,7 @@ const GalleryPost = ({postData, publishedAnnotationsProps} : Props) => {
   const [data, setData] = useState<DPost>(postData);
   const [modelAppearence, setModelAppearence] = useState<boolean>(false);
   const bodyRef = useRef<HTMLParagraphElement | null>(null);
-  const [annotationData, setAnnotationData] = useState<SendAnnotationData>({content: "", endIndex: null, postId: 9, startIndex: null, userId: 1});
+  const [annotationData, setAnnotationData] = useState<SendAnnotationData>({content: "", endIndex: null, postId: 9, startIndex: null, userId: parseInt(localStorage.getItem("user_id") ?? "-1")});
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [downloadStatus, setDownloadStatus] = useState(false);
