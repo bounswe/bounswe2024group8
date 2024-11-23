@@ -4,6 +4,7 @@ import { Button, GetProp, message, Upload, UploadFile, UploadProps } from 'antd'
 import React, { SetStateAction, useEffect, useState } from 'react'
 import { Category } from '../interfaces'
 import axios, { AxiosError } from 'axios'
+import { limitPostBodies } from '../tsfunctions'
 
 const categories:Category[] = require('../../resources/json-files/Categories.json');
 interface Props{
@@ -111,7 +112,7 @@ const CreatePost = ({dialogFunction} : Props) => {
             </div>
             
             <TextField minRows={4} multiline label="Content" error={!!contentError} helperText={contentError} value={content} onChange={(e) => {
-                if (e.target.value.length > 512){
+                if (limitPostBodies(e.target.value)){
                     return;
                 }
                 setContentError("");

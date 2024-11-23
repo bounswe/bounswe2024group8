@@ -12,11 +12,7 @@ interface Props{
 const DiscussionPost = ({postData} : Props) => {
     const [data, setData] = useState<DPost>(postData);
     const bodyRef = useRef<HTMLParagraphElement | null>(null);
-    const [annotationData, setAnnotationData] = useState<SendAnnotationData>(
-      {body: "", target:{selector: {end: null, start: null}, source: postData.postId}}
-    );
 
-    
 
     const likeClicked = async (event:any) =>{
         event.stopPropagation();
@@ -44,28 +40,9 @@ const DiscussionPost = ({postData} : Props) => {
         setData((prev) => ({...prev, liked: false, disliked: true, dislikes: prev.dislikes + 1}));
     }
 
-    const setAnnotation = () =>{
-      const selection = window.getSelection();
-      if (!selection){
-        return;
-      }
-      const selectedText = selection.toString();
-  
-      if (selectedText && selection.anchorNode && bodyRef.current!.contains(selection.anchorNode)) {
-        const startI = selection.anchorOffset;
-        const endI = selection.focusOffset;
-        setAnnotationData(prev => ({...prev, target:{selector: {end: startI, start: endI}, source: postData.postId}}) );
-      } else {
-        setAnnotationData(prev => ({...prev, target:{selector: {end: null, start: null}, source: postData.postId}}) );
-      }
-    }
-
-    useEffect(() => {
-      console.log(annotationData)
-    },[annotationData]) 
 
     return (
-            <div onMouseOut={setAnnotation} className={`clickable-post ${styles.postCard}`}  onClick={() => {window.location.href = `/post/${postData.postId}`}} >
+            <div  className={`clickable-post ${styles.postCard}`}  onClick={() => {window.location.href = `/post/${postData.postId}`}} >
                 <div className='flex'>
                     {/* Profile picture and username div here */}
 
@@ -73,7 +50,7 @@ const DiscussionPost = ({postData} : Props) => {
                 </div>
                 <div className='flex flex-col gap-2'>
                     <p className='font-bold text-lg'>{data.title}</p>
-                    <p ref={bodyRef} onMouseUp={setAnnotation} >{data.text}</p>
+                    <p ref={bodyRef}  >{data.text}</p>
                 </div>
                 <div className='flex gap-6'>
                     <div className='flex items-center'>

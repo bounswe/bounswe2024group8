@@ -16,6 +16,7 @@ const Feed = ({category, pageNumber}: Props) => {
     const [postData, setPostData] = useState<DPost[]>([]);
     const [feedType, setFeedType] = useState(true);
     const [feedLoading, setFeedLoading] = useState(true);
+    const [tabConfig, setTabConfig] = useState([0, 0]);
 
     useEffect(() => {
         fetchPostData();
@@ -63,6 +64,10 @@ const Feed = ({category, pageNumber}: Props) => {
         setFeedType(x);
     }
 
+    const renderTabs  = () => {
+        return null;
+    }
+
 
     return (
             
@@ -94,6 +99,7 @@ const Feed = ({category, pageNumber}: Props) => {
                     ))
             )        
             }
+            {!feedLoading && postData.length != 0 && renderTabs()}
             
         </div>
     )

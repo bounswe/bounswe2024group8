@@ -51,7 +51,8 @@ const Login = () => {
         try{
             //AJAX POST Request
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/authenticate`,{email:email,password:password});
-            localStorage.setItem("username",`${response.data.firstName} ${response.data.lastName}`);
+            console.log(response.data);
+            localStorage.setItem("username",`${response.data.userName}`);
             localStorage.setItem("user_id",response.data.userId);
             localStorage.setItem("jwt_token",response.data.accessToken);
             window.location.href = "/home";
