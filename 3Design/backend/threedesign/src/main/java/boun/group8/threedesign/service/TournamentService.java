@@ -48,8 +48,8 @@ public class TournamentService {
     private void setTournaments() {
         tournaments = tournamentRepository.findByIsFinishedFalse();
     }
-//    @Scheduled(cron = "0 0 0 * * MON", zone = "UTC") // At 00:00 UTC every week monday
-    @Scheduled(cron = "0 41 19 * * SAT", zone = "UTC") // testing
+    @Scheduled(cron = "0 0 0 * * MON", zone = "UTC") // At 00:00 UTC every week monday
+//    @Scheduled(cron = "0 41 19 * * SAT", zone = "UTC") // testing
     @Transactional(rollbackFor = Exception.class)
     @Retryable(retryFor = ThreeDesignDatabaseException.class, maxAttempts = 3, backoff = @Backoff(delay = 10000))
     public void startNewTournaments() {
@@ -83,8 +83,8 @@ public class TournamentService {
         setTournaments();
     }
 
-//    @Scheduled(cron = "0 55 23 * * SUN", zone = "UTC") // At 23:55 UTC every week sunday
-    @Scheduled(cron = "0 48 19 * * SAT", zone = "UTC") // testing
+    @Scheduled(cron = "0 55 23 * * SUN", zone = "UTC") // At 23:55 UTC every week sunday
+//    @Scheduled(cron = "0 48 19 * * SAT", zone = "UTC") // testing
     @Transactional(rollbackFor = Exception.class)
     @Retryable(retryFor = ThreeDesignDatabaseException.class, maxAttempts = 3, backoff = @Backoff(delay = 10000))
     public void endTournaments() {
