@@ -5,8 +5,8 @@ import boun.group8.threedesign.model.*;
 import boun.group8.threedesign.model.enums.ReactionType;
 import boun.group8.threedesign.repository.TournamentEntryRepository;
 import boun.group8.threedesign.repository.TournamentRepository;
+import boun.group8.threedesign.repository.UserRepository;
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -28,24 +28,28 @@ public class TournamentService {
     final TournamentEntryRepository tournamentEntryRepository;
 
     final CategoryService categoryService;
+
+    final UserRepository userRepository;
     List<Tournament> tournaments;
 
     public TournamentService(
             final TournamentRepository tournamentRepository,
             final TournamentEntryRepository tournamentEntryRepository,
-            final CategoryService categoryService) {
+            final CategoryService categoryService,
+            final UserRepository userRepository) {
         this.tournamentRepository = tournamentRepository;
         this.tournamentEntryRepository = tournamentEntryRepository;
         this.categoryService = categoryService;
+        this.userRepository = userRepository;
 
-        SetTournaments();
+        setTournaments();
     }
 
-    private void SetTournaments() {
+    private void setTournaments() {
         tournaments = tournamentRepository.findByIsFinishedFalse();
     }
     @Scheduled(cron = "0 0 0 * * MON", zone = "UTC") // At 00:00 UTC every week monday
-//    @Scheduled(cron = "0 18 19 * * WED", zone = "UTC") // testing
+//    @Scheduled(cron = "0 41 19 * * SAT", zone = "UTC") // testing
     @Transactional(rollbackFor = Exception.class)
     @Retryable(retryFor = ThreeDesignDatabaseException.class, maxAttempts = 3, backoff = @Backoff(delay = 10000))
     public void startNewTournaments() {
@@ -76,11 +80,11 @@ public class TournamentService {
             throw new ThreeDesignDatabaseException("Failed to start new tournaments");
         }
 
-        SetTournaments();
+        setTournaments();
     }
 
     @Scheduled(cron = "0 55 23 * * SUN", zone = "UTC") // At 23:55 UTC every week sunday
-//    @Scheduled(cron = "0 22 19 * * WED", zone = "UTC") // testing
+//    @Scheduled(cron = "0 48 19 * * SAT", zone = "UTC") // testing
     @Transactional(rollbackFor = Exception.class)
     @Retryable(retryFor = ThreeDesignDatabaseException.class, maxAttempts = 3, backoff = @Backoff(delay = 10000))
     public void endTournaments() {
@@ -104,7 +108,9 @@ public class TournamentService {
 
         //TODO: Calculate points and assign prizes.
 
-        SetTournaments();
+        assignPrizes();
+
+        setTournaments();
     }
 
     public Tournament getCurrentTournamentByCategoryId(Long categoryId){
@@ -135,6 +141,7 @@ public class TournamentService {
         tournamentEntry.setUser(user);
         tournamentEntry.setPostId(post.getId());
         tournamentEntry.setScore(0);
+        tournamentEntry.setFinishedPosition(0);
 
         try {
             tournamentEntryRepository.save(tournamentEntry);
@@ -192,5 +199,44 @@ public class TournamentService {
             reactionScore += 2;
 
         return reactionScore;
+    }
+
+    @Transactional
+    public void assignPrizes() {
+
+        if (tournaments.isEmpty()) return;
+
+        List<User> toBeUpdatedUsers = new ArrayList<>();
+        List<TournamentEntry> toBeUpdatedEntries = new ArrayList<>();
+
+        for (Tournament tournament : tournaments) {
+            List<TournamentEntry> topEntries = tournamentEntryRepository.findTop3ByTournamentOrderByScoreDesc(tournament);
+
+            if (!topEntries.isEmpty()) {
+                // Award prizes to the top 3 competitors
+                int[] prizeAmounts = {30, 20, 10}; // User scores
+                for (int i = 0; i < topEntries.size(); i++) {
+                    //TODO: Update user score.
+                    User user = topEntries.get(i).getUser();
+                    user.setExperience(user.getExperience() + prizeAmounts[i]);
+                    toBeUpdatedUsers.add(user);
+                    TournamentEntry entry = topEntries.get(i);
+                    entry.setFinishedPosition(i + 1);
+                    toBeUpdatedEntries.add(entry);
+                }
+            }
+        }
+
+        try {
+            userRepository.saveAll(toBeUpdatedUsers);
+        } catch (Exception e) {
+            throw new ThreeDesignDatabaseException("Failed to assign prizes", e);
+        }
+
+        try {
+            tournamentEntryRepository.saveAll(toBeUpdatedEntries);
+        } catch (Exception e) {
+            throw new ThreeDesignDatabaseException("Failed to assign prizes", e);
+        }
     }
 }

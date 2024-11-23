@@ -33,4 +33,7 @@ public class TournamentEntry {
 
     @Column(nullable = false, columnDefinition = "integer default 0")
     Integer score;
+
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    Integer finishedPosition;
 }

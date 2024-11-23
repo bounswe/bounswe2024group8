@@ -16,4 +16,6 @@ public interface TournamentEntryRepository extends JpaRepository<TournamentEntry
     TournamentEntry findByPostIdAndTournamentId(Long postId, Long tournamentId);
 
     List<TournamentEntry> findByTournamentOrderByScoreDesc(Tournament tournament);
+
+    List<TournamentEntry> findTop3ByTournamentOrderByScoreDesc(Tournament tournament);
 }
