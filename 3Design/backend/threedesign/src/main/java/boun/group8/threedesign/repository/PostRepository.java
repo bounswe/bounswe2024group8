@@ -89,5 +89,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p JOIN Reaction r ON p.id = r.post.id WHERE r.user.id = :userId AND r.bookmark = true")
     List<Post> findAllBookmarkedPosts(@Param("userId") Long userId);
 
+    int countByUserId(Long userId);
+
 
 }
