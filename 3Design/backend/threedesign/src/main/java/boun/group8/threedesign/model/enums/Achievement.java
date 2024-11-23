@@ -1,5 +1,6 @@
 package boun.group8.threedesign.model.enums;
 
+import boun.group8.threedesign.exception.custom.ThreeDesignDatabaseException;
 import boun.group8.threedesign.model.User;
 import boun.group8.threedesign.model.UserAchievement;
 import boun.group8.threedesign.repository.*;
@@ -87,8 +88,13 @@ public enum Achievement {
 
             userAchievementRepository.save(userAchievement);
 
-            // TODO increment user score with point when implemented
-            //user.setScore(user.getScore() + point);
+            user.setExperience(user.getExperience() + point);
+
+            try {
+                userRepository.save(user);
+            } catch (Exception e) {
+                throw new ThreeDesignDatabaseException("Failed to award achievement", e);
+            }
         }
     }
 
