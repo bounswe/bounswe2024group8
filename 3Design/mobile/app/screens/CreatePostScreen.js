@@ -73,7 +73,11 @@ const CreatePost = () => {
       const res = await DocumentPicker.getDocumentAsync({});
 
       if (res.assets[0].name.endsWith('.obj')) {
-        setFile(res.assets[0]);
+        setFile({
+          uri: res.assets[0].uri,
+          name: res.assets[0].name,
+          type: res.assets[0].mimeType,
+        });
         setIsVisual(true);
         Alert.alert(
           'Information',
@@ -110,10 +114,13 @@ const CreatePost = () => {
       .post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts`, fd, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
+          'Content-Type': 'multipart/form-data',
         },
       })
       .then(() => Alert.alert('Success', 'Your post is created successfully.'))
-      .catch(() => Alert.alert('Error', 'Something went wrong.'));
+      .catch((error) => {
+        Alert.alert('Error', 'Something went wrong.');
+      });
 
     // Reset the form
     setTitle('');
@@ -144,10 +151,7 @@ const CreatePost = () => {
           <DropDownPicker
             open={open}
             value={category}
-            items={Categories.map((category) => ({
-              label: category,
-              value: category,
-            }))}
+            items={Categories}
             setOpen={setOpen}
             setValue={setCategory}
             setItems={() => {}}

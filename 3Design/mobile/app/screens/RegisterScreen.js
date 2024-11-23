@@ -34,30 +34,24 @@ export default function RegisterScreen({ navigation }) {
   const validateCredentials = () => {
     if (!username) {
       return 'Enter your username to create your account.';
-    }
-    else if (username.length < 5) {
+    } else if (username.length < 5) {
       return 'The username has to be at least 5 characters.';
-    }
-    else if (!email) {
+    } else if (!email) {
       return 'Enter your email to create your account.';
-    }
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return 'Invalid email format.';
-    }
-    else if (!password){
-      return "Enter your password to create your account.";
-    }
-    else if (password.length < 3) {
+    } else if (!password) {
+      return 'Enter your password to create your account.';
+    } else if (password.length < 3) {
       return 'The password has to be at least 3 characters.';
-    }
-    else {
+    } else {
       return '';
     }
   };
 
   const onSignupClick = () => {
     const userParams = {
-      username: username,
+      userName: username,
       email: email,
       password: password,
     };
@@ -78,10 +72,9 @@ export default function RegisterScreen({ navigation }) {
       )
       .then((response) => {
         setUser(response.data);
-        console.log(response.data);
         navigation.replace('Home');
       })
-      .catch((error) => {
+      .catch(() => {
         setError(email + ' already in use.');
       });
   };
