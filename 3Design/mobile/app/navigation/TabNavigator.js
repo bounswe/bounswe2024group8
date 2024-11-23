@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useContext } from 'react';
 import { StyleSheet, Platform, StatusBar, SafeAreaView } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { Colors } from '../constants/Colors';
 import FeedScreen from '../screens/FeedScreen';
@@ -9,6 +10,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import CategoriesScreen from '../screens/CategoriesScreen';
 import { PostScreenContext } from '../context/PostScreenContext';
 import PostCreationScreen from '../screens/CreatePostScreen';
+import SearchScreen from '../screens/SearchScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -37,7 +39,7 @@ export default function TabNavigator({ navigation, route }) {
               return (
                 <Ionicons
                   name={focused ? 'home' : 'home-outline'}
-                  size={37}
+                  size={40}
                   color={color}
                 />
               );
@@ -52,17 +54,25 @@ export default function TabNavigator({ navigation, route }) {
           options={{
             tabBarIcon: ({ focused, color }) => {
               return (
-                <Ionicons
-                  name={focused ? 'add' : 'add-outline'}
-                  size={30}
+                <Icon
+                  name={focused ? 'plus-square' : 'plus-square-o'}
+                  size={37}
                   color={color}
-                  style={{
-                    width: 30,
-                    height: 30,
-                    borderWidth: 2.5,
-                    borderRadius: 10,
-                    borderColor: focused ? Colors.dark : Colors.grey,
-                  }}
+                />
+              );
+            },
+          }}
+        />
+        <Tab.Screen
+          name='Search'
+          component={SearchScreen}
+          options={{
+            tabBarIcon: ({ focused, color }) => {
+              return (
+                <Ionicons
+                  name={focused ? 'search' : 'search-outline'}
+                  size={40}
+                  color={color}
                 />
               );
             },
@@ -76,7 +86,7 @@ export default function TabNavigator({ navigation, route }) {
               return (
                 <Ionicons
                   name={focused ? 'grid' : 'grid-outline'}
-                  size={37}
+                  size={40}
                   color={color}
                 />
               );

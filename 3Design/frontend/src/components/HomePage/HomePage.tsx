@@ -6,7 +6,7 @@ import { Button, Upload } from 'antd'
 import { Add, UploadOutlined } from '@mui/icons-material'
 import { Dialog, TextField } from '@mui/material'
 import CreatePost from '../CreatePost/CreatePost'
-import GalleryPost from '../GalleryPost/GalleryPost'
+import GalleryPost from '../GalleryPost/Clickable/GalleryPost'
 import Feed from '../Feed/Feed'
 import { useLocation, useParams } from 'react-router-dom'
 import GenericFeed from '../GenericFeed/GenericFeed'
@@ -38,7 +38,7 @@ const HomePage = () => {
                 Create Post
             </Button>
             <Dialog maxWidth="sm" fullWidth open={createPost} onClose={() => setPostDialog(false)}>
-                <CreatePost dialogFunction={setPostDialog} category=''/>
+                <CreatePost dialogFunction={setPostDialog}/>
             </Dialog>
         </>
     )

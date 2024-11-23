@@ -2,10 +2,12 @@ package boun.group8.threedesign.service;
 
 import boun.group8.threedesign.exception.custom.ThreeDesignDatabaseException;
 import boun.group8.threedesign.model.Post;
-import boun.group8.threedesign.model.User;
 import boun.group8.threedesign.model.Reaction;
+import boun.group8.threedesign.model.User;
+
 import boun.group8.threedesign.model.enums.ReactionType;
 
+import boun.group8.threedesign.payload.PostResponse;
 
 import boun.group8.threedesign.payload.ReactionRequest;
 import boun.group8.threedesign.payload.ReactionResponse;
@@ -15,7 +17,6 @@ import boun.group8.threedesign.repository.CategoryRepository;
 
 import boun.group8.threedesign.payload.PostCreateRequest;
 import boun.group8.threedesign.repository.PostRepository;
-import boun.group8.threedesign.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,9 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.*;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,8 +40,7 @@ public class PostService {
     final UserService userService;
     final CommentService commentService;
 
-    //TODO search post, getfeed, getpostbycategory, convertpoststopostresponse, getpostsbyuser, getpostsuserreactedto
-    //TODO getbookmarkedposts
+
 
     final CategoryRepository categoryRepository;
     final TournamentService tournamentService;
@@ -75,9 +76,9 @@ public class PostService {
         } catch (Exception e) {
             throw new ThreeDesignDatabaseException("Error while saving post");
         }
-        if(request.getJoinToTournament()) {
+
+        if (request.getJoinToTournament())
             tournamentService.enterTournament(user, created);
-        }
         return created;
     }
 
@@ -121,6 +122,66 @@ public class PostService {
         return post;
 
     }
+
+    public List<PostResponse> searchPosts(User user, String keyword) {
+
+        List<Post> results = new ArrayList<>(postRepository.findByTextLikeIgnoreCase(keyword));
+
+        List<String> siblings = wikidataService.getAllSiblings(keyword);
+
+        for (String sibling : siblings) {
+            results.addAll(postRepository.findByTextLikeIgnoreCase(sibling));
+        }
+        // Use a map to count occurrences of each post
+        Set<Post> postSet = new HashSet<>();
+
+        postSet.addAll(results);
+
+        List<Post> sortedPosts = postSet.stream()
+                .sorted(Comparator.comparing(Post::getId).reversed())
+                .collect(Collectors.toList());
+
+        return convertPostsToPostResponses(user, sortedPosts);
+
+    }
+
+    public List<PostResponse> convertPostsToPostResponses(User user, List<Post> posts) {
+        List<PostResponse> result = new ArrayList<>();
+
+        for (Post post : posts) {
+            Reaction reaction = reactionRepository.findByPostIdAndUserId(post.getId(), user.getId());
+            ReactionType reactionType = ReactionType.NONE;
+            Boolean bookmark = false;
+
+            if (reaction != null) {
+                reactionType = reaction.getReactionType();
+                bookmark = reaction.getBookmark();
+            }
+
+            PostResponse postResponse = PostResponse.builder()
+                    .postId(post.getId())
+                    .text(post.getText())
+                    .user(post.getUser())
+                    .title(post.getTitle())
+                    .likes(post.getLikes())
+                    .dislikes(post.getDislikes())
+                    .comments(post.getComments())
+                    .categoryId(post.getCategoryId())
+                    .isVisualPost(post.getIsVisualPost())
+                    .fileUrl(post.getFileUrl())
+                    .challengedPostId(post.getChallengedPostId())
+                    .tags(post.getTags())
+                    .createdAt(post.getCreatedAt())
+                    .reactionId(reaction == null ? -1L : reaction.getId())
+                    .reactionType(reactionType)
+                    .bookmark(bookmark)
+                    .build();
+
+            result.add(postResponse);
+        }
+        return result;
+    }
+
 
     public ReactionResponse reactToPost(User user, ReactionRequest request, Long postId) {
 
@@ -191,4 +252,79 @@ public class PostService {
         return result;
     }
 
+    public List<PostResponse> getFeed(User user) {
+
+        List<Post> posts = postRepository.findAllPostsByUserDefault(user.getId());
+
+        if (posts.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return convertPostsToPostResponses(user, posts);
+    }
+
+    public List<PostResponse> getVisualPostsByCategory(User user, Long categoryId) {
+
+        List<Post> visualPosts = postRepository.findVisualPostsByCategory(categoryId);
+
+        if (visualPosts.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return convertPostsToPostResponses(user, visualPosts);
+    }
+
+    public List<PostResponse> getNonVisualPostsByCategory(User user, Long categoryId) {
+
+        List<Post> nonVisualPosts = postRepository.findNonVisualPostsByCategory(categoryId);
+
+        if (nonVisualPosts.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return convertPostsToPostResponses(user, nonVisualPosts);
+
+    }
+
+    public List<PostResponse> getPostsByUser(User user, Long userId) {
+
+
+        List<Post> posts = postRepository.findAllPostsByAUser(userId);
+
+        if (posts.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return convertPostsToPostResponses(user, posts);
+
+    }
+
+    public List<PostResponse> getPostsUserReactedTo(User user, Long userId) {
+
+        User targetUser = userService.getUserById(userId);
+
+        List<Post> posts = postRepository.findAllByUserReactedTo(targetUser);
+
+        if (posts.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return convertPostsToPostResponses(user, posts);
+    }
+
+    public List<PostResponse> getBookmarkedPosts(User user, Long userId) {
+
+        if (!user.getId().equals(userId)) {
+            throw new ThreeDesignDatabaseException("You can only view your own bookmarked posts");
+        }
+
+        //List<PostResponse> bookmarkedPosts = postRepository.findAllBookmarkedPosts(userId);
+        List<Post> bookmarkedPosts = postRepository.findAllBookmarkedPosts(userId);
+
+        if (bookmarkedPosts.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return convertPostsToPostResponses(user, bookmarkedPosts);
+    }
 }
