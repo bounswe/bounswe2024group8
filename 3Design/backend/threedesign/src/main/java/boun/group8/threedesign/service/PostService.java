@@ -17,7 +17,7 @@ import boun.group8.threedesign.repository.CategoryRepository;
 
 import boun.group8.threedesign.payload.PostCreateRequest;
 import boun.group8.threedesign.repository.PostRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -39,11 +39,11 @@ public class PostService {
     final WikidataService wikidataService;
     final UserService userService;
     final CommentService commentService;
+    final TournamentService tournamentService;
 
 
 
     final CategoryRepository categoryRepository;
-    final TournamentService tournamentService;
 
     @Transactional
     public Post createPost(User user, PostCreateRequest request) throws IOException {
@@ -182,7 +182,7 @@ public class PostService {
         return result;
     }
 
-
+    @Transactional
     public ReactionResponse reactToPost(User user, ReactionRequest request, Long postId) {
 
         Long userId = user.getId();
@@ -198,7 +198,7 @@ public class PostService {
         if (reaction != null) {
 
             ReactionType oldReactionType = reaction.getReactionType();
-            reaction.setBookmark(bookmark);
+            boolean oldBookmark = reaction.getBookmark();
 
             if (oldReactionType.equals(ReactionType.LIKE)) {
                 if (reactionType.equals(ReactionType.DISLIKE)) {
@@ -223,6 +223,17 @@ public class PostService {
             }
 
             reaction.setReactionType(reactionType);
+            reaction.setBookmark(bookmark);
+
+
+            if (!post.getUser().getId().equals(user.getId())) {
+                int oldReactionScore = tournamentService.calculateReactionScore(oldReactionType, oldBookmark);
+                int newReactionScore = tournamentService.calculateReactionScore(reactionType, bookmark);
+
+                tournamentService.updatePostScoreIfPossible(post, newReactionScore - oldReactionScore);
+            }
+
+
             reactionRepository.save(reaction);
             postRepository.save(post);
         } else {
@@ -239,6 +250,10 @@ public class PostService {
                 post.setLikes(post.getLikes() + 1);
             } else if (reactionType.equals(ReactionType.DISLIKE)) {
                 post.setDislikes(post.getDislikes() + 1);
+            }
+
+            if (!post.getUser().equals(user)) {
+                tournamentService.updatePostScoreIfPossible(post, tournamentService.calculateReactionScore(reactionType, bookmark));
             }
             postRepository.save(post);
         }
