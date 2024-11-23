@@ -1,4 +1,4 @@
-import { Category, DPost } from "./interfaces";
+import { Category, DPost, Profile } from "./interfaces";
 
 export function getCategoryById(id: string){
     const categories = require("../resources/json-files/Categories.json") as Category[];
@@ -57,10 +57,10 @@ export function getProfileFromId(id: string | undefined){
         return null;
     }
     const intId = parseInt(id);
-    const posts = require("../resources/json-files/MockProfiles.json");
-    for (let i = 0; i < posts.length; i++) {
-        const element: DPost = posts[i];
-        if (element.postId == intId){
+    const profiles = require("../resources/json-files/MockProfiles.json");
+    for (let i = 0; i < profiles.length; i++) {
+        const element: Profile = profiles[i];
+        if (element.id == intId){
             return element;
         }
         

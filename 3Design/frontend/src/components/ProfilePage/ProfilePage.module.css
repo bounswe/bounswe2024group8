@@ -4,3 +4,10 @@
     display: flex;
     flex-direction: column;
 }
+.profileAvatar {
+    width: 100px; /* Adjust as needed */
+    height: 100px; /* Same as width for a square */
+    object-fit: cover; /* Crop and fill */
+    border-radius: 50%; /* Circular shape */
+  }
+  

@@ -11,18 +11,41 @@ const ProfilePage = () => {
   
   const { id } = useParams();
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [isCurrentUserProfile, setIsCurrentUserProfile] = useState<boolean>(false);
+
+    const currentUserId = localStorage.getItem("user_id");
+
 
   useEffect(() => {
-      setProfile(getProfileFromId(id)); 
-   }, []);
-
+    const fetchedProfile = getProfileFromId(id); // Fetch profile based on `id`
+    if (fetchedProfile) {
+        setProfile(fetchedProfile);
+    } else {
+        setProfile(null); // Set to null if profile not found
+    }
+    // Check if the profile belongs to the current user
+    if (id === currentUserId) {
+        setIsCurrentUserProfile(true);
+    } else {
+        setIsCurrentUserProfile(false);
+    }
+  }, [id]); // Re-run effect if `id` changes
 
   if (!id){
       return <div>404</div>;
   }
   if(!profile){
-      return <div>Loading</div>;   
-  }
+    return (
+      <>
+              <PageHeader/>
+              <div className='flex'>
+                  <SideBar active={""}/>
+                  <div className={styles.mainContainer}>
+                      not a valid user
+                  </div> 
+              </div>
+      </>);
+      }
   
 
   return (
@@ -31,12 +54,18 @@ const ProfilePage = () => {
           <div className='flex'>
               <SideBar active={""}/>
               <div className={styles.mainContainer}>
-                testing
-              </div> 
-              
-          </div>
+                <img
+                  src={profile.avatarUrl || "/default_pp.png"}
+                  alt="Profile Avatar"
+                  className={styles.profileAvatar}
+                />
+                <h1>{profile.username}</h1>
+                <p>Tournament Points: {profile.tournamentPoints}</p>
+                {/* Check if this is the current user's profile */}
+                {isCurrentUserProfile && <p>This is your profile!</p>}
 
-      
+              </div> 
+          </div>
   </>);
 }
 

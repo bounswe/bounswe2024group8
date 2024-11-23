@@ -1,14 +1,20 @@
 [
     {    
+        "id": 1,
+        "username": "turkerdm1",
+        "avatarUrl": "/default_pp.png",
+        "tournamentPoints": "231"
+    },
+    {    
         "id": 231,
-        "username": "turkerdm",
-        "avatarUrl": "/avatar.png",
+        "username": "turkerdm231",
+        "avatarUrl": "/default_pp.png",
         "tournamentPoints": "231"
     },
     {    
         "id": 232,
-        "username": "turkerdm",
-        "avatarUrl": "/avatar.png",
+        "username": "turkerdm232",
+        "avatarUrl": "/default_pp.png",
         "tournamentPoints": "232"
     }
 ]
