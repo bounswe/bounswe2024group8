@@ -4,6 +4,13 @@ export interface CustomProfile{
     tournamentPoints : string
 }
 
+export interface Profile{
+    id: number,
+    username: string,
+    avatarUrl: string,
+    tournamentPoints: number
+}
+
 export interface Category{
     name: string,
     id: string,

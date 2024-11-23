@@ -51,3 +51,19 @@ export function limitPostBodies(x:string){
     }
     return count > 1024;
 }
+
+export function getProfileFromId(id: string | undefined){
+    if (!id){
+        return null;
+    }
+    const intId = parseInt(id);
+    const posts = require("../resources/json-files/MockProfiles.json");
+    for (let i = 0; i < posts.length; i++) {
+        const element: DPost = posts[i];
+        if (element.postId == intId){
+            return element;
+        }
+        
+    }
+    return null;
+}

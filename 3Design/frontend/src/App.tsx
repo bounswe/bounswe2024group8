@@ -8,6 +8,7 @@ import RegisterPage from './components/RegisterPage/RegisterPage';
 import PostPage from './components/PostPage/PostPage';
 import SearchResults from './components/SearchResults/SearchResults';
 import LeaderboardPage from './components/TournamentLeaderboard/LeaderboardPage';
+import ProfilePage from './components/ProfilePage/ProfilePage';
 
 function App() {
   return (
@@ -57,9 +58,15 @@ function App() {
           }
         />
         <Route
+<<<<<<< HEAD
           path="/tournament/:category"
           element={
             <LeaderboardPage/>
+=======
+          path="/profile/:id"
+          element={
+            <ProfilePage/>
+>>>>>>> 784fcb7 (profile page merge)
           }
         />
       </Routes>
