@@ -10,18 +10,19 @@ import MockComments from '../../../resources/json-files/Comments.json'
 import ChallengePost from '../../CreatePost/ChallengePost'
 import PostAnnotation from '../../Annotations/PostAnnotation'
 import { message, Switch } from 'antd'
+import axios from 'axios'
 interface Props{
   postData: DPost,
-  publishedAnnotations: RecievedAnnotationData[]
+  publishedAnnotationsProps: RecievedAnnotationData[]
 }
 
-const GalleryPost = ({postData, publishedAnnotations} : Props) => {
+const GalleryPost = ({postData, publishedAnnotationsProps} : Props) => {
 
   const comments: DComment[] = JSON.parse(localStorage.getItem("comments") || "[]") as DComment[];
   const [data, setData] = useState<DPost>(postData);
   const [modelAppearence, setModelAppearence] = useState<boolean>(false);
   const bodyRef = useRef<HTMLParagraphElement | null>(null);
-  const [annotationData, setAnnotationData] = useState<SendAnnotationData>({content: "", endIndex: null, postId: postData.postId, startIndex: null, userId: 1});
+  const [annotationData, setAnnotationData] = useState<SendAnnotationData>({content: "", endIndex: null, postId: 9, startIndex: null, userId: 1});
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [downloadStatus, setDownloadStatus] = useState(false);
@@ -33,6 +34,9 @@ const GalleryPost = ({postData, publishedAnnotations} : Props) => {
   const [annotationsVisible, setAnnotationsVisible] = useState(false);
 
   const [annotatedText, setAnnotatedText] = useState("");
+  const [annotationSending, setAnnotatingSending] = useState(false);
+
+  const [publishedAnnotations, setPublishedAnnotations] = useState<RecievedAnnotationData[]>(publishedAnnotationsProps);
 
   const setDisplayedAnnotation = useCallback((x: DisplayedAnnotationData[]) =>{
     setCurrentAnnotations(x);
@@ -74,6 +78,9 @@ const GalleryPost = ({postData, publishedAnnotations} : Props) => {
   }
 
   const setAnnotation = () =>{
+    if (!!annotatedText){
+      return;
+    }
     const selection = window.getSelection();
     if (!selection){
       return;
@@ -83,6 +90,7 @@ const GalleryPost = ({postData, publishedAnnotations} : Props) => {
     if (selectedText && selection.anchorNode && bodyRef.current!.contains(selection.anchorNode)) {
       const startI = selection.anchorOffset;
       const endI = selection.focusOffset;
+      console.log(`Start: ${startI} End: ${endI}`);
       setAnnotationData(prev => ({...prev, startIndex: Math.min(startI, endI),endIndex: Math.max(endI, startI)}) );
     } else {
       setAnnotationData(prev => ({...prev, startIndex: null,endIndex: null}) );
@@ -103,17 +111,38 @@ const GalleryPost = ({postData, publishedAnnotations} : Props) => {
   }
 
   const startAnnotation = () => {
-    console.log(`Start: ${annotationData.startIndex!} End: ${annotationData.endIndex!}`);
     setAnnotatedText(postData.text.slice(annotationData.startIndex!, annotationData.endIndex!));
   }
 
   const postAnnotation = async () => {
+    let postPhase = false;
+    if (annotationData.content.length < 3){
+      message.error("Your annotation must be at least 3 characters.");
+      return;
+    }
     try{
-
+      setAnnotatingSending(true);
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/annotations/add`, annotationData, {
+        headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}}
+      )
       message.success("Annotation published successfully.");
+      postPhase = true;
       setAnnotatedText("");
+      const refreshedAnnotations = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/annotations/get?postId=${9}`,
+        {headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}}
+      );
+      setPublishedAnnotations(refreshedAnnotations.data);
     }catch(e){
-      message.success("Something went wrong.");
+      if (!postPhase){
+        message.error("Something went wrong while publishing your annotation.");
+      }
+      else{
+        message.error("Something went wrong while fetching new annotations.");
+      }
+      
+    }
+    finally{
+      setAnnotatingSending(false);
     }
   }
 
@@ -137,7 +166,7 @@ const GalleryPost = ({postData, publishedAnnotations} : Props) => {
                           <Shield/>
                           Challenge Post
                       </MenuItem>
-                      <MenuItem onClick={startAnnotation} disabled={!annotationData.startIndex || annotationsVisible} className='gap-2'>
+                      <MenuItem onClick={startAnnotation} disabled={annotationData.startIndex == null || annotationsVisible} className='gap-2'>
                           <BorderColor/>
                           Annotate
                       </MenuItem>
@@ -209,7 +238,7 @@ const GalleryPost = ({postData, publishedAnnotations} : Props) => {
               }
             </button>
             <div className='flex items-center mr-0 ml-auto'>
-              <Switch checked={annotationsVisible} onChange={(e) => setAnnotationsVisible(e)} checkedChildren="Annotations Visible" unCheckedChildren="Annotations Disabled"/>
+              <Switch checked={annotationsVisible} onChange={(e) => {setAnnotationsVisible(e); setCurrentAnnotations([])}} checkedChildren="Annotations Visible" unCheckedChildren="Annotations Disabled"/>
             </div>
           </div>
           <div className='flex gap-2'>
@@ -221,6 +250,7 @@ const GalleryPost = ({postData, publishedAnnotations} : Props) => {
                 username: localStorage.getItem("username") || "Anonymous",
                 profilePictureUrl: "",
                 id: 1000,
+                userPoints: 100
               },
               "text": comment,
               "memberId": 1,
@@ -273,7 +303,7 @@ const GalleryPost = ({postData, publishedAnnotations} : Props) => {
               }}/>
               <div className='flex gap-4 justify-end'>
                 <button onClick={() => setAnnotatedText("")} className='btn btn-error'>Close</button>
-                <button onClick={postAnnotation} className='btn btn-outline'>Publish</button>
+                <button disabled={annotationSending} onClick={postAnnotation} className='btn btn-outline'>Publish</button>
               </div>    
             </div>
           </Dialog>

@@ -1,18 +1,21 @@
 import { Logout, Person } from '@mui/icons-material'
 import React, { useEffect, useRef, useState } from 'react'
 import styles from "./PageHeader.module.css";
-import { Avatar, Dialog } from '@mui/material';
-import { CustomProfile } from '../interfaces';
+import { Avatar, CircularProgress, Dialog, TextField } from '@mui/material';
+import { CustomProfile, CustomUser } from '../interfaces';
 import Search from 'antd/es/input/Search';
+import { message } from 'antd';
+import axios from 'axios';
 const PageHeader = () => {
     const [profileDialog, setProfileDialog] = useState(false);
-    const [profileInfo, setProfileInfo] = useState<CustomProfile>({profilePhoto: "", tournamentPoints: "", username: ""});
+    const [profileInfo, setProfileInfo] = useState<CustomUser | null>(null);
+    const [changePasswordConfig, setChangePasswordConfig] = useState({dialog: false, newPassword: "", sending:false})
     
     const imageRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
+        fetchProfileInfo();
         //Get profile info with an AJAX request.
-        setProfileInfo({profilePhoto: "/logo192.png", tournamentPoints: "1500", username: "User62"})
     }, [])
 
     const logout=() => {
@@ -20,6 +23,55 @@ const PageHeader = () => {
         localStorage.removeItem("user_id");
         localStorage.removeItem("username");
         window.location.href = "/login";
+    }
+
+    const validatePassword = () => {
+        if (!changePasswordConfig.newPassword){
+            return "New password is required.";
+        }
+        if (changePasswordConfig.newPassword.length < 6){
+            return "The password has to be at least 6 characters.";
+        }
+        if (!(/[A-Z]/.test(changePasswordConfig.newPassword)) || !(/[a-z]/.test(changePasswordConfig.newPassword)) || !(/\d/.test(changePasswordConfig.newPassword))){
+            return "The password has to have at least 1 uppercase, 1 lowercase and 1 number.";
+        }
+        return "";
+    }
+
+    const fetchProfileInfo = async () => {
+        try{
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/users/${localStorage.getItem("user_id")}`, {
+                headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+            });
+            setProfileInfo(res.data);
+        }catch(e){
+            message.error("Couldn't fetch user information. The site might not work as intended.")
+        }
+    }
+
+    const changeProfilePicture = async (e:any) => {
+        if (!e.target.files || !e.target.files[0]){
+            return;
+        }
+        const newUrl = URL.createObjectURL(e.target.files[0]);
+        setProfileInfo((prev) =>{ return {...prev!, profilePhoto: newUrl}});
+    }
+
+    const changePassword = async () => {
+        const passwordValid = validatePassword();
+        if (!!passwordValid){
+            message.error(passwordValid);
+            return;
+        }
+        try{
+            setChangePasswordConfig(prev => ({...prev, sending: true}));
+
+            // PUT Request
+            message.success("Password successfully changed.");
+            setChangePasswordConfig({dialog: false, newPassword: "", sending: false})
+        }catch(e){
+            message.error("Something went wrong.")
+        }
     }
     
     return (
@@ -52,23 +104,39 @@ const PageHeader = () => {
                 </button>
             </div>
             <Dialog maxWidth="sm" fullWidth open={profileDialog} onClose={() => setProfileDialog(false)}>
+                {profileInfo ? 
                 <div className='flex flex-col justify-center items-center py-5 gap-4' >
                     <button onClick={() => imageRef.current?.click()} className={styles.ppButton}>
-                        <Avatar sx={{ width: 100, height: 100 }} src={profileInfo?.profilePhoto}/>
+                        <Avatar sx={{ width: 100, height: 100 }} src={profileInfo.profilePictureUrl ?? "/default_pp.png"}/>
                     </button>
-                    <input accept='.png,.jpg,.jpeg' type='file' style={{display: "none"}} ref={imageRef} onChange={(e) => {
-                        //Send AJAX here.
-                        if (!e.target.files || !e.target.files[0]){
-                            return;
-                        }
-                        const newUrl = URL.createObjectURL(e.target.files[0]);
-                        setProfileInfo((prev) =>{ return {...prev, profilePhoto: newUrl}});
-                    }}/>
-                    <p className={styles.usernameText}>{profileInfo.username}</p>
-                    <p>Tournament Points: {profileInfo.tournamentPoints}</p>
+                    <input accept='.png,.jpg,.jpeg' type='file' style={{display: "none"}} ref={imageRef} onChange={changeProfilePicture}/>
+                    <button className={`btn btn-link ${styles.usernameText}`}>{profileInfo.username}</button>
+                    <p>User Points: {profileInfo.userPoints}</p>
                     <div className='flex justify-center gap-4 items-center'>
                         <button className='btn btn-primary text-white' onClick={() => setProfileDialog(false)}>Back to Gallery</button>
-                        <button className='btn btn-warning text-white font-bold' >Change Password</button>
+                        <button className='btn btn-warning text-white font-bold' onClick={() => setChangePasswordConfig(prev => ({...prev, dialog: true})) } >Change Password</button>
+                    </div>
+                </div>
+                :
+                <div className='flex items-center justify-center'>
+                    <CircularProgress/>
+                </div>
+                }
+            </Dialog>
+            <Dialog  maxWidth="sm" fullWidth open={changePasswordConfig.dialog} onClose={() => setChangePasswordConfig(prev => ({...prev, dialog: false})) }>
+                <div className='flex flex-col gap-4 p-4'>
+                    <div className='flex flex-col gap-4 justify-center'>
+                        <p className='font-bold text-lg'>Change Your Password</p>
+                        <TextField
+                        label="Your New Password"
+                        value={changePasswordConfig.newPassword}
+                        onChange={(e) => setChangePasswordConfig(prev => ({...prev, newPassword: e.target.value}))}
+                        />
+                    </div>
+
+                    <div className='flex gap-4 justify-end'>
+                        <button onClick={() => setChangePasswordConfig(prev => ({...prev, dialog: false}))} className='btn btn-error'>Cancel</button>
+                        <button onClick={changePassword} disabled={changePasswordConfig.sending} className='btn btn-outline'>Confirm</button>
                     </div>
                 </div>
             </Dialog>

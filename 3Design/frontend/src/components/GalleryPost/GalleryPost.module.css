@@ -40,7 +40,7 @@
     height: 500px;
     position: sticky;
     top: 100px;
-    overflow-y: scroll;
+    
     width: 30%;
     background-color: #E0D3AF;
     border-radius: 10%;
@@ -51,11 +51,13 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    overflow-y: scroll;
+    height: 400px;
     
 }
 
 .ellipsis {
-    width: 200px;
+    width: 300px;
     white-space: nowrap; 
     overflow: hidden; 
     text-overflow: ellipsis;

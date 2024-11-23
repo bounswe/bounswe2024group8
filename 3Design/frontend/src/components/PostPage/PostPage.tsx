@@ -36,7 +36,7 @@ const PostPage = () => {
                         postData ? 
                         (postData.isVisualPost ? 
                     
-                            <GalleryPost publishedAnnotations={publishedAnnotations} postData={postData}/>
+                            <GalleryPost publishedAnnotationsProps={publishedAnnotations} postData={postData}/>
                         :
                             <DiscussionPost postData={postData}/> 
                         )    

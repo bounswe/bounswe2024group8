@@ -59,7 +59,8 @@ export interface SendAnnotationData{
 export interface CustomUser{
     id : number,
     profilePictureUrl: string | null,
-    username: string
+    username: string,
+    userPoints: number
 }
 
 
