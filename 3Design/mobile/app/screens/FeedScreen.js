@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Colors } from '../constants/Colors';
 import Post from '../components/Post';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -14,7 +14,9 @@ export default function FeedScreen() {
   const route = useRoute();
   const category = route.params?.category || null;
 
-  const [posts, setPosts] = useState([]); // State for posts
+  const [posts, setPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [showVisual, setShowVisual] = useState(false);
   const { user } = useContext(AuthContext);
 
   const disableScroll = (isDisabled) => {
@@ -23,13 +25,13 @@ export default function FeedScreen() {
     }
   };
 
-  // Function to fetch posts
   const fetchPosts = async () => {
-    try {
-      if (category == null) {
-        const allPosts = [];
-        for (let item of Categories) {
-          const response = await axios.get(
+    let fetchedPosts = [];
+    if (category == null) {
+      for (let item of Categories) {
+        console.log(item.value);
+        try{
+          let response = await axios.get(
             `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${item.value}/nonvisual`,
             {
               headers: {
@@ -38,12 +40,32 @@ export default function FeedScreen() {
               },
             }
           );
-          allPosts.push(...response.data);
+          fetchedPosts.push(...response.data);
+            response = await axios.get(
+              `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${item.value}/visual`,
+              {
+                headers: {
+                  Authorization: `Bearer ${user.accessToken}`,
+                  'Content-Type': 'multipart/form-data',
+                },
+              }
+            );
+            fetchedPosts.push(...response.data);
+        } catch (e) {}
+      }
+    } else {
+      let response = await axios.get(
+        `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${category}/nonvisual`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+            'Content-Type': 'multipart/form-data',
+          },
         }
-        setPosts(allPosts); // Update the posts state
-      } else {
-        const response = await axios.get(
-          `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${category}/nonvisual`,
+      );
+        fetchedPosts.push(...response.data);
+        response = await axios.get(
+          `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${category}/visual`,
           {
             headers: {
               Authorization: `Bearer ${user.accessToken}`,
@@ -51,30 +73,57 @@ export default function FeedScreen() {
             },
           }
         );
-        setPosts(response.data); // Update the posts state
-      }
-    } catch (error) {
-      console.error(error);
+        fetchedPosts.push(...response.data);
     }
+    setPosts(fetchedPosts);
+    filterPosts(fetchedPosts, showVisual);
   };
 
-  // Use useEffect to fetch posts on component mount or when category changes
+  const filterPosts = (allPosts, showVisual) => {
+    const filtered = allPosts.filter((post) =>
+      showVisual ? post.model !== undefined : post.model === undefined
+    );
+    setFilteredPosts(filtered);
+  };
+
   useEffect(() => {
     fetchPosts();
   }, [category]);
 
+  useEffect(() => {
+    filterPosts(posts, showVisual);
+  }, [showVisual, posts]);
+
   return (
     <View style={styles.body}>
+      {/* Toggle Buttons */}
+      <View style={styles.toggleContainer}>
+        <TouchableOpacity
+          style={[styles.toggleButton, !showVisual && styles.activeToggle]}
+          onPress={() => setShowVisual(false)}
+        >
+          <Text style={styles.toggleText}>Text Posts</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.toggleButton, showVisual && styles.activeToggle]}
+          onPress={() => setShowVisual(true)}
+        >
+          <Text style={styles.toggleText}>Visual Posts</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Posts List */}
       <GestureHandlerRootView>
         <FlatList
           ref={flatListRef}
-          data={posts} // Use the state variable here
+          data={filteredPosts} // Use filtered posts
           keyExtractor={(item) => item.postId.toString()}
           removeClippedSubviews={false}
           renderItem={({ item }) => (
             <Post
               title={item.title}
               content={item.text}
+              model={item.model} // Pass model if present
               disableScroll={disableScroll}
             />
           )}
@@ -89,5 +138,25 @@ const styles = StyleSheet.create({
     flex: 1,
     display: 'flex',
     backgroundColor: Colors.light,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  toggleButton: {
+    padding: 10,
+    marginHorizontal: 5,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+  },
+  activeToggle: {
+    backgroundColor: Colors.primary,
+  },
+  toggleText: {
+    color: Colors.dark,
+    fontWeight: 'bold',
   },
 });
