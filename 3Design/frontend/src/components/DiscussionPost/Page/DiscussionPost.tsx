@@ -16,7 +16,7 @@ interface Props{
 const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
     const [data, setData] = useState<DPost>(postData);
     const bodyRef = useRef<HTMLParagraphElement | null>(null);
-    const [annotationData, setAnnotationData] = useState<SendAnnotationData>({content: "", endIndex: null, postId: 9, startIndex: null, userId: parseInt(localStorage.getItem("user_id") ?? "-1")});
+    const [annotationData, setAnnotationData] = useState<SendAnnotationData>({content: "", endIndex: null, postId: postData.postId, startIndex: null, userId: parseInt(localStorage.getItem("user_id") ?? "-1")});
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -97,7 +97,7 @@ const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
             message.success("Annotation published successfully.");
             postPhase = true;
             setAnnotatedText("");
-            const refreshedAnnotations = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/annotations/get?postId=${9}`,
+            const refreshedAnnotations = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/annotations/get?postId=${postData.postId}`,
             {headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}}
             );
             setPublishedAnnotations(refreshedAnnotations.data);

@@ -5,8 +5,10 @@ export interface CustomProfile{
 }
 
 export interface Category{
-    text: string,
-    id: string
+    name: string,
+    id: string,
+    description: string,
+    followerCount: number
 }
 
 
@@ -59,8 +61,8 @@ export interface SendAnnotationData{
 export interface CustomUser{
     id : number,
     profilePictureUrl: string | null,
-    username: string,
-    userPoints: number
+    nickName: string,
+    experience: number
 }
 
 

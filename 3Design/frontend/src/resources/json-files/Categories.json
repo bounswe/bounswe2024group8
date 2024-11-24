@@ -1,7 +1,4 @@
 [
-    {"text": "Characters", "id": "1"},
-    {"text": "Enviroments", "id": "4"},
-    {"text": "Props", "id": "5"},
-    {"text": "Vehicles", "id": "7"},
-    {"text": "Animations", "id": "9"}
+    {"name": "Testing", "id": "1", "description": "This is a test category1", "followerCount": 0},
+    {"name": "Testing2", "id": "4", "description": "This is a test category2", "followerCount": 0}
 ]

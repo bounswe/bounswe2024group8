@@ -9,6 +9,7 @@ import SideBar from "../SideBar/SideBar";
 import PageHeader from "../PageHeader/PageHeader";
 import styles from "./PostPage.module.css"
 import { Skeleton } from "antd";
+import axios from "axios";
 
 
 const PostPage = () => {
@@ -17,10 +18,29 @@ const PostPage = () => {
     const [publishedAnnotations, setPublishedAnnotations] = useState([]);
 
     useEffect(() => {
-        setPostData(getPostFromId(id)); 
-        setPublishedAnnotations(require("../../resources/json-files/MockAnnotations.json"));
+        fetchPostData();
      }, []);
 
+    const fetchPostData = async () =>{
+        try{
+            const postRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/posts/${id}`,
+                {
+                    headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+                }
+            );
+            const annotationRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/annotations/get?postId=${id}`,
+                {
+                    headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+                }
+            );
+            setPublishedAnnotations(annotationRes.data);
+            setPostData({...postRes.data, postId: postRes.data.id});
+        }
+        catch(e){
+            setPublishedAnnotations(require("../../resources/json-files/MockAnnotations.json"));
+            setPostData(getPostFromId(id)); 
+        }
+    } 
 
     if (!id){
         return <div>404</div>;

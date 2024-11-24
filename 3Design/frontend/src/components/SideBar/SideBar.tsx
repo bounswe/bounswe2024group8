@@ -13,7 +13,7 @@ const SideBar = ({active} : Props) => {
             <p className={styles.categoriesText}>Categories</p>
             <div className={styles.categoryContainer}>
                 {categories.map((item, index) => (
-                    <button className={active == item.id ? styles.activeCategoryButton : styles.categoryButton } onClick={() => window.location.href = `/home/${item.id}`} key={`${item.id}_${index}`}>{item.text}</button>
+                    <button className={active == item.id ? styles.activeCategoryButton : styles.categoryButton } onClick={() => window.location.href = `/home/${item.id}`} key={`${item.id}_${index}`}>{item.name}</button>
                 ))}
             </div>
         </div>

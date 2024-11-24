@@ -109,7 +109,7 @@ const ChallengePost = ({dialogFunction, challengedPostId, categoryId} : Props) =
                 <FormControl className='w-4/6'>
                     <InputLabel id="categoryLabel">Category</InputLabel>
                     <Select disabled label='Category' labelId='categoryLabel' value={category}>
-                        {categories.map((c) => <MenuItem key={c.id} value={c.id}>{c.text}</MenuItem>)}
+                        {categories.map((c) => <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>)}
                     </Select>
                 </FormControl>
                 <div className='w-2/6 flex items-center flex-col'>
