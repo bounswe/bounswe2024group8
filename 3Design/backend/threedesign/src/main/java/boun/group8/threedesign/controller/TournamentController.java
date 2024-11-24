@@ -1,5 +1,6 @@
 package boun.group8.threedesign.controller;
 
+import boun.group8.threedesign.model.Tournament;
 import boun.group8.threedesign.model.TournamentEntry;
 import boun.group8.threedesign.service.TournamentService;
 import lombok.AccessLevel;
@@ -31,5 +32,17 @@ public class TournamentController {
         }
 
         return ResponseEntity.ok(leaderboard);
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<Tournament> getTournamentByCategoryId(@PathVariable Long categoryId) {
+
+        var tournament = tournamentService.getCurrentTournamentByCategoryId(categoryId);
+
+        if (tournament == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(tournament);
     }
 }
