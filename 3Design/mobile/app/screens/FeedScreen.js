@@ -3,13 +3,14 @@ import { View, FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native
 import { Colors } from '../constants/Colors';
 import Post from '../components/Post';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useRoute } from '@react-navigation/native';
-import axios from "axios";
+import { useRoute, useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 import { AuthContext } from "../context/AuthContext";
 import { Categories } from "../constants/Categories";
 
 export default function FeedScreen() {
   const flatListRef = useRef(null);
+  const navigation = useNavigation();
 
   const route = useRoute();
   const category = route.params ? route.params['category'] : null;
@@ -17,7 +18,7 @@ export default function FeedScreen() {
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [showVisual, setShowVisual] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(false); // New state for follow/unfollow
+  const [isFollowing, setIsFollowing] = useState(false);
   const { user } = useContext(AuthContext);
 
   const disableScroll = (isDisabled) => {
@@ -31,31 +32,18 @@ export default function FeedScreen() {
   const fetchPosts = async () => {
     let fetchedPosts = [];
     if (category == null) {
-      for (let item of Categories) {
-        try {
-          let response = await axios.get(
-            `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${item.value}/nonvisual`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.accessToken}`,
-                'Content-Type': 'multipart/form-data',
-              },
-            }
-          );
-          fetchedPosts.push(...response.data);
-
-          response = await axios.get(
-            `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${item.value}/visual`,
-            {
-              headers: {
-                Authorization: `Bearer ${user.accessToken}`,
-                'Content-Type': 'multipart/form-data',
-              },
-            }
-          );
-          fetchedPosts.push(...response.data);
-        } catch (e) {}
-      }
+      try {
+        let response = await axios.get(
+          `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/feed`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+        fetchedPosts.push(...response.data);
+      } catch (e) {}
     } else {
       try {
         let response = await axios.get(
@@ -112,20 +100,37 @@ export default function FeedScreen() {
     })
   };
 
+  // Reset the category to null and reload the feed
+  const handleResetCategory = () => {
+    navigation.setParams({ category: null }); // Set the category to null
+  };
+
   return (
     <View style={styles.body}>
       {/* Category Name */}
       <Text style={styles.categoryName}>{categoryName}</Text>
 
-      {/* Follow/Unfollow Button */}
-      <TouchableOpacity
-        style={styles.followButton}
-        onPress={handleFollowUnfollow}
-      >
-        <Text style={styles.followButtonText}>
-          {isFollowing ? 'Unfollow' : 'Follow'} Category
-        </Text>
-      </TouchableOpacity>
+      {/* Follow/Unfollow Button - Only show if category is not null */}
+      {category && (
+        <TouchableOpacity
+          style={styles.followButton}
+          onPress={handleFollowUnfollow}
+        >
+          <Text style={styles.followButtonText}>
+            {isFollowing ? 'Unfollow' : 'Follow'} Category
+          </Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Reset Category Button (Top Right) */}
+      {category && (
+        <TouchableOpacity
+          style={styles.resetButton}
+          onPress={handleResetCategory}
+        >
+          <Text style={styles.resetButtonText}>X</Text>
+        </TouchableOpacity>
+      )}
 
       {/* Toggle Buttons */}
       <View style={styles.toggleContainer}>
@@ -212,5 +217,20 @@ const styles = StyleSheet.create({
   toggleText: {
     color: Colors.dark,
     fontWeight: 'bold',
+  },
+  resetButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    backgroundColor: Colors.secondary,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+  },
+  resetButtonText: {
+    color: Colors.dark,
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });
