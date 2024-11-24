@@ -23,7 +23,7 @@ const PostPage = () => {
 
     const fetchPostData = async () =>{
         try{
-            const postRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/posts/${id}`,
+            const postRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/posts/new/${id}`,
                 {
                     headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
                 }
@@ -34,7 +34,7 @@ const PostPage = () => {
                 }
             );
             setPublishedAnnotations(annotationRes.data);
-            setPostData({...postRes.data, postId: postRes.data.id});
+            setPostData(postRes.data);
         }
         catch(e){
             setPublishedAnnotations(require("../../resources/json-files/MockAnnotations.json"));

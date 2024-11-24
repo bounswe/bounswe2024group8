@@ -26,6 +26,8 @@ const Feed = ({category, pageNumber}: Props) => {
     const [categoryInfo, setCategoryInfo] = useState<CategoryInfo>({category: null, isFollowed: false})
     const [followRequesting, setFollowRequesting] = useState(false);
 
+    const [tournamentInfo, setTournamentInfo] = useState();
+
     useEffect(() => {
         fetchPostData();
     }, [feedType])

@@ -83,6 +83,7 @@ export interface RecievedAnnotationData{
     target: RecievedAnnotationTarget
 }
 
+
 interface RecievedAnnotationCreator{
     id: string,
     type: string,
@@ -97,4 +98,21 @@ interface RecievedAnnotationTargetSelector{
     type: string,
     start: number,
     end: number
+}
+
+interface Tournament{
+    id: number,
+    startTime: string,
+    endTime : string,
+    categoryId: number,
+    isFinished : boolean
+}
+
+export interface TournamentEntry{
+    id: number,
+    user: CustomUser,
+    postId: number,
+    tournament: Tournament,
+    score : number,
+    finishedPosition : number
 }
