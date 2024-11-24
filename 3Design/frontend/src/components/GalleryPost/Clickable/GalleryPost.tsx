@@ -2,9 +2,10 @@ import React, { memo, SetStateAction, useEffect, useRef, useState } from 'react'
 import { DPost, SendAnnotationData } from '../../interfaces'
 import styles from "../GalleryPost.module.css"
 import DViewer from '../../DViewer/DViewer'
-import { Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined } from '@mui/icons-material'
+import { ChevronRight,Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined } from '@mui/icons-material'
 import { IconButton, Menu, MenuItem } from '@mui/material'
-import { formatInteractions } from '../../tsfunctions'
+import { grey } from '@mui/material/colors';
+import { formatInteractions,getCategoryById } from '../../tsfunctions'
 interface Props{
   postData: DPost,
 }
@@ -59,7 +60,20 @@ const GalleryPost = ({postData} : Props) => {
   return (
       <div className={`clickable-post ${styles.postCard}`} onClick={() => {window.location.href = `/post/${postData.postId}`}}>
         <div className='flex'>
-            {/* Profile picture and username div here */}
+        <img src={data.user?.profilePictureUrl || "/default_pp.png"} className="mr-2 w-12 h-12 rounded-full pixelated" /> 
+                    <div className='flex'>
+                    <div className="flex items-center mb"> 
+                    <p className="font-bold mr-2 mb-2">{data.user?.nickName}</p>
+                    <ChevronRight className='mb-1.5'/>
+                    <p className="font-bold ml-1 mb-2">{getCategoryById(data.categoryId.toString())}</p>
+                    </div>
+                    { data.isVisualPost && data.challengedPostId !== null ?
+                    <div className="flex items-center mb-2"> 
+                    <Shield sx={{ backgroundColor: 'white', color: grey[500] }} className='ml-5'/>
+                    <p style={{ color: grey[500] }} className='ml-2'>Challenged to <a>post</a></p>
+                    </div>: null
+                    }
+                    </div>
         </div>
         <div className='flex flex-col gap-2'>
           {modelAppearence ?
@@ -104,7 +118,7 @@ const GalleryPost = ({postData} : Props) => {
                 <InsertCommentOutlined/>
               }
             </button>
-            <p>{1453 /*comment sayısı buraya gelecek */}</p> 
+            <p>{data.comments}</p> 
           </div>
           <button
             onClick={(e) => {
