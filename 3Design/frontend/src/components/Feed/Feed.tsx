@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { DPost } from '../interfaces'
+import { Category, DPost } from '../interfaces'
 import GalleryPost from '../GalleryPost/Clickable/GalleryPost';
 import styles from "./Feed.module.css"
 import DiscussionPost from '../DiscussionPost/Clickable/DiscussionPost';
-import { Skeleton } from 'antd';
+import { Button, message, Skeleton } from 'antd';
 import { getCategoryById } from '../tsfunctions';
 import axios from 'axios';
 
@@ -12,11 +12,21 @@ interface Props{
     pageNumber: number
 }
 
+interface CategoryInfo{
+    category: Category |null,
+    isFollowed: boolean
+}
+
 const Feed = ({category, pageNumber}: Props) => {
     const [postData, setPostData] = useState<DPost[]>([]);
     const [feedType, setFeedType] = useState(true);
     const [feedLoading, setFeedLoading] = useState(true);
     const [tabConfig, setTabConfig] = useState([0, 0]);
+    
+    const [categoryInfo, setCategoryInfo] = useState<CategoryInfo>({category: null, isFollowed: false})
+    const [followRequesting, setFollowRequesting] = useState(false);
+
+    const [tournamentInfo, setTournamentInfo] = useState();
 
     useEffect(() => {
         fetchPostData();
@@ -24,28 +34,41 @@ const Feed = ({category, pageNumber}: Props) => {
 
 
     const fetchPostData = async () => {
-        // AJAX Request with category
-        try{
-            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/posts/category/${category}/nonvisual`,
+        try{            
+            const followRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/categories/get/${category}`, 
                 {headers: {
                     Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
                 }}
             );
-            console.log(res.data);
+            console.log(followRes.data);
+            setCategoryInfo(followRes.data);
         }
         catch(e){
+            setFeedLoading(false);
             console.log(e);
         }
         if (feedType){
             const data = require("../../resources/json-files/MockPosts.json");
             setPostData(data.slice(2*(pageNumber-1), 2*pageNumber));
             setFeedLoading(false);
+            
             return;
         }
-        const data : DPost[] = require("../../resources/json-files/MockDiscussions.json");
-        setPostData(data.slice(2*(pageNumber-1), 2*pageNumber));
-        setFeedLoading(false);
-
+        try{            
+            
+            const postRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/posts/category/${category}/nonvisual`,
+                {headers: {
+                    Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
+                }}
+            );
+            setPostData(postRes.data);
+            setFeedLoading(false);
+        }
+        catch(e){
+            setFeedLoading(false);
+            console.log(e);
+        }
+        
     }
 
     const changePostData = (newPost: DPost,index: number) => {
@@ -68,13 +91,44 @@ const Feed = ({category, pageNumber}: Props) => {
         return null;
     }
 
+    const handleFollowLogic = async (x: boolean) => {
+        setFollowRequesting(true);
+        try{
+            if (x){
+                await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/categories/follow/${category}`, {}, 
+                    {headers: {
+                        Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
+                    }}
+                );
+                setCategoryInfo(prev => ({...prev, isFollowed: true}));
+                return;
+            }
+            await axios.delete(`${process.env.REACT_APP_API_URL}/api/v1/categories/unfollow/${category}`, 
+                {headers: {
+                    Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
+                }}
+            );
+            setCategoryInfo(prev => ({...prev, isFollowed: false}));
+        }
+        catch(e){
+            message.error("Something went wrong, your follow status can not be changed.")
+        }
+        finally{
+            setFollowRequesting(false);
+        }
+    }
+
 
     return (
             
         <div className={`flex flex-col gap-4 ${styles.mainContainer} p-4`}>
             <div className='flex flex-col gap-6'>
-                <div>
+                <div className='flex'>
                     <p className='font-bold text-xl'>{getCategoryById(category)} - {feedType ? "Gallery" : "Discussion"}</p>
+                    {categoryInfo.isFollowed ? 
+                    <Button disabled={followRequesting} onClick={() => handleFollowLogic(false)} className='mr-0 ml-auto'>Unfollow Category</Button> :
+                    <Button disabled={followRequesting} type='primary' onClick={() => handleFollowLogic(true)} className='mr-0 ml-auto'>Follow Category</Button> 
+                    }
                 </div>
                 <div className='flex gap-8 justify-start'> 
                     <button className='btn btn-neutral' style={!feedType ? {background: "#ffffff", color: "black"} : {background: "#d0d0d0", color: "black"}} onClick={() => changeFeedType(true)}>Gallery</button>

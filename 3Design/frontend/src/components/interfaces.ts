@@ -5,8 +5,10 @@ export interface CustomProfile{
 }
 
 export interface Category{
-    text: string,
-    id: string
+    name: string,
+    id: string,
+    description: string,
+    followerCount: number
 }
 
 
@@ -59,8 +61,8 @@ export interface SendAnnotationData{
 export interface CustomUser{
     id : number,
     profilePictureUrl: string | null,
-    username: string,
-    userPoints: number
+    nickName: string,
+    experience: number
 }
 
 
@@ -81,6 +83,7 @@ export interface RecievedAnnotationData{
     target: RecievedAnnotationTarget
 }
 
+
 interface RecievedAnnotationCreator{
     id: string,
     type: string,
@@ -95,4 +98,21 @@ interface RecievedAnnotationTargetSelector{
     type: string,
     start: number,
     end: number
+}
+
+interface Tournament{
+    id: number,
+    startTime: string,
+    endTime : string,
+    categoryId: number,
+    isFinished : boolean
+}
+
+export interface TournamentEntry{
+    id: number,
+    user: CustomUser,
+    postId: number,
+    tournament: Tournament,
+    score : number,
+    finishedPosition : number
 }

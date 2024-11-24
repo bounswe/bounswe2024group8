@@ -110,15 +110,15 @@ const PageHeader = () => {
                         <Avatar sx={{ width: 100, height: 100 }} src={profileInfo.profilePictureUrl ?? "/default_pp.png"}/>
                     </button>
                     <input accept='.png,.jpg,.jpeg' type='file' style={{display: "none"}} ref={imageRef} onChange={changeProfilePicture}/>
-                    <button className={`btn btn-link ${styles.usernameText}`}>{profileInfo.username}</button>
-                    <p>User Points: {profileInfo.userPoints}</p>
+                    <button className={`btn btn-link ${styles.usernameText}`}>{profileInfo.nickName}</button>
+                    <p>User Experience Points: {profileInfo.experience}</p>
                     <div className='flex justify-center gap-4 items-center'>
                         <button className='btn btn-primary text-white' onClick={() => setProfileDialog(false)}>Back to Gallery</button>
                         <button className='btn btn-warning text-white font-bold' onClick={() => setChangePasswordConfig(prev => ({...prev, dialog: true})) } >Change Password</button>
                     </div>
                 </div>
                 :
-                <div className='flex items-center justify-center'>
+                <div className='flex items-center justify-center py-5 h-60'>
                     <CircularProgress/>
                 </div>
                 }

@@ -60,7 +60,7 @@ const CreatePost = ({dialogFunction} : Props) => {
             const fd = new FormData();
             const isVisual = fileList.length == 1;
             const tagString = tags.join(", ");
-            const fixedCategory = category;
+            const fixedCategory = `${category}`;
             fd.append("title", title);
             fd.append("text", content);
             fd.append("categoryId", fixedCategory);
@@ -102,7 +102,7 @@ const CreatePost = ({dialogFunction} : Props) => {
                 <FormControl className='w-4/6'>
                     <InputLabel id="categoryLabel">Category</InputLabel>
                     <Select label='Category' labelId='categoryLabel' value={category} onChange={e => setCategory(e.target.value)}>
-                        {categories.map((c) => <MenuItem key={c.id} value={c.id}>{c.text}</MenuItem>)}
+                        {categories.map((c) => <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>)}
                     </Select>
                 </FormControl>
                 <div className='w-2/6 flex items-center flex-col'>

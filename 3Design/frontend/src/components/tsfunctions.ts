@@ -5,7 +5,7 @@ export function getCategoryById(id: string){
     for (let i = 0; i < categories.length; i++) {
         const element = categories[i];
         if (element.id == id){
-            return element.text;
+            return element.name;
         }
         
     }

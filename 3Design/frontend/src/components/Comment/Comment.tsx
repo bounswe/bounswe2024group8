@@ -39,7 +39,7 @@ const Comment = ({commentData} : Props) => {
         <div className="pb-4 border-b border-t border-gray-300"> 
           <div className="flex items-center mt-2"> 
             <AccountCircleOutlined fontSize="large" className="mr-2" /> 
-            <p className="font-bold mr-2 mb-2">{data.user.username}</p> 
+            <p className="font-bold mr-2 mb-2">{data.user.nickName}</p> 
           </div>
           <p className="flex items-center ml-11">{data.text}</p>
           <div className='flex gap-6 mt-1'>

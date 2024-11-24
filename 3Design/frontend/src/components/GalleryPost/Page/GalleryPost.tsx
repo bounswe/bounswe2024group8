@@ -22,7 +22,7 @@ const GalleryPost = ({postData, publishedAnnotationsProps} : Props) => {
   const [data, setData] = useState<DPost>(postData);
   const [modelAppearence, setModelAppearence] = useState<boolean>(false);
   const bodyRef = useRef<HTMLParagraphElement | null>(null);
-  const [annotationData, setAnnotationData] = useState<SendAnnotationData>({content: "", endIndex: null, postId: 9, startIndex: null, userId: 1});
+  const [annotationData, setAnnotationData] = useState<SendAnnotationData>({content: "", endIndex: null, postId: 1, startIndex: null, userId: parseInt(localStorage.getItem("user_id") ?? "-1")});
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [downloadStatus, setDownloadStatus] = useState(false);
@@ -128,7 +128,7 @@ const GalleryPost = ({postData, publishedAnnotationsProps} : Props) => {
       message.success("Annotation published successfully.");
       postPhase = true;
       setAnnotatedText("");
-      const refreshedAnnotations = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/annotations/get?postId=${9}`,
+      const refreshedAnnotations = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/annotations/get?postId=${1}`,
         {headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}}
       );
       setPublishedAnnotations(refreshedAnnotations.data);
@@ -247,10 +247,10 @@ const GalleryPost = ({postData, publishedAnnotationsProps} : Props) => {
             const newComment: DComment = {
               commentId: comments.length + 1,
               user: {
-                username: localStorage.getItem("username") || "Anonymous",
+                nickName: localStorage.getItem("username") || "Anonymous",
                 profilePictureUrl: "",
                 id: 1000,
-                userPoints: 100
+                experience: 1000
               },
               "text": comment,
               "memberId": 1,
