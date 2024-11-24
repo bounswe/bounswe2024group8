@@ -2,8 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { Categories } from '../constants/Categories';
+import {useNavigation} from "@react-navigation/native";
 
 export default function CategoriesScreen() {
+  const navigation = useNavigation();
   return (
     <View style={styles.body}>
       <Text style={styles.title}>Select a Category</Text>
@@ -12,7 +14,7 @@ export default function CategoriesScreen() {
           <TouchableOpacity
             key={category.value}
             style={styles.categoryButton}
-            onPress={() => {}}
+            onPress={() => {navigation.navigate('Feed', { category: category.value })}}
           >
             <Text style={styles.categoryButtonText}>{category.label}</Text>
           </TouchableOpacity>
