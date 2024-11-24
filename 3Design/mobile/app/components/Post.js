@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text} from "react-native";
+import {View, StyleSheet, Text, TouchableOpacity} from "react-native";
 import OBJViewer from '../components/ObjectViewer';
 
 class Post extends Component {
@@ -11,13 +11,25 @@ class Post extends Component {
   }
 
   render() {
-    const { title, content, model, disableScroll } = this.props;
+    const { title, content, model, id, navigation, disableScroll } = this.props;
 
     if(model) {
       return (
         <View style={styles.postContainer}>
           <View>
-            <Text style={styles.postTitle}>{title}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                console.log("clicked");
+                navigation.navigate('Post', {
+                postId: id,
+                title: title,
+                content: content,
+                model: model,
+                });
+              }
+            }>
+              <Text style={styles.postTitle}>{title}</Text>
+            </TouchableOpacity>
             <Text style={styles.postContent}>{content}</Text>
           </View>
           <View style={styles.modelView}>
@@ -29,7 +41,19 @@ class Post extends Component {
       return (
         <View style={styles.postContainer}>
           <View>
-            <Text style={styles.postTitle}>{title}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                console.log("clicked");
+                navigation.navigate('Post', {
+                  postId: id,
+                  title: title,
+                  content: content,
+                  model: model,
+                });
+              }
+              }>
+              <Text style={styles.postTitle}>{title}</Text>
+            </TouchableOpacity>
             <Text style={styles.postContent}>{content}</Text>
           </View>
         </View>
