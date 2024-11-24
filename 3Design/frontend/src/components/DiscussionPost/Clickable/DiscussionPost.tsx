@@ -2,7 +2,7 @@ import React, { memo, SetStateAction, useEffect, useRef, useState } from 'react'
 import { DPost, SendAnnotationData } from '../../interfaces'
 import styles from "../DiscussionPost.module.css"
 import DViewer from '../../DViewer/DViewer'
-import { Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined } from '@mui/icons-material'
+import { Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined } from '@mui/icons-material'
 import { IconButton, Menu, MenuItem } from '@mui/material'
 import { formatInteractions } from '../../tsfunctions'
 interface Props{
@@ -97,6 +97,14 @@ const DiscussionPost = ({postData} : Props) => {
                         </button>
                         <p className={styles.interactionCount}>{formatInteractions(data.dislikeCount)}</p>
                     </div>
+                    <div className='flex items-center'>
+            <button className='btn btn-ghost'>
+            {
+                <InsertCommentOutlined/>
+              }
+            </button>
+            <p>{1453 /*comment sayısı buraya gelecek */}</p> 
+          </div>
                     <button
                         onClick={(event) => {
                             event.stopPropagation();

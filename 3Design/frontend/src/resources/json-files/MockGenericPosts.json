@@ -4,6 +4,7 @@
         "title": "Human Model",
         "body": "Check out this human model",
         "memberId": 2,
+        "user":{ "username": "John Doe", "profilePicture": "/profile.jpg","id":2,"userPoints": 100},    
         "tags": [],
         "category": "Human",
         "visual": true,
@@ -20,6 +21,7 @@
         "title": "How do I print a model?",
         "body": "Which button should I press to start printing?",
         "memberId": 2,
+        "user":{ "username": "John Doe", "profilePicture": "/profile.jpg","id":2,"userPoints": 100},
         "tags": [],
         "category": "Printing",
         "visual": false,
@@ -28,7 +30,12 @@
         "likeCount": 2,
         "dislikeCount": 4,
         "liked": false,
+<<<<<<< Updated upstream
         "disliked": true,
+=======
+        "disliked": false,
+        "comments": 123,
+>>>>>>> Stashed changes
         "bookmark":false
     },
     {

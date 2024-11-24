@@ -11,6 +11,7 @@ export interface Category{
 
 
 export interface DComment{
+<<<<<<< Updated upstream
     id: number,
     user:CustomProfile,
     body: string,
@@ -20,6 +21,21 @@ export interface DComment{
     dislikeCount: number,
     liked: boolean,
     disliked: boolean
+=======
+        commentId: number;
+        text: string;
+        user: {
+            id: number;
+            email: string;
+            profilePictureUrl: string;
+            username: string;
+        };
+        likes: number;
+        dislikes: number;
+        createdAt: string;
+        reactionId: number;
+        reactionType: string;
+>>>>>>> Stashed changes
 }
 
 export interface DPost{
