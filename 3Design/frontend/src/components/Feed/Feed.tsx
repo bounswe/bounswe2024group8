@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Category, DPost } from '../interfaces'
+import { Category, DPost, Tournament } from '../interfaces'
 import GalleryPost from '../GalleryPost/Clickable/GalleryPost';
 import styles from "./Feed.module.css"
 import DiscussionPost from '../DiscussionPost/Clickable/DiscussionPost';
 import { Button, message, Skeleton } from 'antd';
 import { getCategoryById } from '../tsfunctions';
 import axios from 'axios';
+import TournamentInfo from '../TournamentInfo/TournamentInfo';
 
 interface Props{
     category: string,
@@ -26,36 +27,41 @@ const Feed = ({category, pageNumber}: Props) => {
     const [categoryInfo, setCategoryInfo] = useState<CategoryInfo>({category: null, isFollowed: false})
     const [followRequesting, setFollowRequesting] = useState(false);
 
-    const [tournamentInfo, setTournamentInfo] = useState();
+    const [tournamentInfo, setTournamentInfo] = useState<Tournament | null>(null);
+    const [tournamentLoading, setTournamentLoading] = useState(true);
 
     useEffect(() => {
-        fetchPostData();
+        fetchServerData();
     }, [feedType])
 
 
+    const fetchServerData = async () => {
+        fetchFollowData();
+        fetchPostData();
+        fetchTournamentData();        
+    }
+
+    
+    const changeFeedType = (x : boolean) => {
+        if (x == feedType){
+            return;
+        }
+        setFeedLoading(true);
+        setFeedType(x);
+    }
+
+    const renderTabs  = () => {
+        return null;
+    }
+
     const fetchPostData = async () => {
-        try{            
-            const followRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/categories/get/${category}`, 
-                {headers: {
-                    Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
-                }}
-            );
-            console.log(followRes.data);
-            setCategoryInfo(followRes.data);
-        }
-        catch(e){
-            setFeedLoading(false);
-            console.log(e);
-        }
         if (feedType){
             const data = require("../../resources/json-files/MockPosts.json");
             setPostData(data.slice(2*(pageNumber-1), 2*pageNumber));
-            setFeedLoading(false);
-            
+            setFeedLoading(false);            
             return;
         }
-        try{            
-            
+        try{                        
             const postRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/posts/category/${category}/nonvisual`,
                 {headers: {
                     Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
@@ -68,27 +74,41 @@ const Feed = ({category, pageNumber}: Props) => {
             setFeedLoading(false);
             console.log(e);
         }
-        
-    }
+    } 
+    useEffect(() => {
+        console.log(tournamentInfo);
+    }, [tournamentInfo]);
 
-    const changePostData = (newPost: DPost,index: number) => {
-        setPostData(prev => {
-            const clone = [...prev];
-            clone[index] = newPost;
-            return clone;
-        })
-    }
-    
-    const changeFeedType = (x : boolean) => {
-        if (x == feedType){
-            return;
+    const fetchTournamentData = async () => {
+        try{
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/tournaments/category/${category}`, 
+                {headers: {
+                    Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
+                }}
+            )
+            setTournamentInfo(res.data);
         }
-        setFeedLoading(true);
-        setFeedType(x);
+        catch(e){
+            ;
+        }
+        finally{
+            setTournamentLoading(false);
+        }
     }
 
-    const renderTabs  = () => {
-        return null;
+    const fetchFollowData = async () => {
+        try{            
+            const followRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/categories/get/${category}`, 
+                {headers: {
+                    Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
+                }}
+            );
+            console.log(followRes.data);
+            setCategoryInfo(followRes.data);
+        }
+        catch(e){
+            console.log(e)
+        }
     }
 
     const handleFollowLogic = async (x: boolean) => {
@@ -130,6 +150,7 @@ const Feed = ({category, pageNumber}: Props) => {
                     <Button disabled={followRequesting} type='primary' onClick={() => handleFollowLogic(true)} className='mr-0 ml-auto'>Follow Category</Button> 
                     }
                 </div>
+                {tournamentLoading ? <div style={{height:"75px"}}></div>  : <TournamentInfo showButton={0} info={tournamentInfo}/>}
                 <div className='flex gap-8 justify-start'> 
                     <button className='btn btn-neutral' style={!feedType ? {background: "#ffffff", color: "black"} : {background: "#d0d0d0", color: "black"}} onClick={() => changeFeedType(true)}>Gallery</button>
                     <button className='btn btn-neutral' style={feedType ? {background: "#ffffff", color: "black"} : {background: "#d0d0d0", color: "black"}} onClick={() => changeFeedType(false)}>Discussion</button>
