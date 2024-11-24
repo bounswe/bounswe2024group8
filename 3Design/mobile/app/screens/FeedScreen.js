@@ -155,11 +155,14 @@ export default function FeedScreen() {
           data={filteredPosts}
           keyExtractor={(item) => item.postId.toString()}
           removeClippedSubviews={false}
+          keyboardShouldPersistTaps="handled"
           renderItem={({ item }) => (
             <Post
               title={item.title}
               content={item.text}
-              model={item.model} // Pass model if present
+              model={item.model}
+              id={item.postId}
+              navigation={navigation}
               disableScroll={disableScroll}
             />
           )}
