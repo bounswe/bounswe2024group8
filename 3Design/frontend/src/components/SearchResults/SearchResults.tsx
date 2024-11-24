@@ -7,13 +7,14 @@ import GalleryPost from '../GalleryPost/Clickable/GalleryPost';
 import DiscussionPost from '../DiscussionPost/Clickable/DiscussionPost';
 import SideBar from '../SideBar/SideBar';
 import PageHeader from '../PageHeader/PageHeader';
+import axios from 'axios';
 
 const SearchResults = () => {
     const {query} = useParams();
     const [searchResults, setSearchResults] = useState<DPost[]>([]);
     const [searchLoading, setSearchLoading] = useState(true);
 
-    if (!query){
+    if (query == undefined || query == null){
         window.location.href = "/home";
     }
 
@@ -22,11 +23,20 @@ const SearchResults = () => {
     }, [])
 
     const fetchPostData = async () => {
-        // AJAX Request
+        try{
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/posts?param=${query}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
+                }
+            });
+            setSearchResults(res.data);
+        }
+        catch(e){
 
-        const data = require("../../resources/json-files/MockGenericPosts.json");
-        setSearchResults(data);
-        setSearchLoading(false);
+        }
+        finally{
+            setSearchLoading(false);
+        }
 
     }
 
@@ -48,6 +58,8 @@ const SearchResults = () => {
                             <Skeleton active avatar paragraph={{ rows: 4 }} />
                         </div>
                     ) : 
+                        searchResults.length == 0 ? 
+                        <p>No results for this query</p> :
                         searchResults.map((item, index) => (
                             item.isVisualPost ?
                             <GalleryPost  key={`g_${item.isVisualPost}`} postData={item}/> 

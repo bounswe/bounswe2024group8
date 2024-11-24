@@ -98,7 +98,7 @@ interface RecievedAnnotationTargetSelector{
     end: number
 }
 
-interface Tournament{
+export interface Tournament{
     id: number,
     startTime: string,
     endTime : string,

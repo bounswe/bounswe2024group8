@@ -7,6 +7,7 @@ import HomePage from './components/HomePage/HomePage';
 import RegisterPage from './components/RegisterPage/RegisterPage';
 import PostPage from './components/PostPage/PostPage';
 import SearchResults from './components/SearchResults/SearchResults';
+import LeaderboardPage from './components/TournamentLeaderboard/LeaderboardPage';
 
 function App() {
   return (
@@ -53,6 +54,12 @@ function App() {
           path="/search"
           element={
             <SearchResults/>
+          }
+        />
+        <Route
+          path="/tournament/:category"
+          element={
+            <LeaderboardPage/>
           }
         />
       </Routes>

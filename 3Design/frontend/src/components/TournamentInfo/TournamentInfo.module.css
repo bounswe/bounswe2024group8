@@ -1,0 +1,10 @@
+.mainContainer{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #FFFACD;
+    padding: 10px 20px;
+    border-left: 5px solid #FFA500;
+    border-radius: 5px;
+    width: 100%;
+}
