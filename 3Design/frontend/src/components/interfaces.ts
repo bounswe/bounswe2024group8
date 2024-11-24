@@ -13,15 +13,12 @@ export interface Category{
 
 
 export interface DComment{
-    commentId: number,
-    user:CustomUser,
-    text: string,
-    memberId: number,
-    postId: number,
-    likes: number,
-    dislikes: number,
-    liked: boolean,
-    disliked: boolean
+        commentId: number;
+        text: string;
+        user:CustomUser;
+        likes: number;
+        dislikes: number;
+        reactionType: string;
 }
 
 export interface DPost{
@@ -40,7 +37,8 @@ export interface DPost{
     comments: number,
     liked: boolean,
     disliked: boolean,
-    bookmark: boolean
+    bookmark: boolean,
+    reactionType: string
 }
 
 export interface Tag{
