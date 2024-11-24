@@ -12,7 +12,7 @@ export default function FeedScreen() {
   const flatListRef = useRef(null);
 
   const route = useRoute();
-  const category = route.params['category'];
+  const category = route.params ? route.params['category'] : null;
 
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
@@ -56,27 +56,32 @@ export default function FeedScreen() {
         } catch (e) {}
       }
     } else {
-      let response = await axios.get(
-        `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${category}/nonvisual`,
-        {
-          headers: {
-            Authorization: `Bearer ${user.accessToken}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-      fetchedPosts.push(...response.data);
-      response = await axios.get(
-        `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${category}/visual`,
-        {
-          headers: {
-            Authorization: `Bearer ${user.accessToken}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-      fetchedPosts.push(...response.data);
+      try {
+        let response = await axios.get(
+          `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${category}/nonvisual`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+        fetchedPosts.push(...response.data);
+      } catch (e) {}
+      try {
+        let response = await axios.get(
+          `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${category}/visual`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+        fetchedPosts.push(...response.data);
+      } catch(e){}
     }
+    console.log(fetchedPosts);
     setPosts(fetchedPosts);
     filterPosts(fetchedPosts, showVisual);
   };
