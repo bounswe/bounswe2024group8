@@ -12,7 +12,7 @@ export default function FeedScreen() {
   const flatListRef = useRef(null);
 
   const route = useRoute();
-  const category = route.params?.category || null;
+  const category = route.params['category'];
 
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
@@ -25,12 +25,13 @@ export default function FeedScreen() {
     }
   };
 
+  const categoryName = Categories.find((cat) => cat.value === category)?.label || 'All Categories';
+
   const fetchPosts = async () => {
     let fetchedPosts = [];
     if (category == null) {
       for (let item of Categories) {
-        console.log(item.value);
-        try{
+        try {
           let response = await axios.get(
             `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${item.value}/nonvisual`,
             {
@@ -41,16 +42,17 @@ export default function FeedScreen() {
             }
           );
           fetchedPosts.push(...response.data);
-            response = await axios.get(
-              `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${item.value}/visual`,
-              {
-                headers: {
-                  Authorization: `Bearer ${user.accessToken}`,
-                  'Content-Type': 'multipart/form-data',
-                },
-              }
-            );
-            fetchedPosts.push(...response.data);
+
+          response = await axios.get(
+            `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${item.value}/visual`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.accessToken}`,
+                'Content-Type': 'multipart/form-data',
+              },
+            }
+          );
+          fetchedPosts.push(...response.data);
         } catch (e) {}
       }
     } else {
@@ -63,17 +65,17 @@ export default function FeedScreen() {
           },
         }
       );
-        fetchedPosts.push(...response.data);
-        response = await axios.get(
-          `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${category}/visual`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.accessToken}`,
-              'Content-Type': 'multipart/form-data',
-            },
-          }
-        );
-        fetchedPosts.push(...response.data);
+      fetchedPosts.push(...response.data);
+      response = await axios.get(
+        `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${category}/visual`,
+        {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      fetchedPosts.push(...response.data);
     }
     setPosts(fetchedPosts);
     filterPosts(fetchedPosts, showVisual);
@@ -96,6 +98,9 @@ export default function FeedScreen() {
 
   return (
     <View style={styles.body}>
+      {/* Category Name */}
+      <Text style={styles.categoryName}>{categoryName}</Text>
+
       {/* Toggle Buttons */}
       <View style={styles.toggleContainer}>
         <TouchableOpacity
@@ -116,7 +121,7 @@ export default function FeedScreen() {
       <GestureHandlerRootView>
         <FlatList
           ref={flatListRef}
-          data={filteredPosts} // Use filtered posts
+          data={filteredPosts}
           keyExtractor={(item) => item.postId.toString()}
           removeClippedSubviews={false}
           renderItem={({ item }) => (
@@ -139,6 +144,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     backgroundColor: Colors.light,
     marginTop: 20,
+  },
+  categoryName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: Colors.dark,
+    textAlign: 'center',
+    marginBottom: 10,
   },
   toggleContainer: {
     flexDirection: 'row',
