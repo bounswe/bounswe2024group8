@@ -123,6 +123,16 @@ public class PostService {
 
     }
 
+    public PostResponse getPostResponseByIdElseThrow(Long id) {
+        Post post = getPostByIdElseThrow(id);
+
+        if (post == null) {
+            throw new ThreeDesignDatabaseException("Post not found with ID: " + id);
+        }
+
+        return convertPostToPostResponse(post.getUser(), post);
+    }
+
     public List<PostResponse> searchPosts(User user, String keyword) {
 
         List<Post> results = new ArrayList<>(postRepository.findByTextLikeIgnoreCase(keyword));
@@ -180,6 +190,36 @@ public class PostService {
             result.add(postResponse);
         }
         return result;
+    }
+
+    public PostResponse convertPostToPostResponse(User user, Post post) {
+        Reaction reaction = reactionRepository.findByPostIdAndUserId(post.getId(), user.getId());
+        ReactionType reactionType = ReactionType.NONE;
+        Boolean bookmark = false;
+
+        if (reaction != null) {
+            reactionType = reaction.getReactionType();
+            bookmark = reaction.getBookmark();
+        }
+
+        return PostResponse.builder()
+                .postId(post.getId())
+                .text(post.getText())
+                .user(post.getUser())
+                .title(post.getTitle())
+                .likes(post.getLikes())
+                .dislikes(post.getDislikes())
+                .comments(post.getComments())
+                .categoryId(post.getCategoryId())
+                .isVisualPost(post.getIsVisualPost())
+                .fileUrl(post.getFileUrl())
+                .challengedPostId(post.getChallengedPostId())
+                .tags(post.getTags())
+                .createdAt(post.getCreatedAt())
+                .reactionId(reaction == null ? -1L : reaction.getId())
+                .reactionType(reactionType)
+                .bookmark(bookmark)
+                .build();
     }
 
     @Transactional

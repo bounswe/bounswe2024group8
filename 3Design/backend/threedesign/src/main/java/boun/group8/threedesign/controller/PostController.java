@@ -50,6 +50,14 @@ public class PostController {
         return ResponseEntity.ok(post);
     }
 
+    @GetMapping("/new/{id}")
+    public ResponseEntity<PostResponse> getPostResponseById(@PathVariable Long id) {
+
+        PostResponse post = postService.getPostResponseByIdElseThrow(id);
+
+        return ResponseEntity.ok(post);
+    }
+
     @GetMapping("")
     public ResponseEntity<List<PostResponse>> search(
             @AuthenticationPrincipal User user,
