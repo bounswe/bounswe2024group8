@@ -17,6 +17,7 @@ export default function FeedScreen() {
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [showVisual, setShowVisual] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false); // New state for follow/unfollow
   const { user } = useContext(AuthContext);
 
   const disableScroll = (isDisabled) => {
@@ -101,10 +102,30 @@ export default function FeedScreen() {
     filterPosts(posts, showVisual);
   }, [showVisual, posts]);
 
+  const handleFollowUnfollow = () => {
+    setIsFollowing((prevState) => !prevState);
+    axios.post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/categories/follow/${category}`, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  };
+
   return (
     <View style={styles.body}>
       {/* Category Name */}
       <Text style={styles.categoryName}>{categoryName}</Text>
+
+      {/* Follow/Unfollow Button */}
+      <TouchableOpacity
+        style={styles.followButton}
+        onPress={handleFollowUnfollow}
+      >
+        <Text style={styles.followButtonText}>
+          {isFollowing ? 'Unfollow' : 'Follow'} Category
+        </Text>
+      </TouchableOpacity>
 
       {/* Toggle Buttons */}
       <View style={styles.toggleContainer}>
@@ -156,6 +177,21 @@ const styles = StyleSheet.create({
     color: Colors.dark,
     textAlign: 'center',
     marginBottom: 10,
+  },
+  followButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: Colors.primary,
+    borderWidth: 1,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 10,
+    alignSelf: 'center',
+  },
+  followButtonText: {
+    color: Colors.dark,
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   toggleContainer: {
     flexDirection: 'row',
