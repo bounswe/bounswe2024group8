@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
     flex: 1,
     display: 'flex',
     backgroundColor: Colors.light,
+    marginTop: 20,
   },
   toggleContainer: {
     flexDirection: 'row',
