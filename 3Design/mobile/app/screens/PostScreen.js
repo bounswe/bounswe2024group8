@@ -1,32 +1,97 @@
 import React, {useContext, useEffect, useState} from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, Button } from 'react-native';
+import {View, Text, StyleSheet, FlatList, TextInput, Button, TouchableOpacity} from 'react-native';
 import axios from 'axios';
 import { Colors } from '../constants/Colors';
 import {AuthContext} from "../context/AuthContext";
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function PostScreen({ route }) {
   const { postId, title, content, model } = route.params;
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const { user } = useContext(AuthContext);
 
-  const fetchComments = () => {
-    axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/comments/post/${postId}`, {
-      headers: {
-        Authorization: `Bearer ${user.accessToken}`,
-        'Content-Type': 'multipart/form-data',
-      },
+  const fetchPostData = () => {
+    axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}`, {
+      headers: { Authorization: `Bearer ${user.accessToken}` },
     })
       .then((response) => {
-        setComments(response.data);
-        console.log(response.data);
+        const { likes, dislikes } = response.data;
+        setLikes(likes);
+        setDislikes(dislikes);
       })
+      .catch((error) => console.error(error));
+
+    fetchComments();
+  };
+
+  const fetchComments = () => {
+    axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/comments/post/${postId}`, {
+      headers: { Authorization: `Bearer ${user.accessToken}` },
+    })
+      .then((response) => setComments(response.data))
       .catch((error) => console.error(error));
   };
 
   useEffect(() => {
-    fetchComments();
+    fetchPostData();
   }, [postId]);
+
+  const likePost = () => {
+    axios.post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}/react`, {
+      "reactionType": "LIKE",
+      "bookmark": false
+    }, {
+      headers: { Authorization: `Bearer ${user.accessToken}` },
+    })
+      .then(() => setLikes((prevLikes) => prevLikes + 1))
+      .catch((error) => console.error(error));
+  };
+
+  const dislikePost = () => {
+    axios.post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}/react`, {
+      "reactionType": "DISLIKE",
+      "bookmark": false
+    }, {
+      headers: { Authorization: `Bearer ${user.accessToken}` },
+    })
+      .then(() => setDislikes((prevDislikes) => prevDislikes + 1))
+      .catch((error) => console.error(error));
+  };
+
+  const likeComment = (commentId) => {
+    axios.post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/comment/${commentId}/react?reactionType=LIKE`, {}, {
+      headers: { Authorization: `Bearer ${user.accessToken}` },
+    })
+      .then(() => {
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment.commentId === commentId
+              ? { ...comment, likes: comment.likes + 1 }
+              : comment
+          )
+        );
+      })
+      .catch((error) => console.error(error));
+  };
+
+  const dislikeComment = (commentId) => {
+    axios.post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/comment/${commentId}/react?reactionType=DISLIKE`, {}, {
+      headers: { Authorization: `Bearer ${user.accessToken}` },
+    })
+      .then(() => {
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment.commentId === commentId
+              ? { ...comment, dislikes: comment.dislikes + 1 }
+              : comment
+          )
+        );
+      })
+      .catch((error) => console.error(error));
+  };
 
   const submitComment = () => {
     axios.post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/comment`, {
@@ -44,17 +109,27 @@ export default function PostScreen({ route }) {
       .catch((error) => console.error(error));
   };
 
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.content}>{content}</Text>
       {model && (
         <View style={styles.modelContainer}>
-          {/* Assuming OBJViewer is a component to view the 3D model */}
           <OBJViewer objFilePath={model} />
         </View>
       )}
+
+      <View style={styles.reactionsContainer}>
+        <TouchableOpacity style={styles.iconButton} onPress={likePost}>
+          <Icon name="thumbs-up" size={20} color="green" />
+          <Text style={styles.iconButtonText}>{likes}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton} onPress={dislikePost}>
+          <Icon name="thumbs-down" size={20} color="red" />
+          <Text style={styles.iconButtonText}>{dislikes}</Text>
+        </TouchableOpacity>
+      </View>
+
       <Text style={styles.commentsTitle}>Comments</Text>
       <FlatList
         data={comments}
@@ -63,9 +138,20 @@ export default function PostScreen({ route }) {
           <View style={styles.comment}>
             <Text style={styles.commentUsername}>{item.user.nickName}</Text>
             <Text>{item.text}</Text>
+            <View style={styles.reactionsContainer}>
+              <TouchableOpacity style={styles.iconButton} onPress={() => likeComment(item.commentId)}>
+                <Icon name="thumbs-up" size={15} color="green" />
+                <Text style={styles.iconButtonText}>{item.likes}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.iconButton} onPress={() => dislikeComment(item.commentId)}>
+                <Icon name="thumbs-down" size={15} color="red" />
+                <Text style={styles.iconButtonText}>{item.dislikes}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       />
+
       <View style={styles.newCommentContainer}>
         <TextInput
           style={styles.input}
@@ -78,6 +164,7 @@ export default function PostScreen({ route }) {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -128,5 +215,22 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginRight: 10,
+  },
+  reactionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginTop: 10,
+    gap: 15, // Space between buttons
+  },
+  iconButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  iconButtonText: {
+    marginLeft: 5,
+    fontSize: 14,
+    color: Colors.dark,
   },
 });
