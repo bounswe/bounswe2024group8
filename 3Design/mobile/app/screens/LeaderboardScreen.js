@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -10,26 +10,37 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import { Colors } from '../constants/Colors';
+import { AuthContext } from "../context/AuthContext";
+import { Categories } from "../constants/Categories";
 
 export default function LeaderboardScreen({ route, navigation }) {
-  const { categoryId, categoryName } = route.params;
+  const { category } = route.params;
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    // Fetch leaderboard data for the category
-    axios
-      .get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/leaderboard/${categoryId}`)
-      .then((response) => {
-        setLeaderboardData(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError('Failed to load leaderboard data.');
-        setLoading(false);
-      });
-  }, [categoryId]);
+      if (category) {
+        const url = `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/tournaments/leaderboard/${category.value}`;
+        axios
+          .get(url, {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+          .then((response) => {
+            console.log(response.data[0])
+            // Assume the endTime is in ISO 8601 format and located at response.data[0].tournament.endTime
+
+          })
+          .catch((error) => {
+            console.error('Failed to fetch remaining time', error.response?.data || error.message);
+            setLoading(false);
+          });
+      }
+    }, [category]);
 
   const renderItem = ({ item, index }) => (
     <View style={styles.row}>
@@ -59,7 +70,7 @@ export default function LeaderboardScreen({ route, navigation }) {
     <View style={styles.body}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>
-          Leaderboard for {categoryName} Category
+          Leaderboard for {category.label} Category
         </Text>
       </View>
       <View style={styles.tableHeader}>

@@ -133,19 +133,39 @@ export default function FeedScreen() {
   // Fetch remaining time for the tournament
   useEffect(() => {
     if (category) {
+      const url = `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/tournaments/leaderboard/${category.value}`;
       axios
-        .get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/tournament/${category}/remaining-time`)
+        .get(url, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        })
         .then((response) => {
-          const timeLeftInSeconds = response.data.remainingTime; // Assuming backend returns time in seconds
-          setRemainingTime(timeLeftInSeconds);
+          //console.log('Response Data:', response.data);
+
+          // Assume the endTime is in ISO 8601 format and located at response.data[0].tournament.endTime
+          const endTimeISO = response.data[0]?.tournament?.endTime;
+
+          if (endTimeISO) {
+            const endTime = new Date(endTimeISO).getTime(); // Convert to timestamp in milliseconds
+            const now = Date.now(); // Current timestamp in milliseconds
+            const timeLeftInSeconds = Math.floor((endTime - now) / 1000); // Calculate remaining time in seconds
+
+            setRemainingTime(timeLeftInSeconds);
+          } else {
+            console.error('endTime not found in the response');
+          }
+
           setLoading(false);
         })
         .catch((error) => {
-          console.error('Failed to fetch remaining time', error);
+          console.error('Failed to fetch remaining time', error.response?.data || error.message);
           setLoading(false);
         });
     }
   }, [category]);
+
 
   // Timer countdown
   useEffect(() => {
@@ -176,8 +196,7 @@ export default function FeedScreen() {
 
   const handleLeaderboardPress = () => {
     navigation.navigate('Leaderboard', {
-      categoryId: category,
-      categoryName: categoryName,
+      category: category
     });
   };
 
