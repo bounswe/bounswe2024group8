@@ -163,7 +163,7 @@ export default function FeedScreen() {
             setIsLoadingTime(false);
           })
           .catch((error) => {
-            console.error('Failed to fetch remaining time', error.response?.data || error.message);
+            //console.error('Failed to fetch remaining time', error.response?.data || error.message);
             setIsLoadingTime(false);
             setShowTournamentBox(false); // Do not show the tournament box
           });
