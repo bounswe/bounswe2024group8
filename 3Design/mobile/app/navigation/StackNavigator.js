@@ -23,12 +23,18 @@ export default function StackNavigator() {
       <Stack.Screen
         name='Home'
         component={TabNavigator}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          unmountOnBlur: true,
+        }}
       />
       <Stack.Screen
         name="Post"
         component={PostScreen}
-        options={{ title: 'Post' }}
+        options={{
+          title: 'Post',
+          unmountOnBlur: true,
+        }}
       />
     </Stack.Navigator>
   );

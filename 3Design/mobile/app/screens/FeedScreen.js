@@ -27,7 +27,7 @@ export default function FeedScreen() {
     }
   };
 
-  const categoryName = Categories.find((cat) => cat.value === category)?.label || 'All Categories';
+  const categoryName = Categories.find((cat) => cat.value === category)?.label || '3Design';
 
   const fetchPosts = async () => {
     let fetchedPosts = [];
@@ -77,10 +77,14 @@ export default function FeedScreen() {
 
   const filterPosts = (allPosts, showVisual) => {
     const filtered = allPosts.filter((post) =>
-      showVisual ? post.model !== undefined : post.model === undefined
+      showVisual ? post.isVisualPost : !post.isVisualPost
     );
     setFilteredPosts(filtered);
   };
+
+  const filterPostsCallback = () => {
+    filterPosts(posts, showVisual);
+  }
 
   useEffect(() => {
     fetchPosts();
@@ -90,19 +94,31 @@ export default function FeedScreen() {
     filterPosts(posts, showVisual);
   }, [showVisual, posts]);
 
-  const handleFollowUnfollow = () => {
-    setIsFollowing((prevState) => !prevState);
-    axios.post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/categories/follow/${category}`, {
-      headers: {
-        Authorization: `Bearer ${user.accessToken}`,
-        'Content-Type': 'multipart/form-data',
-      },
-    })
+  const handleFollowUnfollow = async () => {
+    try {
+      const url = `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/categories/follow/${category}`;
+      await axios.post(url, null, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      setIsFollowing((prevState) => !prevState); // Update the button text only after a successful request
+      console.log(`Successfully ${isFollowing ? 'unfollowed' : 'followed'} category.`);
+    } catch (error) {
+      console.error(`Failed to ${isFollowing ? 'unfollow' : 'follow'} category:`, error);
+    }
   };
+
 
   // Reset the category to null and reload the feed
   const handleResetCategory = () => {
     navigation.setParams({ category: null }); // Set the category to null
+  };
+
+  const clearFilteredPosts = () => {
+    setFilteredPosts([]);
+    console.log('Filtered posts cleared.');
   };
 
   return (
@@ -135,16 +151,16 @@ export default function FeedScreen() {
       {/* Toggle Buttons */}
       <View style={styles.toggleContainer}>
         <TouchableOpacity
-          style={[styles.toggleButton, !showVisual && styles.activeToggle]}
-          onPress={() => setShowVisual(false)}
-        >
-          <Text style={styles.toggleText}>Text Posts</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
           style={[styles.toggleButton, showVisual && styles.activeToggle]}
           onPress={() => setShowVisual(true)}
         >
-          <Text style={styles.toggleText}>Visual Posts</Text>
+          <Text style={styles.toggleText}>Designs</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.toggleButton, !showVisual && styles.activeToggle]}
+          onPress={() => setShowVisual(false)}
+        >
+          <Text style={styles.toggleText}>Discussion</Text>
         </TouchableOpacity>
       </View>
 
@@ -160,10 +176,12 @@ export default function FeedScreen() {
             <Post
               title={item.title}
               content={item.text}
-              model={item.model}
+              model={item.fileUrl}
               id={item.postId}
               navigation={navigation}
               disableScroll={disableScroll}
+              clearFilteredPosts={clearFilteredPosts}
+              filterPosts={filterPostsCallback}
             />
           )}
         />

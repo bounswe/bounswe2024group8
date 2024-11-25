@@ -4,14 +4,19 @@ import axios from 'axios';
 import { Colors } from '../constants/Colors';
 import {AuthContext} from "../context/AuthContext";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import OBJViewer from '../components/ObjectViewer';
+import {GestureHandlerRootView} from "react-native-gesture-handler";
+import Post from "../components/Post";
+import { useNavigation } from "@react-navigation/native";
 
 export default function PostScreen({ route }) {
-  const { postId, title, content, model } = route.params;
+  const { postId, title, content, model, filterPostsCallback} = route.params;
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const { user } = useContext(AuthContext);
+  const navigation = useNavigation();
 
   const fetchPostData = () => {
     axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}`, {
@@ -38,6 +43,17 @@ export default function PostScreen({ route }) {
   useEffect(() => {
     fetchPostData();
   }, [postId]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', () => {
+      if (filterPostsCallback) {
+        filterPostsCallback();
+        console.log('filterPostsCallback executed');
+      }
+    });
+
+    return unsubscribe; // Cleanup listener on unmount
+  }, [navigation, filterPostsCallback]);
 
   const likePost = () => {
     axios.post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}/react`, {
@@ -115,7 +131,9 @@ export default function PostScreen({ route }) {
       <Text style={styles.content}>{content}</Text>
       {model && (
         <View style={styles.modelContainer}>
-          <OBJViewer objFilePath={model} />
+          <GestureHandlerRootView>
+            <OBJViewer objFilePath={model} />
+          </GestureHandlerRootView>
         </View>
       )}
 
