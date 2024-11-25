@@ -16,7 +16,7 @@ export default function CategoriesScreen() {
           <TouchableOpacity
             key={category.value}
             style={styles.categoryButton}
-            onPress={() => {navigation.navigate('Feed', { category: category.value })}}
+            onPress={() => {navigation.navigate('Feed', { category: category})}}
           >
             <Text style={styles.categoryButtonText}>{category.label}</Text>
           </TouchableOpacity>
