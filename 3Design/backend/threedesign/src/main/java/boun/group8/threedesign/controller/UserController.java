@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -68,6 +69,14 @@ public class UserController {
         return ResponseEntity.ok(following);
     }
 
+    @PostMapping("/profile-picture/upload")
+    public ResponseEntity<String> uploadProfilePicture(
+            @AuthenticationPrincipal User user,
+            @RequestParam("file") MultipartFile file) {
+
+        userService.uploadProfilePicture(user.getId(), file);
+        return ResponseEntity.ok().build();
+    }
 
 
 
