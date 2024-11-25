@@ -183,7 +183,7 @@ export default function FeedScreen() {
               navigation={navigation}
               disableScroll={disableScroll}
               clearFilteredPosts={clearFilteredPosts}
-              filterPosts={filterPostsCallback}
+              filterPostsCallback={filterPostsCallback}
             />
           )}
         />
