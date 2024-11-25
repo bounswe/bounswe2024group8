@@ -4,13 +4,14 @@ import { useState } from "react";
 import SideBar from "../SideBar/SideBar";
 import PageHeader from "../PageHeader/PageHeader";
 import styles from "./ProfilePage.module.css"
-import { CustomUser, DPost } from '../interfaces'
-import { CircularProgress, Dialog } from "@mui/material";
+import { Achievement, CustomUser, DPost } from '../interfaces'
+import { CircularProgress, Dialog, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from "@mui/material";
 import ProfileDisplayer from "./ProfilePageDialogDisplayer/ProfilePageDialogDisplayer"
 import axios, { AxiosError } from "axios";
 import { message, Skeleton } from "antd";
 import GalleryPost from "../GalleryPost/Clickable/GalleryPost";
 import DiscussionPost from "../DiscussionPost/Clickable/DiscussionPost";
+import StarsIcon from '@mui/icons-material/Stars';
 
 const ProfilePage = () => {
   
@@ -29,6 +30,9 @@ const ProfilePage = () => {
   const [displayedPosts, setDisplayedPosts] = useState<DPost[] |null>(null);
   
   const [currentlyFollowing, setCurrentlyFollowing] = useState<boolean | null>(null);
+
+  const [achievements, setAchievements] = useState<Achievement[] | null>(null);
+  const [achievementDialog, setAchievementDialog] = useState(false);
 
   const currentUserId = localStorage.getItem("user_id");
 
@@ -182,11 +186,26 @@ const ProfilePage = () => {
     }
   }
 
+  const fetchAchievements = async () => {
+    try{
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/achievements/user/${id}`,
+          {
+              headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`},
+          }
+        );
+        setAchievements(res.data);
+    }
+    catch(e){
+
+    }
+  }
+
 
   useEffect(() => {
     getFollowerUserIds();
     getFollowingUserIds();
     getProfileInfo();
+    fetchAchievements();
 
     if (id === currentUserId) {
         setIsCurrentUserProfile(true);
@@ -313,6 +332,7 @@ const ProfilePage = () => {
               >
                 Followers
               </button>
+              
             </div>
             
             {/* Dialog section TODO */}
@@ -362,6 +382,10 @@ const ProfilePage = () => {
                   {content}
                 </button>
               ))}
+              <button className="btn btn-ghost mr-0 ml-auto" onClick={() => setAchievementDialog(true)}>
+                <StarsIcon/>
+              </button>
+              
             </div>
 
             {/* Tab Content */}
@@ -384,6 +408,40 @@ const ProfilePage = () => {
 
         </div>
       </div>
+      <Dialog fullWidth maxWidth="md" open={achievementDialog} onClose={() => setAchievementDialog(false)}>
+           <div className="p-4 flex flex-col gap-4">
+             <p className="font-bold text-large">Achievements</p>
+             {achievements ? 
+                <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="left">Title</TableCell>
+                      <TableCell align="left">Description</TableCell>
+                      <TableCell align="left">Rewards</TableCell>
+                      <TableCell align="left">Earned At</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {achievements.map((row) => (
+                        <TableRow
+                          key={row.name}
+                          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.description}</TableCell>
+                        <TableCell align="left">{row.point}</TableCell>
+                        <TableCell align="left">{ new Intl.DateTimeFormat('en-GB').format(new Date(row.earnedAt))}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+               :
+            <p>No achievements earned.</p>            
+            }
+           </div>     
+      </Dialog>
     </>
   );
 }

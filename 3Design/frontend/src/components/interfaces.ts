@@ -115,3 +115,11 @@ export interface TournamentEntry{
     score : number,
     finishedPosition : number
 }
+
+export interface Achievement{
+    id: number,
+    name: string,
+    description: string,
+    point: number,
+    earnedAt: string
+}
