@@ -49,12 +49,33 @@ const PageHeader = () => {
         }
     }
 
-    const changeProfilePicture = async (e:any) => {
+    const changeProfilePicture = async (e:React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || !e.target.files[0]){
             return;
         }
-        const newUrl = URL.createObjectURL(e.target.files[0]);
-        setProfileInfo((prev) =>{ return {...prev!, profilePictureUrl: newUrl}});
+        const fileExtension = e.target.files[0].name.split(".").pop();
+        if (fileExtension != "png" && fileExtension != "jpg" && fileExtension != "jpeg"){
+            e.target.files = null;
+            message.error("Only png, jpg and jpeg extensions are allowed.");
+            return;
+        }
+        setProfileInfo(null);
+        try{
+            const fd = new FormData();
+            fd.append("file", e.target.files[0]);
+            await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/users/profile-picture/upload`,
+                fd,
+                {
+                headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+            });
+            message.success("Profile photo successfully changed.");
+            await fetchProfileInfo();
+        }
+        catch(e){
+            message.error("Unable to change the profile photo.");
+            await fetchProfileInfo();
+        }
+
     }
 
     const changePassword = async () => {
