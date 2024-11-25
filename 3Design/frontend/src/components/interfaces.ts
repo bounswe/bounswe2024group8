@@ -1,7 +1,8 @@
-export interface CustomProfile{
+export interface Profile{
+    id: number,
     username: string,
-    profilePhoto: string,
-    tournamentPoints : string
+    avatarUrl: string,
+    tournamentPoints: number
 }
 
 export interface Category{
