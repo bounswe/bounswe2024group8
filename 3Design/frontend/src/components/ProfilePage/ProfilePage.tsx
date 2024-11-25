@@ -1,133 +1,255 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getProfileFromId, getProfilesList } from "../tsfunctions";
 import { useState } from "react";
 import SideBar from "../SideBar/SideBar";
 import PageHeader from "../PageHeader/PageHeader";
 import styles from "./ProfilePage.module.css"
-import { Profile } from '../interfaces'
-import { Dialog } from "@mui/material";
-import ProfileDisplayer from "./ProfilePageDialogDisplayer/ProfilePageDialogDisplayer";
+import { CustomUser, DPost } from '../interfaces'
+import { CircularProgress, Dialog } from "@mui/material";
+import ProfileDisplayer from "./ProfilePageDialogDisplayer/ProfilePageDialogDisplayer"
+import axios, { AxiosError } from "axios";
+import { message, Skeleton } from "antd";
+import GalleryPost from "../GalleryPost/Clickable/GalleryPost";
+import DiscussionPost from "../DiscussionPost/Clickable/DiscussionPost";
 
 const ProfilePage = () => {
   
   const { id } = useParams();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<CustomUser | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
   const [isCurrentUserProfile, setIsCurrentUserProfile] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState(0);
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // State to control dialog visibility
+
+  const [followingDialog, setFollowingDialog] = useState(false);
+  const [followersDialog, setFollowersDialog] = useState(false);
+
   const [followerProfilesList, setFollowerProfilesList] = useState<number[]>([]); // Store the list of profiles
   const [followingProfilesList, setFollowingProfilesList] = useState<number[]>([]); // Store the list of profiles
-
+  
+  const [displayedPosts, setDisplayedPosts] = useState<DPost[] |null>(null);
+  
+  const [currentlyFollowing, setCurrentlyFollowing] = useState<boolean | null>(null);
 
   const currentUserId = localStorage.getItem("user_id");
-  
 
-  const getProfileInfo = async () => {
-    /* Request TODO
-  try{
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/annotations/get?postId=${profileId}`,
-          {
-              headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
-          }
-      );
-      setProfileInfo(res.data);
-  }
-  catch(e){
-
-  } 
-  */
-
-  setProfile({"id": 5,
-    "username": "turkerdm5",
-    "avatarUrl": "/default_pp.png",
-    "tournamentPoints": 5555});
-  };
-
-
-  const getFollowerUserIds = async () => {
-    /* Request TODO
-  try{
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/annotations/get?postId=${profileId}`,
-          {
-              headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
-          }
-      );
-      setProfileInfo(res.data);
-  }
-  catch(e){
-
-  } 
-  */
-
-  setFollowerProfilesList([1,2,3,4]);
-  };
-
-  const getFollowingUserIds = async () => {
-            /* Request TODO
+  const fetchPosts = async () => {
+    setDisplayedPosts(null);
+    if (activeTab == 0){
         try{
-            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/annotations/get?postId=${profileId}`,
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/posts/user/${id}`,
                 {
                     headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
                 }
             );
-            setProfileInfo(res.data);
+            setDisplayedPosts(res.data);
+        }
+        catch(e){
+            setDisplayedPosts([]);
+        } 
+    }
+    else if(activeTab == 1){
+        try{
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/posts/user/${id}/reacted`,
+                {
+                    headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+                }
+            );
+            setDisplayedPosts(res.data);
+        }
+        catch(e){
+            setDisplayedPosts([]);
+        } 
+    }
+    else{
+        try{
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/posts/user/${id}/bookmarked`,
+                {
+                    headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+                }
+            );
+            setDisplayedPosts(res.data);
+        }
+        catch(e){
+            setDisplayedPosts([]);
+        } 
+    }
+    
+  }
+  
+
+  const getProfileInfo = async () => {
+    try{
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/users/${id}`,
+            {
+                headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+            }
+        );
+        setProfile(res.data);
+    }
+    catch(e){
+
+    } 
+    finally{
+        setProfileLoading(false);
+    }
+  }
+
+
+  const getFollowerUserIds = async () => {
+    try{
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/users/followers/${id}`,
+            {
+                headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+            }
+        );
+        const idList : number[] = res.data;
+        setFollowerProfilesList(idList);
+        let checked = false;
+        for (let cid of idList){
+            if (cid == parseInt(currentUserId ?? "-1")){
+                setCurrentlyFollowing(true);
+                return;
+            }
+        }
+        setCurrentlyFollowing(false);
+        
+    }
+    catch(e){
+        if (e instanceof AxiosError && e.status == 404){
+            setCurrentlyFollowing(false);
+        }
+    } 
+
+  };
+
+  const getFollowingUserIds = async () => {
+        try{
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/users/following/${id}`,
+                {
+                    headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+                }
+            );
+            setFollowingProfilesList(res.data);
         }
         catch(e){
 
         } 
-        */
 
-        setFollowingProfilesList([1,2,3]);
   };
+
+  
+
+  const handleFollowLogic = async(x:boolean) => {
+    setCurrentlyFollowing(null);
+    if (x){
+        try{
+            await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/users/follow`,
+                null,
+                {
+                    headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`},
+                    params: {followedUserId: id}
+                }
+            );
+            setCurrentlyFollowing(true);
+        }
+        catch(e){
+            message.error("Couldn't follow user.");
+            setCurrentlyFollowing(false);
+        } 
+        finally{
+            getFollowerUserIds();
+            getFollowingUserIds();
+            return;
+        }
+    }
+    try{
+        await axios.delete(`${process.env.REACT_APP_API_URL}/api/v1/users/unfollow`,
+            {
+                headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`},
+                params: {followedUserId: id}
+            }
+        );
+        setCurrentlyFollowing(false);
+    }
+    catch(e){
+        message.error("Couldn't unfollow user.");
+        setCurrentlyFollowing(true);
+    } 
+    finally{
+        getFollowerUserIds();
+        getFollowingUserIds();
+        return;
+    }
+  }
 
 
   useEffect(() => {
     getFollowerUserIds();
     getFollowingUserIds();
+    getProfileInfo();
 
-
-    // Check if the profile belongs to the current user
     if (id === currentUserId) {
         setIsCurrentUserProfile(true);
     } else {
         setIsCurrentUserProfile(false);
     }
-
-    // Fetch the list of profiles (you can replace this with actual API call or mock data)
     
-  }, [id]); // Re-run effect if `id` changes
+  }, [id]); 
 
-  if (!id){
-      return <div>404</div>;
+  useEffect(()=> {
+    fetchPosts(); 
+  }, [activeTab])
+
+
+  if (id == undefined || id == null){
+    window.location.href = "/home";
+    return  null;
   }
+  
+  if(!/^\d+$/.test(id)){
+    window.location.href = "/home";
+    return  null;
+  }
+
+
+
   if(!profile){
     return (
       <>
         <PageHeader/>
         <div className='flex'>
           <SideBar active={""}/>
-          <div className={styles.mainContainer}>
+          {profileLoading ? 
+            <div className="flex justify-center items-center h-lvh w-full">
+                <CircularProgress/>
+            </div>
+          :
+            <div className={styles.mainContainer}>
+
             not a valid user
-          </div> 
+            </div>       
+          }
+          
+          
         </div>
       </>);
   }
   
   const defaultTabs = [
-    <div>Content for Public Tab 1</div>,
-    <div>Content for Public Tab 2</div>,
+    "Published Posts",
+    "Reacted Posts"
   ];
 
   const currentUserTabs = [
-    <div>Content for Current User Tab 1</div>,
-    <div>Content for Current User Tab 2</div>,
-    <div>Content for Current User Tab 3</div>,
+    "Published Posts",
+    "Reacted Posts",
+    "Bookmarked Posts"
   ];
 
   const tabContents = isCurrentUserProfile ? currentUserTabs : defaultTabs;
 
   
+
   return (
     <>
       <PageHeader/>
@@ -136,36 +258,42 @@ const ProfilePage = () => {
         <div className={styles.mainContainer}>
 
           {/* Profile Header Container*/}
-          <div className={styles.profileHeaderContainer}>
+          <div >
 
             {/* Profile Header Details Container */}
-            <div className={styles.profileHeaderDetailsContainer}>
+            <div className="flex flex-col items-center">
               
               {/* Profile Header Details Avatar */}
               <img
-                src={profile.avatarUrl || "/default_pp.png"}
+                src={profile.profilePictureUrl || "/default_pp.png"}
                 alt="Profile Avatar"
                 className={styles.profileHeaderDetailsAvatar}
               />
 
               {/* Profile Header Details Nickname */}
-              <h1 className="font-bold">{profile.username}</h1>
+              <h1 className="font-bold">{profile.nickName}</h1>
 
               {/* Profile Header Details Exp Points */}
-              <p className="font-bold">Exp Points: {profile.tournamentPoints}</p>
+              <p className="font-bold">Exp Points: {profile.experience}</p>
 
             </div>
 
             {/* Profile Header Buttons Container */}
-            <div className={styles.profileHeaderButtonsContainer}>
+            <div className="flex gap-4 justify-center">
 
               {/* Profile Header Buttons Follow */}
               {!isCurrentUserProfile && (
                   <button
-                    className={styles.profileHeaderButtonsFollowButton}
-                    onClick={() => console.log("follow")}
+                    className={styles.profileHeaderButtonsFollowingButton}
+                    onClick={currentlyFollowing ? () => handleFollowLogic(false) : () => handleFollowLogic(true)}
+                    disabled={currentlyFollowing == null}
                   >
-                    Follow +
+                    {currentlyFollowing == null ? 
+                    <CircularProgress/> :
+                    (currentlyFollowing ?
+                    <p>Unfollow</p> :
+                    <p>Follow</p>)
+                    }
                   </button>
                 )
               }
@@ -173,7 +301,7 @@ const ProfilePage = () => {
               {/* Profile Header Buttons Following */}
               <button
                 className={styles.profileHeaderButtonsFollowingButton}
-                onClick={() => console.log("following")}
+                onClick={() => setFollowingDialog(true)}
               >
                 Following
               </button>
@@ -181,15 +309,16 @@ const ProfilePage = () => {
               {/* Profile Header Buttons Followers */}
               <button
                 className={styles.profileHeaderButtonsFollowersButton}
-                onClick={() => setIsDialogOpen(true)} // Open the dialog
+                onClick={() => setFollowersDialog(true)} // Open the dialog
               >
                 Followers
               </button>
             </div>
             
             {/* Dialog section TODO */}
-            <Dialog open={isDialogOpen}>
+            <Dialog fullWidth maxWidth="sm" onClose={() => setFollowersDialog(false)} open={followersDialog}>
               <div className={styles.scrollableList}>
+                <p className="font-bold text-lg">Followers</p>
                 {followerProfilesList.length > 0 ? (
                   followerProfilesList.map((profile) => (
                     <ProfileDisplayer profileId={profile}></ProfileDisplayer>
@@ -200,13 +329,18 @@ const ProfilePage = () => {
                 </div>
             </Dialog>
 
-          </div>
-
-          {/* Profile Content Container */}
-          <div className={styles.profileContentContainer}>
-
-            {/* Profile Content Container */}
-
+            <Dialog fullWidth maxWidth="sm" onClose={() => setFollowingDialog(false)} open={followingDialog}>
+              <div className={styles.scrollableList}>
+                <p className="font-bold text-lg">Following</p>
+                {followingProfilesList.length > 0 ? (
+                  followingProfilesList.map((profile) => (
+                    <ProfileDisplayer profileId={profile}></ProfileDisplayer>
+                    ))
+                  ) : (
+                    <p>No profiles available</p>
+                  )}
+                </div>
+            </Dialog>
 
           </div>
           {/* Tab Buttons */}
@@ -225,14 +359,26 @@ const ProfilePage = () => {
                   }}
                   onClick={() => setActiveTab(index)}
                 >
-                  Tab {index + 1}
+                  {content}
                 </button>
               ))}
             </div>
 
             {/* Tab Content */}
             <div style={{ marginTop: '1rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '5px' }}>
-              {tabContents[activeTab]}
+              {displayedPosts == null ? 
+               <Skeleton active avatar paragraph={{ rows: 4 }} /> :
+                (displayedPosts.length == 0 ?
+                <p>There are currently no posts here.</p> :
+                <div className={styles.postContainer}>
+                    {displayedPosts.map((item) => (
+                    item.isVisualPost ?
+                    <GalleryPost key={item.postId} postData={item}/> :
+                    <DiscussionPost key={item.postId} postData={item}/>
+                    ))}
+                </div>)
+                
+                }
             </div>
           </div>
 

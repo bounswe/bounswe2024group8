@@ -1,24 +1,22 @@
 import { Avatar } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { Profile } from '../../interfaces'
+import { CustomUser } from '../../interfaces'
 import axios from 'axios'
 import { Skeleton } from 'antd'
-import { getProfileFromId } from "../../tsfunctions";
-
+import styles from "./ProfilePageDialogDisplayer.module.css"
 
 interface Props{
     profileId : number
 }
 const ProfileDisplayer = ({profileId}:  Props) => {
-    const [profileInfo,setProfileInfo] = useState<Profile | null>(null); 
+    const [profileInfo,setProfileInfo] = useState<CustomUser | null>(null); 
     useEffect(() => {
         fetchUserData();
     }, []);
 
     const fetchUserData = async () => {
-        /* Request to be
         try{
-            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/annotations/get?postId=${profileId}`,
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/users/${profileId}`,
                 {
                     headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
                 }
@@ -28,18 +26,19 @@ const ProfileDisplayer = ({profileId}:  Props) => {
         catch(e){
 
         } 
-        */
-        setProfileInfo(getProfileFromId(profileId));
     }
     if (!profileInfo){
         return(
-            <Skeleton avatar/>
+            <div className='flex gap-6'>
+                <Skeleton.Avatar active/>
+                <Skeleton.Input active/>
+            </div>
         )
     }
     return (
-        <div className='flex gap-4'>
-            <Avatar src={profileInfo.avatarUrl!}/>
-            <p>{profileInfo.username}</p>
+        <div onClick={() => window.location.href = `/profile/${profileId}`} className={styles.profileContainer}>
+            <Avatar src={profileInfo.profilePictureUrl ?? "/default_pp"}/>
+            <p>{profileInfo.nickName}</p>
         </div>
     )
 }

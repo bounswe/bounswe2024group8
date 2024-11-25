@@ -1,0 +1,12 @@
+.profileContainer {
+    display: flex; 
+    gap: 1rem;
+    background-color: white;
+    color: black;          
+    cursor: pointer;        
+    transition: background-color 0.3s; 
+  }
+  
+  .profileContainer:hover {
+    background-color: #f0f0f0; /* Grayish background on hover */
+  }
