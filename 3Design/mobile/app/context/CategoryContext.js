@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import {AuthContext} from "./AuthContext";
+import { AuthContext } from './AuthContext';
 
 export const CategoryContext = createContext({
   categories: [],
@@ -15,28 +15,34 @@ export const CategoryProvider = ({ children }) => {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/categories`,{
-          headers: {
-            Authorization: `Bearer ${user.accessToken}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        const transformedCategories = response.data.map(category => ({
-          label: category.name,
-          value: category.id,
-        }));
-        setCategories(transformedCategories);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to load categories');
-        setLoading(false);
-      }
-    };
+    if (user?.accessToken) {
+      const fetchCategories = async () => {
+        try {
+          const response = await axios.get(
+            `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/categories`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.accessToken}`,
+                'Content-Type': 'multipart/form-data',
+              },
+            }
+          );
 
-    fetchCategories();
-  }, []);
+          const transformedCategories = response.data.map((category) => ({
+            label: category.name,
+            value: category.id,
+          }));
+          setCategories(transformedCategories);
+          setLoading(false);
+        } catch (err) {
+          setError('Failed to load categories');
+          setLoading(false);
+        }
+      };
+
+      fetchCategories();
+    }
+  }, [user?.accessToken]);
 
   return (
     <CategoryContext.Provider value={{ categories, loading, error }}>
