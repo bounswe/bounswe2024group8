@@ -16,6 +16,7 @@ import CheckBox from 'expo-checkbox';
 import { Categories } from '../constants/Categories';
 import { Colors } from '../constants/Colors';
 import { AuthContext } from '../context/AuthContext';
+import {useCategories} from "../context/CategoryContext";
 
 const CreatePost = () => {
   const { user } = useContext(AuthContext);
@@ -33,6 +34,8 @@ const CreatePost = () => {
 
   const [file, setFile] = useState(null);
   const [isVisual, setIsVisual] = useState(false);
+
+  const { categories, loading, error } = useCategories();
 
   const validateInputs = () => {
     if (title.length < 5) {
@@ -151,7 +154,7 @@ const CreatePost = () => {
           <DropDownPicker
             open={open}
             value={category}
-            items={Categories}
+            items={categories}
             setOpen={setOpen}
             setValue={setCategory}
             setItems={() => {}}

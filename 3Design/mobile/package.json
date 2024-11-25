@@ -14,7 +14,7 @@
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "axios": "^1.7.7",
-    "expo": "^52.0.9",
+    "expo": "^52.0.11",
     "expo-build-properties": "^0.13.1",
     "expo-checkbox": "^4.0.0",
     "expo-document-picker": "~13.0.1",
@@ -22,7 +22,7 @@
     "expo-status-bar": "~2.0.0",
     "expo-three": "^8.0.0",
     "react": "^18.3.1",
-    "react-native": "^0.76.2",
+    "react-native": "^0.76.3",
     "react-native-document-picker": "^8.2.1",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-gesture-handler": "~2.20.2",
@@ -37,5 +37,12 @@
   "private": true,
   "overrides": {
     "expo-file-system": "~17.0.1"
+  },
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "listUnknownPackages": false
+      }
+    }
   }
 }

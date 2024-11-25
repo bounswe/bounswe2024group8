@@ -62,7 +62,7 @@ export default function LoginScreen({ navigation }) {
     >
       <View style={styles.container}>
         <View style={styles.headerContainer}>
-          <Text style={styles.header}>Login</Text>
+          <Text style={styles.header}>3Design</Text>
         </View>
         <View style={styles.inputContainer}>
           <TextInput

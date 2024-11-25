@@ -59,14 +59,26 @@ const ObjViewer = ({ objFilePath }) => {
             child.material = new MeshStandardMaterial();
           }
         });
+
         objectRef.current = object;
 
         // Calculate the bounding box and center
         const box = new Box3().setFromObject(object);
-        box.getCenter(centerRef.current);
+        const size = new Vector3();
+        box.getSize(size);  // Get the width, height, and depth
+
+        const maxDimension = Math.max(size.x, size.y, size.z);  // Get the maximum size of the model
+
+        const scaleFactor = 15 / maxDimension;  // Scale down the model to fit within 1 unit
+
+        object.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+        const scaledBox = new Box3().setFromObject(object);
+        scaledBox.getCenter(centerRef.current);
 
         // Center the object at the origin
         object.position.sub(centerRef.current); // Move the object so its center is at the origin
+
         scene.add(object);
       },
       (xhr) => {
