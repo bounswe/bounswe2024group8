@@ -33,12 +33,22 @@ export default function PostScreen({ route }) {
   };
 
   const fetchComments = () => {
-    axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/comments/post/${postId}`, {
-      headers: { Authorization: `Bearer ${user.accessToken}` },
-    })
-      .then((response) => setComments(response.data))
-      .catch((error) => console.error(error));
+    axios
+      .get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/comments/post/${postId}`, {
+        headers: { Authorization: `Bearer ${user.accessToken}` },
+      })
+      .then((response) => {
+        setComments(response.data);
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 404) {
+          setComments(null);
+        } else {
+          console.error(error);
+        }
+      });
   };
+
 
   useEffect(() => {
     fetchPostData();
@@ -150,8 +160,8 @@ export default function PostScreen({ route }) {
 
       <Text style={styles.commentsTitle}>Comments</Text>
       <FlatList
-        data={comments}
-        keyExtractor={(item) => item.commentId.toString()}
+        data={comments || []} // Use an empty array if comments are null
+        keyExtractor={(item) => item.commentId?.toString()}
         renderItem={({ item }) => (
           <View style={styles.comment}>
             <Text style={styles.commentUsername}>{item.user.nickName}</Text>
@@ -168,7 +178,13 @@ export default function PostScreen({ route }) {
             </View>
           </View>
         )}
+        ListEmptyComponent={
+          comments === null ? (
+            <Text style={styles.noCommentsText}>No comments yet</Text>
+          ) : null
+        }
       />
+
 
       <View style={styles.newCommentContainer}>
         <TextInput
@@ -250,5 +266,11 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 14,
     color: Colors.dark,
+  },
+  noCommentsText: {
+    textAlign: 'center',
+    color: '#888',
+    fontStyle: 'italic',
+    marginVertical: 20,
   },
 });
