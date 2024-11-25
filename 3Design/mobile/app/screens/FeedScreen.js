@@ -156,7 +156,7 @@ export default function FeedScreen() {
               setRemainingTime(timeLeftInSeconds);
               setShowTournamentBox(true); // Show the tournament box
             } else {
-              console.error('endTime not found in the response');
+              //console.error('endTime not found in the response');
               setShowTournamentBox(false); // Do not show the tournament box
             }
 
