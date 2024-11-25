@@ -4,7 +4,7 @@ import Post from '../components/Post';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import axios from 'axios';
 import { AuthContext } from "../context/AuthContext";
-import {useNavigation} from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 const ProfilePage = () => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -62,15 +62,6 @@ const ProfilePage = () => {
   }, [user]);
 
   const navigation = useNavigation();
-  const renderFollowItem = ({ item }) => (
-    <Text style={styles.modalItem}>{item.name}</Text>
-  );
-
-  const openModal = (data, title) => {
-    setModalData(data);
-    setModalTitle(title);
-    setModalVisible(true);
-  };
 
   const flatListRef = useRef(null);
 
@@ -82,53 +73,14 @@ const ProfilePage = () => {
 
   return (
     <View style={styles.container}>
+      {/* Display Username at the top of the page */}
+      <Text style={styles.usernameText}>{userData.nickName}</Text>
+
       {/* Profile Picture */}
       <Image source={{ uri: userData.profilePictureUrl || 'https://via.placeholder.com/100' }} style={styles.profilePicture} />
 
       {/* Tournament Points */}
       <Text style={styles.pointsText}>Tournament Points: {userData.experience}</Text>
-
-      {/*/!* Followed and Following *!/*/}
-      {/*<View style={styles.followContainer}>*/}
-      {/*  <TouchableOpacity onPress={() => openModal(user.followed, 'Followed Users')}>*/}
-      {/*    <Text style={styles.followText}>Followed: {user.followed.length}</Text>*/}
-      {/*  </TouchableOpacity>*/}
-      {/*  <TouchableOpacity onPress={() => openModal(user.following, 'Following Users')}>*/}
-      {/*    <Text style={styles.followText}>Following: {user.following.length}</Text>*/}
-      {/*  </TouchableOpacity>*/}
-      {/*</View>*/}
-
-      {/*/!* Followed and Following *!/*/}
-      {/*<View style={styles.followContainer}>*/}
-      {/*  <TouchableOpacity onPress={() => openModal(user.followed, 'Followed Users')}>*/}
-      {/*    <Text style={styles.followText}>Followed: {user.followed.length}</Text>*/}
-      {/*  </TouchableOpacity>*/}
-      {/*  <TouchableOpacity onPress={() => openModal(user.following, 'Following Users')}>*/}
-      {/*    <Text style={styles.followText}>Following: {user.following.length}</Text>*/}
-      {/*  </TouchableOpacity>*/}
-      {/*</View>*/}
-
-      {/*/!* Toggle Buttons for Discussion / Designs *!/*/}
-      {/*<View style={styles.toggleContainer}>*/}
-      {/*  <TouchableOpacity*/}
-      {/*    style={[styles.toggleButton, showVisual && styles.activeToggle]}*/}
-      {/*    onPress={() => {*/}
-      {/*      setShowVisual(true);*/}
-      {/*      filterPosts(latestPosts, true);*/}
-      {/*    }}*/}
-      {/*  >*/}
-      {/*    <Text style={styles.toggleText}>Designs</Text>*/}
-      {/*  </TouchableOpacity>*/}
-      {/*  <TouchableOpacity*/}
-      {/*    style={[styles.toggleButton, !showVisual && styles.activeToggle]}*/}
-      {/*    onPress={() => {*/}
-      {/*      setShowVisual(false);*/}
-      {/*      filterPosts(latestPosts, false);*/}
-      {/*    }}*/}
-      {/*  >*/}
-      {/*    <Text style={styles.toggleText}>Discussion</Text>*/}
-      {/*  </TouchableOpacity>*/}
-      {/*</View>*/}
 
       {/* Latest Posts */}
       <Text style={styles.latestHeader}>Latest Posts:</Text>
@@ -155,21 +107,6 @@ const ProfilePage = () => {
           )}
         />
       </GestureHandlerRootView>
-
-      {/*/!* Modal for Followed and Following Users *!/*/}
-      {/*<Modal visible={isModalVisible} transparent animationType="slide">*/}
-      {/*  <View style={styles.modalContainer}>*/}
-      {/*    <Text style={styles.modalTitle}>{modalTitle}</Text>*/}
-      {/*    <FlatList*/}
-      {/*      data={modalData}*/}
-      {/*      renderItem={renderFollowItem}*/}
-      {/*      keyExtractor={(item) => item.id}*/}
-      {/*    />*/}
-      {/*    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>*/}
-      {/*      <Text style={styles.closeButtonText}>Close</Text>*/}
-      {/*    </TouchableOpacity>*/}
-      {/*  </View>*/}
-      {/*</Modal>*/}
     </View>
   );
 };
@@ -179,6 +116,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
+  },
+  usernameText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
   },
   profilePicture: {
     width: 100,
@@ -192,15 +135,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
-  },
-  followContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
-  },
-  followText: {
-    fontSize: 16,
-    color: '#007BFF',
   },
   latestHeader: {
     fontSize: 18,
@@ -220,33 +154,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   itemTitle: {
-    fontSize: 16,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#fff',
-  },
-  modalItem: {
-    fontSize: 16,
-    color: '#fff',
-    marginVertical: 5,
-  },
-  closeButton: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#007BFF',
-    borderRadius: 5,
-  },
-  closeButtonText: {
-    color: '#fff',
     fontSize: 16,
   },
 });
