@@ -4,6 +4,7 @@ import Post from '../components/Post';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import axios from 'axios';
 import { AuthContext } from "../context/AuthContext";
+import {useNavigation} from "@react-navigation/native";
 
 const ProfilePage = () => {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -45,6 +46,8 @@ const ProfilePage = () => {
     fetchUserPosts();
     fetchUserData();
   }, [user]);
+
+  const navigation = useNavigation();
 
   const renderFollowItem = ({ item }) => (
     <Text style={styles.modalItem}>{item.name}</Text>
@@ -99,6 +102,7 @@ const ProfilePage = () => {
               model={item.fileUrl}
               username={item.user.nickName}
               id={item.id}
+              navigation={navigation}
               disableScroll={disableScroll}
             />
           )}
