@@ -19,7 +19,7 @@ const DiscussionPost = ({postData} : Props) => {
     const handleBookmark = async (event:any) => {
         event.stopPropagation();
         try{
-            const commentData = {reactionType:"DISLIKE",bookmark: !data.bookmark};
+            const commentData = {reactionType:data.reactionType,bookmark: !data.bookmark};
             const res = await axios.post(
                 `${process.env.REACT_APP_API_URL}/api/v1/posts/${data.postId}/react`,
                 commentData,
