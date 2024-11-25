@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.multipart.MultipartFile;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 
 import java.util.Set;
 
@@ -33,6 +35,7 @@ public class PostCreateRequest {
 
     Set<String> tags;
 
+//    @Schema(type = "string", format = "binary", description = "Upload file")
     MultipartFile file;
 
     @NotNull(message = "Tournament flag must be provided")
