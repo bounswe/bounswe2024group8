@@ -10,7 +10,7 @@ import Post from "../components/Post";
 import { useNavigation } from "@react-navigation/native";
 
 export default function PostScreen({ route }) {
-  const { postId, title, content, model, filterPostsCallback} = route.params;
+  const { postId, title, content, model, username, filterPostsCallback} = route.params;
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
   const [comments, setComments] = useState([]);
@@ -137,6 +137,7 @@ export default function PostScreen({ route }) {
 
   return (
     <View style={styles.container}>
+      {username && <Text style={styles.username}>{username}</Text>}
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.content}>{content}</Text>
       {model && (
@@ -272,5 +273,12 @@ const styles = StyleSheet.create({
     color: '#888',
     fontStyle: 'italic',
     marginVertical: 20,
+  },
+  username: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#555',
+    marginBottom: 5,
+    fontStyle: 'italic',
   },
 });

@@ -180,6 +180,7 @@ export default function FeedScreen() {
               content={item.text}
               model={item.fileUrl}
               id={item.postId}
+              username={item.user.nickName}
               navigation={navigation}
               disableScroll={disableScroll}
               clearFilteredPosts={clearFilteredPosts}

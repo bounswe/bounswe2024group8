@@ -11,11 +11,12 @@ class Post extends Component {
   }
 
   render() {
-    const { title, content, model, id, navigation, disableScroll , clearFilteredPosts, filterPostsCallback} = this.props;
+    const { title, content, model, id, username, navigation, disableScroll , clearFilteredPosts, filterPostsCallback} = this.props;
 
     if(model) {
       return (
         <View style={styles.postContainer}>
+          {username && <Text style={styles.username}>{username}</Text>}
           <View>
             <TouchableOpacity
               onPress={() => {
@@ -25,6 +26,7 @@ class Post extends Component {
                   title: title,
                   content: content,
                   model: model,
+                  username: username,
                   filterPostsCallback: filterPostsCallback,
                 });
                 if(clearFilteredPosts) {
@@ -44,6 +46,7 @@ class Post extends Component {
     } else {
       return (
         <View style={styles.postContainer}>
+          {username && <Text style={styles.username}>{username}</Text>}
           <View>
             <TouchableOpacity
               onPress={() => {
@@ -53,6 +56,7 @@ class Post extends Component {
                   title: title,
                   content: content,
                   model: model,
+                  username: username,
                 });
               }
               }>
@@ -93,6 +97,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 300,
     backgroundColor: 'white',
+  },
+  username: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#555',
+    marginBottom: 5,
+    fontStyle: 'italic',
   },
 });
 
