@@ -55,10 +55,21 @@ const Feed = ({category, pageNumber}: Props) => {
     }
 
     const fetchPostData = async () => {
+        setPostData([]);
         if (feedType){
-            const data = require("../../resources/json-files/MockPosts.json");
-            setPostData(data.slice(2*(pageNumber-1), 2*pageNumber));
-            setFeedLoading(false);            
+            try{
+                const postRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/posts/category/${category}/visual`,
+                    {headers: {
+                        Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
+                    }}
+                );
+                setPostData(postRes.data);  
+            }catch(e){
+
+            }
+            finally{
+                setFeedLoading(false);            
+            }
             return;
         }
         try{                        
@@ -68,16 +79,13 @@ const Feed = ({category, pageNumber}: Props) => {
                 }}
             );
             setPostData(postRes.data);
-            setFeedLoading(false);
         }
         catch(e){
+        }
+        finally{
             setFeedLoading(false);
-            console.log(e);
         }
     } 
-    useEffect(() => {
-        console.log(tournamentInfo);
-    }, [tournamentInfo]);
 
     const fetchTournamentData = async () => {
         try{

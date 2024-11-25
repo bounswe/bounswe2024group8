@@ -4,6 +4,7 @@ import GalleryPost from '../GalleryPost/Clickable/GalleryPost';
 import { Skeleton } from 'antd';
 import DiscussionPost from '../DiscussionPost/Clickable/DiscussionPost';
 import styles from "./GenericFeed.module.css";
+import axios from 'axios';
 interface Props{
 pageNumber: number
 }
@@ -17,13 +18,20 @@ const GenericFeed = ({pageNumber}:Props) => {
     }, [])
 
     const fetchPostData = async () => {
-        // AJAX Request
-
-        const data = require("../../resources/json-files/MockGenericPosts.json");
-        setPostData(data.slice(2*(pageNumber-1), 2*pageNumber));
-        setFeedLoading(false);
-
-    }
+        try{                        
+            const postRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/posts/feed`,
+                {headers: {
+                    Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
+                }}
+            );
+            setPostData(postRes.data);
+        }
+        catch(e){
+        }
+        finally{
+            setFeedLoading(false);
+        }
+    } 
 
     return (
             
@@ -40,7 +48,7 @@ const GenericFeed = ({pageNumber}:Props) => {
                 </div>
             ) : 
             postData.length == 0 ? 
-                <p>There are currently no posts here.</p>
+                <p>Follow categories or users to get recommended posts.</p>
             :
             (postData.map((item, index) => (
                 item.isVisualPost ?
