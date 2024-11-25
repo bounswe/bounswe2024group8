@@ -77,7 +77,7 @@ export default function FeedScreen() {
 
   const filterPosts = (allPosts, showVisual) => {
     const filtered = allPosts.filter((post) =>
-      showVisual ? post.model !== undefined : post.model === undefined
+      showVisual ? post.isVisualPost : !post.isVisualPost
     );
     setFilteredPosts(filtered);
   };
