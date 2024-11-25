@@ -58,15 +58,15 @@ function App() {
           }
         />
         <Route
-<<<<<<< HEAD
           path="/tournament/:category"
           element={
             <LeaderboardPage/>
-=======
+          }
+        />
+        <Route
           path="/profile/:id"
           element={
             <ProfilePage/>
->>>>>>> 784fcb7 (profile page merge)
           }
         />
       </Routes>
