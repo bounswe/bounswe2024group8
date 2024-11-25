@@ -96,7 +96,7 @@ const ProfilePage = () => {
             <Post
               title={item.title}
               content={item.content}
-              model={item.model}
+              model={item.fileUrl}
               username={item.user.nickName}
               id={item.id}
               disableScroll={disableScroll}
