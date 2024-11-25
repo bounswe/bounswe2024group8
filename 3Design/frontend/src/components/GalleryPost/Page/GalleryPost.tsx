@@ -63,10 +63,9 @@ const GalleryPost = ({postData, publishedAnnotationsProps} : Props) => {
     }
   }
 
-const likeClicked = async (event:any) =>{
+  const likeClicked = async (event:any) =>{
     event.stopPropagation();
-    if (data.disliked){
-        setData((prev) => ({...prev, disliked: false, liked: true}));
+    if (data.reactionType === "DISLIKE"){
         try{
             const res = await axios.post(
                 `${process.env.REACT_APP_API_URL}/api/v1/posts/${data.postId}/react`,
@@ -80,14 +79,14 @@ const likeClicked = async (event:any) =>{
         catch(e){
             console.log(e);
         }
+        setData((prev) => ({...prev,reactionType:"LIKE", likes: prev.likes + 1, dislikes: prev.dislikes - 1}));
         return;
     }
-    if (data.liked){
-        setData((prev) => ({...prev,    liked: true}));
+    if (data.reactionType === "LIKE"){
         try{
             const res = await axios.post(
                 `${process.env.REACT_APP_API_URL}/api/v1/posts/${data.postId}/react`,
-                {reactionType:"LIKE",bookmark: data.bookmark },
+                {reactionType:"NONE",bookmark: data.bookmark },
                 {headers: {
                     Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
                 }}
@@ -97,9 +96,9 @@ const likeClicked = async (event:any) =>{
         catch(e){
             console.log(e);
         }
+        setData((prev) => ({...prev, reactionType:"NONE" ,  liked: false, likes: prev.likes - 1}));
         return;
     }
-    setData((prev) => ({...prev, disliked: false, liked: true}));
     try{
         const res = await axios.post(
             `${process.env.REACT_APP_API_URL}/api/v1/posts/${data.postId}/react`,
@@ -113,12 +112,12 @@ const likeClicked = async (event:any) =>{
     catch(e){
         console.log(e);
     }
+    setData((prev) => ({...prev, reactionType:"LIKE" ,liked: true, likes: prev.likes + 1}));
 }
 
 const dislikeClicked = async (event:any) =>{
     event.stopPropagation();
-    if (data.liked){
-        setData((prev) => ({...prev, liked: false, disliked: true}));
+    if (data.reactionType === "LIKE"){
         try{
             const res = await axios.post(
                 `${process.env.REACT_APP_API_URL}/api/v1/posts/${data.postId}/react`,
@@ -132,14 +131,14 @@ const dislikeClicked = async (event:any) =>{
         catch(e){
             console.log(e);
         }
+        setData((prev) => ({...prev, reactionType:"DISLIKE",likes: prev.likes - 1, dislikes: prev.dislikes + 1}));
         return;
     }
-    if (data.disliked){
-        setData((prev) => ({...prev,    disliked: true}));
+    if (data.reactionType === "DISLIKE"){
         try{
             const res = await axios.post(
                 `${process.env.REACT_APP_API_URL}/api/v1/posts/${data.postId}/react`,
-                {reactionType:"DISLIKE",bookmark: data.bookmark },
+                {reactionType:"NONE",bookmark: data.bookmark },
                 {headers: {
                     Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
                 }}
@@ -149,9 +148,9 @@ const dislikeClicked = async (event:any) =>{
         catch(e){
             console.log(e);
         }
+        setData((prev) => ({...prev,reactionType:"NONE",dislikes: prev.dislikes - 1}));
         return;
     }
-    setData((prev) => ({...prev, liked: false, disliked: true}));
     try{
         const res = await axios.post(
             `${process.env.REACT_APP_API_URL}/api/v1/posts/${data.postId}/react`,
@@ -165,6 +164,7 @@ const dislikeClicked = async (event:any) =>{
     catch(e){
         console.log(e);
     }
+    setData((prev) => ({...prev,reactionType:"DISLIKE",dislikes: prev.dislikes + 1}));
 }
 
   const setAnnotation = () =>{
@@ -237,14 +237,16 @@ const dislikeClicked = async (event:any) =>{
   }
 
   useEffect(() => {
-    fetchCommentData();
+    if (comment === ""){
+      fetchCommentData();
+      }
 }, [comment])
 
 
 const handleBookmark = async (event:any) => {
     event.stopPropagation();
     try{
-        const commentData = {reactionType:"DISLIKE",bookmark: true};
+        const commentData = {reactionType:data.reactionType,bookmark: !data.bookmark};
         const res = await axios.post(
             `${process.env.REACT_APP_API_URL}/api/v1/posts/${data.postId}/react`,
             commentData,
@@ -303,7 +305,9 @@ const fetchCommentData = async () => {
                     {data.isVisualPost && data.challengedPostId !== null ?
                     <div className="flex items-center mb-2"> 
                     <Shield sx={{ backgroundColor: 'white', color: grey[500] }} className='ml-5'/>
-                    <p style={{ color: grey[500] }} className='ml-2'>Challenged to <a>post</a></p>
+                    <p style={{ color: grey[500] }} className='ml-2'><a href={`/post/${data.challengedPostId}`}>
+    <u>Challenged to post</u>
+  </a></p>
                     </div>: null
                     }
                     </div>
@@ -354,7 +358,7 @@ const fetchCommentData = async () => {
           <div className='flex items-center'>
                         <button onClick={likeClicked} className='btn btn-ghost'>
                         {
-                                data.liked ?
+                                data.reactionType === "LIKE" ?
                                 <ThumbUp/>:
                                 <ThumbUpOutlined/>
                             }
@@ -364,7 +368,7 @@ const fetchCommentData = async () => {
                     <div className="flex items-center">
                         <button onClick={dislikeClicked} className='btn btn-ghost'>
                             {
-                                data.disliked ?
+                                data.reactionType === "DISLIKE" ?
                                 <ThumbDown/>:
                                 <ThumbDownOutlined/>
                             }

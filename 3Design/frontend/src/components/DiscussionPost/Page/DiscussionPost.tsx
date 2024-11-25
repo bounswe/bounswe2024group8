@@ -17,6 +17,7 @@ interface Props{
 
 const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
     const [data, setData] = useState<DPost>(postData);
+    console.log(data);
     const bodyRef = useRef<HTMLParagraphElement | null>(null);
     const [annotationData, setAnnotationData] = useState<SendAnnotationData>({content: "", endIndex: null, postId: postData.postId, startIndex: null, userId: parseInt(localStorage.getItem("user_id") ?? "-1")});
 
@@ -219,14 +220,16 @@ const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
     }
 
     useEffect(() => {
+        if (comment === ""){
         fetchCommentData();
-    }, [comment])
+        }
+    }, [comment]);
 
 
     const handleBookmark = async (event:any) => {
         event.stopPropagation();
         try{
-            const commentData = {reactionType:"DISLIKE",bookmark: !data.bookmark};
+            const commentData = {reactionType:data.reactionType,bookmark: !data.bookmark};
             const res = await axios.post(
                 `${process.env.REACT_APP_API_URL}/api/v1/posts/${data.postId}/react`,
                 commentData,
