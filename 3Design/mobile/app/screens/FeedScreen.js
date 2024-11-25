@@ -82,6 +82,10 @@ export default function FeedScreen() {
     setFilteredPosts(filtered);
   };
 
+  const filterPostsCallback = () => {
+    filterPosts(posts, showVisual);
+  }
+
   useEffect(() => {
     fetchPosts();
   }, [category]);
@@ -110,6 +114,11 @@ export default function FeedScreen() {
   // Reset the category to null and reload the feed
   const handleResetCategory = () => {
     navigation.setParams({ category: null }); // Set the category to null
+  };
+
+  const clearFilteredPosts = () => {
+    setFilteredPosts([]);
+    console.log('Filtered posts cleared.');
   };
 
   return (
@@ -171,6 +180,8 @@ export default function FeedScreen() {
               id={item.postId}
               navigation={navigation}
               disableScroll={disableScroll}
+              clearFilteredPosts={clearFilteredPosts}
+              filterPosts={filterPostsCallback}
             />
           )}
         />

@@ -11,7 +11,7 @@ class Post extends Component {
   }
 
   render() {
-    const { title, content, model, id, navigation, disableScroll } = this.props;
+    const { title, content, model, id, navigation, disableScroll , clearFilteredPosts, filterPostsCallback} = this.props;
 
     if(model) {
       return (
@@ -21,11 +21,15 @@ class Post extends Component {
               onPress={() => {
                 console.log("clicked");
                 navigation.navigate('Post', {
-                postId: id,
-                title: title,
-                content: content,
-                model: model,
+                  postId: id,
+                  title: title,
+                  content: content,
+                  model: model,
+                  filterPostsCallback: filterPostsCallback,
                 });
+                if(clearFilteredPosts) {
+                  clearFilteredPosts();
+                }
               }
             }>
               <Text style={styles.postTitle}>{title}</Text>
