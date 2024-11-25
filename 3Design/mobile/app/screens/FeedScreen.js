@@ -160,7 +160,7 @@ export default function FeedScreen() {
             <Post
               title={item.title}
               content={item.text}
-              model={item.model}
+              model={item.fileUrl}
               id={item.postId}
               navigation={navigation}
               disableScroll={disableScroll}
