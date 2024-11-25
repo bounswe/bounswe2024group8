@@ -142,12 +142,30 @@ const DiscussionPost = ({postData} : Props) => {
     return (
             <div  className={`clickable-post ${styles.postCard}`}  onClick={() => {window.location.href = `/post/${postData.postId}`}} >
                 <div className='flex'> 
+                    <button onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `/profile/${data.user?.id}`;
+                    }
+                    } style={{ cursor: 'pointer'}}>
                     <img src={data.user?.profilePictureUrl || "/default_pp.png"} className="mr-2 w-12 h-12 rounded-full pixelated" /> 
+                    </button>
                     <div className='flex'>
                     <div className="flex items-center mb"> 
+                    <button onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `/profile/${data.user?.id}`;
+                    }
+                    } style={{ cursor: 'pointer'}}>
                     <p className="font-bold mr-2 mb-2">{data.user?.nickName}</p>
+                    </button>
                     <ChevronRight className='mb-1.5'/>
+                    <button onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `/home/${data.categoryId}`;
+                    }
+                    } style={{ cursor: 'pointer'}}>
                     <p className="font-bold ml-1 mb-2">{getCategoryById(data.categoryId.toString())}</p>
+                    </button>
                     </div>
                     { data.isVisualPost && data.challengedPostId !== null ?
                     <div className="flex items-center mb-2"> 

@@ -295,19 +295,41 @@ const fetchCommentData = async () => {
       <div onMouseOut={ !annotationsVisible ? setAnnotation : () => (null)} className="w-full flex gap-2">
         <div className={styles.postPageCard} >
           <div className='flex'>
-          <img src={data.user?.profilePictureUrl || "/default_pp.png"} className="mr-2 w-12 h-12 rounded-full pixelated" /> 
+                    <button onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `/profile/${data.user?.id}`;
+                    }
+                    } style={{ cursor: 'pointer'}}>
+                    <img src={data.user?.profilePictureUrl || "/default_pp.png"} className="mr-2 w-12 h-12 rounded-full pixelated" /> 
+                    </button>
                     <div className='flex'>
                     <div className="flex items-center mb"> 
+                    <button onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `/profile/${data.user?.id}`;
+                    }
+                    } style={{ cursor: 'pointer'}}>
                     <p className="font-bold mr-2 mb-2">{data.user?.nickName}</p>
+                    </button>
                     <ChevronRight className='mb-1.5'/>
+                    <button onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `/home/${data.categoryId}`;
+                    }
+                    } style={{ cursor: 'pointer'}}>
                     <p className="font-bold ml-1 mb-2">{getCategoryById(data.categoryId.toString())}</p>
+                    </button>
                     </div>
                     {data.isVisualPost && data.challengedPostId !== null ?
-                    <div className="flex items-center mb-2"> 
+                    <div className="flex items-center mb-2">
+                      <button onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `/post/${data.challengedPostId}`;
+                    }
+                    } style={{ cursor: 'pointer'}} className='flex'>
                     <Shield sx={{ color: grey[500] }} className='ml-5'/>
-                    <p style={{ color: grey[500] }} className='ml-2'><a href={`/post/${data.challengedPostId}`}>
-    <u>Challenged to post</u>
-  </a></p>
+                    <p style={{ color: grey[500] }} className='ml-2'>Challenged to post</p>
+                    </button>
                     </div>: null
                     }
                     </div>
