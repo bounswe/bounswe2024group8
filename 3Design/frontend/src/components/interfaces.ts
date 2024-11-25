@@ -1,9 +1,3 @@
-export interface CustomProfile{
-    username: string,
-    profilePhoto: string,
-    tournamentPoints : string
-}
-
 export interface Profile{
     id: number,
     username: string,

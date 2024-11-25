@@ -2,7 +2,7 @@ import { Logout, Person } from '@mui/icons-material'
 import React, { useEffect, useRef, useState } from 'react'
 import styles from "./PageHeader.module.css";
 import { Avatar, CircularProgress, Dialog, TextField } from '@mui/material';
-import { CustomProfile, CustomUser } from '../interfaces';
+import { CustomUser } from '../interfaces';
 import Search from 'antd/es/input/Search';
 import { message } from 'antd';
 import axios from 'axios';
