@@ -174,6 +174,13 @@ export default function FeedScreen() {
           keyExtractor={(item) => item.postId.toString()}
           removeClippedSubviews={false}
           keyboardShouldPersistTaps="handled"
+          ListEmptyComponent={
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={{ textAlign: 'center', color: Colors.grey }}>
+                Follow more categories to see more posts!
+              </Text>
+            </View>
+          }
           renderItem={({ item }) => (
             <Post
               title={item.title}
