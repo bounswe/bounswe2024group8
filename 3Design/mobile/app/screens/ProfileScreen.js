@@ -1,54 +1,50 @@
-import React, {useRef, useState} from 'react';
-import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, Modal } from 'react-native';
+import React, { useContext, useRef, useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, Modal, Alert } from 'react-native';
 import Post from '../components/Post';
-import {GestureHandlerRootView} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import axios from 'axios';
+import { AuthContext } from "../context/AuthContext";
 
 const ProfilePage = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState([]);
+  const [userData, setUserData] = useState({});
   const [modalTitle, setModalTitle] = useState('');
+  const [latestPosts, setLatestPosts] = useState([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+  const { user } = useContext(AuthContext);
+  console.log(user);
 
-  const profileData = {
-    profilePicture: 'https://via.placeholder.com/100',
-    tournamentPoints: 1200,
-    followed: [
-      { id: '1', name: 'Alice' },
-      { id: '2', name: 'Bob' },
-      { id: '3', name: 'Charlie' },
-    ],
-    following: [
-      { id: '4', name: 'David' },
-      { id: '5', name: 'Eve' },
-      { id: '6', name: 'Frank' },
-    ],
-    latestPosts: [
-      {
-        id: '1',
-        title: 'HAMBURGER 😋',
-        content:
-          "Who doesn't love a good hamburger? I made this 3D model of a hamburger for a college assigment, and I" +
-          " was so proud of it that I wanted to share it here. I know that this isn't much, but I'm still a beginner at" +
-          ' this, so please go easy on me :)',
-        model: require('../assets/Hamburger.obj'),
-      },
-      {
-        id: '2',
-        title: 'Environment modeling for games',
-        content:
-          'Hi everyone!\n\nAs an experienced level designer that has worked in countless triple-A games, I have ' +
-          'noticed that lately not enough attention is given to environment modeling in indie titles. That is why I ' +
-          'decided to prepare a tutorial/guide detailing what to pay attention to while designing your environment props.' +
-          '\n\nRead here: https://medium.com/environment-modeling-for-games-77672e86876b',
-      },
-    ],
+  const fetchUserPosts = async () => {
+    try {
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/user/${user.userId}`, {
+        headers: { Authorization: `Bearer ${user.accessToken}` },
+      });
+      setLatestPosts(response.data);
+      setLoadingPosts(false);
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      setLoadingPosts(false);
+      Alert.alert('Error', 'Failed to fetch posts');
+    }
   };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.itemType}>{item.type === 'post' ? 'Post' : 'Comment'}:</Text>
-      <Text style={styles.itemTitle}>{item.title}</Text>
-    </View>
-  );
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/users/${user.userId}`, {
+        headers: { Authorization: `Bearer ${user.accessToken}` },
+      });
+      setUserData(response.data);
+    } catch (error) {
+      console.error('Error fetching userdata:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserPosts();
+    fetchUserData();
+  }, [user]);
 
   const renderFollowItem = ({ item }) => (
     <Text style={styles.modalItem}>{item.name}</Text>
@@ -71,54 +67,58 @@ const ProfilePage = () => {
   return (
     <View style={styles.container}>
       {/* Profile Picture */}
-      <Image source={{ uri: profileData.profilePicture }} style={styles.profilePicture} />
+      <Image source={{ uri: userData.profilePictureUrl || 'https://via.placeholder.com/100' }} style={styles.profilePicture} />
 
       {/* Tournament Points */}
-      <Text style={styles.pointsText}>Tournament Points: {profileData.tournamentPoints}</Text>
+      <Text style={styles.pointsText}>Tournament Points: {userData.experience}</Text>
 
-      {/* Followed and Following */}
-      <View style={styles.followContainer}>
-        <TouchableOpacity onPress={() => openModal(profileData.followed, 'Followed Users')}>
-          <Text style={styles.followText}>Followed: {profileData.followed.length}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => openModal(profileData.following, 'Following Users')}>
-          <Text style={styles.followText}>Following: {profileData.following.length}</Text>
-        </TouchableOpacity>
-      </View>
+      {/*/!* Followed and Following *!/*/}
+      {/*<View style={styles.followContainer}>*/}
+      {/*  <TouchableOpacity onPress={() => openModal(user.followed, 'Followed Users')}>*/}
+      {/*    <Text style={styles.followText}>Followed: {user.followed.length}</Text>*/}
+      {/*  </TouchableOpacity>*/}
+      {/*  <TouchableOpacity onPress={() => openModal(user.following, 'Following Users')}>*/}
+      {/*    <Text style={styles.followText}>Following: {user.following.length}</Text>*/}
+      {/*  </TouchableOpacity>*/}
+      {/*</View>*/}
 
-      {/* Latest Posts and Comments */}
+      {/* Latest Posts */}
       <Text style={styles.latestHeader}>Latest Posts:</Text>
       <GestureHandlerRootView>
         <FlatList
           ref={flatListRef}
-          data={profileData.latestPosts}
-          keyExtractor={(item) => item.id}
+          data={latestPosts}
+          keyExtractor={(item) => item.postId.toString()}
           removeClippedSubviews={false}
+          keyboardShouldPersistTaps="handled"
+          ListEmptyComponent={<Text>This user hasn't posted yet.</Text>}
           renderItem={({ item }) => (
             <Post
               title={item.title}
               content={item.content}
               model={item.model}
+              username={item.user.nickName}
+              id={item.id}
               disableScroll={disableScroll}
             />
           )}
         />
       </GestureHandlerRootView>
 
-      {/* Modal for Followed and Following Users */}
-      <Modal visible={isModalVisible} transparent animationType="slide">
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>{modalTitle}</Text>
-          <FlatList
-            data={modalData}
-            renderItem={renderFollowItem}
-            keyExtractor={(item) => item.id}
-          />
-          <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
+      {/*/!* Modal for Followed and Following Users *!/*/}
+      {/*<Modal visible={isModalVisible} transparent animationType="slide">*/}
+      {/*  <View style={styles.modalContainer}>*/}
+      {/*    <Text style={styles.modalTitle}>{modalTitle}</Text>*/}
+      {/*    <FlatList*/}
+      {/*      data={modalData}*/}
+      {/*      renderItem={renderFollowItem}*/}
+      {/*      keyExtractor={(item) => item.id}*/}
+      {/*    />*/}
+      {/*    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>*/}
+      {/*      <Text style={styles.closeButtonText}>Close</Text>*/}
+      {/*    </TouchableOpacity>*/}
+      {/*  </View>*/}
+      {/*</Modal>*/}
     </View>
   );
 };
