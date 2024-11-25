@@ -11,7 +11,7 @@ class Post extends Component {
   }
 
   render() {
-    const { title, content, model, id, username, navigation, disableScroll , clearFilteredPosts, filterPostsCallback} = this.props;
+    const { title, content, model, id, userId, username, navigation, disableScroll , clearFilteredPosts, filterPostsCallback} = this.props;
 
     if(model) {
       return (
@@ -27,6 +27,7 @@ class Post extends Component {
                   content: content,
                   model: model,
                   username: username,
+                  userId: userId,
                   filterPostsCallback: filterPostsCallback,
                 });
                 if(clearFilteredPosts) {
@@ -57,6 +58,7 @@ class Post extends Component {
                   content: content,
                   model: model,
                   username: username,
+                  userId: userId,
                   filterPostsCallback: filterPostsCallback,
                 });
                 if(clearFilteredPosts) {

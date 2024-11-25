@@ -1,16 +1,15 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {View, Text, StyleSheet, FlatList, TextInput, Button, TouchableOpacity} from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TextInput, Button, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import { Colors } from '../constants/Colors';
-import {AuthContext} from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import OBJViewer from '../components/ObjectViewer';
-import {GestureHandlerRootView} from "react-native-gesture-handler";
-import Post from "../components/Post";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 
 export default function PostScreen({ route }) {
-  const { postId, title, content, model, username, filterPostsCallback} = route.params;
+  const { postId, title, content, model, username, userId, filterPostsCallback } = route.params;
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
   const [comments, setComments] = useState([]);
@@ -48,7 +47,6 @@ export default function PostScreen({ route }) {
         }
       });
   };
-
 
   useEffect(() => {
     fetchPostData();
@@ -135,9 +133,17 @@ export default function PostScreen({ route }) {
       .catch((error) => console.error(error));
   };
 
+  const navigateToUserProfile = () => {
+    navigation.navigate('Profile', { userId: userId });
+  };
+
   return (
     <View style={styles.container}>
-      {username && <Text style={styles.username}>{username}</Text>}
+      {username && (
+        <TouchableOpacity onPress={navigateToUserProfile}>
+          <Text style={styles.username}>{username}</Text>
+        </TouchableOpacity>
+      )}
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.content}>{content}</Text>
       {model && (
@@ -185,7 +191,6 @@ export default function PostScreen({ route }) {
           ) : null
         }
       />
-
 
       <View style={styles.newCommentContainer}>
         <TextInput

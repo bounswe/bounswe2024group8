@@ -4,9 +4,12 @@ import Post from '../components/Post';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import axios from 'axios';
 import { AuthContext } from "../context/AuthContext";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const ProfilePage = () => {
+  const route = useRoute();
+  const { userId } = route.params;  // Get the username passed from PostScreen
+
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState([]);
   const [userData, setUserData] = useState({});
@@ -19,7 +22,7 @@ const ProfilePage = () => {
 
   const fetchUserPosts = async () => {
     try {
-      const response = await axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/user/${user.userId}`, {
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/user/${userId}`, {
         headers: { Authorization: `Bearer ${user.accessToken}` },
       });
       setLatestPosts(response.data);
@@ -34,12 +37,13 @@ const ProfilePage = () => {
 
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/users/${user.userId}`, {
-        headers: {Authorization: `Bearer ${user.accessToken}`},
+      // Fetch the user profile data by username
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/users/${userId}`, {
+        headers: { Authorization: `Bearer ${user.accessToken}` },
       });
       setUserData(response.data);
     } catch (error) {
-      console.error('Error fetching userdata:', error);
+      console.error('Error fetching user data:', error);
     }
   };
 
@@ -59,7 +63,7 @@ const ProfilePage = () => {
   useEffect(() => {
     fetchUserPosts();
     fetchUserData();
-  }, [user]);
+  }, [user, userId]);
 
   const navigation = useNavigation();
 
@@ -98,6 +102,7 @@ const ProfilePage = () => {
               content={item.text}
               model={item.fileUrl}
               username={item.user.nickName}
+              userId={item.user.id}
               id={item.postId}
               navigation={navigation}
               disableScroll={disableScroll}
