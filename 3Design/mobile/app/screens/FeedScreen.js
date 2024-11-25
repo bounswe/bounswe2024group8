@@ -31,7 +31,7 @@ export default function FeedScreen() {
   const { user } = useContext(AuthContext);
 
   const [remainingTime, setRemainingTime] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoadingTime, setIsLoadingTime] = useState(true);
 
   const disableScroll = (isDisabled) => {
     if (flatListRef.current) {
@@ -159,15 +159,14 @@ export default function FeedScreen() {
             console.error('endTime not found in the response');
           }
 
-          setLoading(false);
+          setIsLoadingTime(false);
         })
         .catch((error) => {
           console.error('Failed to fetch remaining time', error.response?.data || error.message);
-          setLoading(false);
+          setIsLoadingTime(false);
         });
     }
   }, [category]);
-
 
   // Timer countdown
   useEffect(() => {
@@ -233,7 +232,7 @@ export default function FeedScreen() {
       {category && (
         <View style={styles.tournamentBox}>
           <Text style={styles.tournamentTitle}>Weekly Tournament for {category.label} Category</Text>
-        {loading ? (
+        {isLoadingTime ? (
             <ActivityIndicator size="small" color={Colors.dark} />
           ) : (
             <Text style={styles.timerText}>
