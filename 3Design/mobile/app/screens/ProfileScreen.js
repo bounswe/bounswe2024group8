@@ -29,9 +29,9 @@ const ProfilePage = () => {
       filterPosts(response.data, true);
       setLoadingPosts(false);
     } catch (error) {
-      console.error('Error fetching posts:', error);
+      // console.error('Error fetching posts:', error);
       setLoadingPosts(false);
-      Alert.alert('Error', 'Failed to fetch posts');
+      // Alert.alert('Error', 'Failed to fetch posts');
     }
   };
 
