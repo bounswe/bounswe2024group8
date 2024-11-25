@@ -40,7 +40,7 @@ export default function FeedScreen() {
     }
   };
 
-  const categoryName = categories.find((cat) => cat.value === category.value)?.label || '3Design';
+  const categoryName = categories.find((cat) => category && cat.value === category.value)?.label || '3Design';
 
   const fetchPosts = async () => {
     let fetchedPosts = [];
