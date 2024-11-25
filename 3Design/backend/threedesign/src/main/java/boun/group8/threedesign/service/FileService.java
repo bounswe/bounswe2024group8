@@ -20,4 +20,8 @@ public class FileService {
         var folderName = "userFolders";
         return cdnService.uploadFile(file.getBytes(), folderName, file.getOriginalFilename());
     }
+
+    public String uploadFile(MultipartFile file, String folderName) throws IOException {
+        return cdnService.uploadFile(file.getBytes(), folderName, file.getOriginalFilename());
+    }
 }
