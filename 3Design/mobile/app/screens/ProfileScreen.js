@@ -1,64 +1,71 @@
-import React, {useRef, useState} from 'react';
-import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, Modal } from 'react-native';
+import React, { useContext, useRef, useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, Modal, Alert } from 'react-native';
 import Post from '../components/Post';
-import {GestureHandlerRootView} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import axios from 'axios';
+import { AuthContext } from "../context/AuthContext";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const ProfilePage = () => {
+  const route = useRoute();
+  const { userId } = route.params;  // Get the username passed from PostScreen
+
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState([]);
+  const [userData, setUserData] = useState({});
   const [modalTitle, setModalTitle] = useState('');
+  const [latestPosts, setLatestPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+  const [showVisual, setShowVisual] = useState(false);
+  const { user } = useContext(AuthContext);
 
-  const profileData = {
-    profilePicture: 'https://via.placeholder.com/100',
-    tournamentPoints: 1200,
-    followed: [
-      { id: '1', name: 'Alice' },
-      { id: '2', name: 'Bob' },
-      { id: '3', name: 'Charlie' },
-    ],
-    following: [
-      { id: '4', name: 'David' },
-      { id: '5', name: 'Eve' },
-      { id: '6', name: 'Frank' },
-    ],
-    latestPosts: [
-      {
-        id: '1',
-        title: 'HAMBURGER 😋',
-        content:
-          "Who doesn't love a good hamburger? I made this 3D model of a hamburger for a college assigment, and I" +
-          " was so proud of it that I wanted to share it here. I know that this isn't much, but I'm still a beginner at" +
-          ' this, so please go easy on me :)',
-        model: require('../assets/Hamburger.obj'),
-      },
-      {
-        id: '2',
-        title: 'Environment modeling for games',
-        content:
-          'Hi everyone!\n\nAs an experienced level designer that has worked in countless triple-A games, I have ' +
-          'noticed that lately not enough attention is given to environment modeling in indie titles. That is why I ' +
-          'decided to prepare a tutorial/guide detailing what to pay attention to while designing your environment props.' +
-          '\n\nRead here: https://medium.com/environment-modeling-for-games-77672e86876b',
-      },
-    ],
+  const fetchUserPosts = async () => {
+    try {
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/user/${userId}`, {
+        headers: { Authorization: `Bearer ${user.accessToken}` },
+      });
+      setLatestPosts(response.data);
+      filterPosts(response.data, true);
+      setLoadingPosts(false);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      setLoadingPosts(false);
+      Alert.alert('Error', 'Failed to fetch posts');
+    }
   };
 
-  const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.itemType}>{item.type === 'post' ? 'Post' : 'Comment'}:</Text>
-      <Text style={styles.itemTitle}>{item.title}</Text>
-    </View>
-  );
-
-  const renderFollowItem = ({ item }) => (
-    <Text style={styles.modalItem}>{item.name}</Text>
-  );
-
-  const openModal = (data, title) => {
-    setModalData(data);
-    setModalTitle(title);
-    setModalVisible(true);
+  const fetchUserData = async () => {
+    try {
+      // Fetch the user profile data by username
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/users/${userId}`, {
+        headers: { Authorization: `Bearer ${user.accessToken}` },
+      });
+      setUserData(response.data);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
   };
+
+  const filterPosts = (allPosts, showVisual) => {
+    setFilteredPosts(allPosts);
+  };
+
+  const filterPostsCallback = () => {
+    filterPosts(latestPosts, showVisual);
+  };
+
+  const clearFilteredPosts = () => {
+    setFilteredPosts([]);
+    console.log('Filtered posts cleared.');
+  };
+
+  useEffect(() => {
+    fetchUserPosts();
+    fetchUserData();
+  }, [user, userId]);
+
+  const navigation = useNavigation();
 
   const flatListRef = useRef(null);
 
@@ -70,55 +77,41 @@ const ProfilePage = () => {
 
   return (
     <View style={styles.container}>
+      {/* Display Username at the top of the page */}
+      <Text style={styles.usernameText}>{userData.nickName}</Text>
+
       {/* Profile Picture */}
-      <Image source={{ uri: profileData.profilePicture }} style={styles.profilePicture} />
+      <Image source={{ uri: userData.profilePictureUrl || 'https://via.placeholder.com/100' }} style={styles.profilePicture} />
 
       {/* Tournament Points */}
-      <Text style={styles.pointsText}>Tournament Points: {profileData.tournamentPoints}</Text>
+      <Text style={styles.pointsText}>Tournament Points: {userData.experience}</Text>
 
-      {/* Followed and Following */}
-      <View style={styles.followContainer}>
-        <TouchableOpacity onPress={() => openModal(profileData.followed, 'Followed Users')}>
-          <Text style={styles.followText}>Followed: {profileData.followed.length}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => openModal(profileData.following, 'Following Users')}>
-          <Text style={styles.followText}>Following: {profileData.following.length}</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Latest Posts and Comments */}
+      {/* Latest Posts */}
       <Text style={styles.latestHeader}>Latest Posts:</Text>
       <GestureHandlerRootView>
         <FlatList
           ref={flatListRef}
-          data={profileData.latestPosts}
-          keyExtractor={(item) => item.id}
+          data={filteredPosts}
+          keyExtractor={(item) => item.postId.toString()}
           removeClippedSubviews={false}
+          keyboardShouldPersistTaps="handled"
+          ListEmptyComponent={<Text>This user hasn't posted yet.</Text>}
           renderItem={({ item }) => (
             <Post
               title={item.title}
-              content={item.content}
-              model={item.model}
+              content={item.text}
+              model={item.fileUrl}
+              username={item.user.nickName}
+              userId={item.user.id}
+              id={item.postId}
+              navigation={navigation}
               disableScroll={disableScroll}
+              clearFilteredPosts={clearFilteredPosts}
+              filterPostsCallback={filterPostsCallback}
             />
           )}
         />
       </GestureHandlerRootView>
-
-      {/* Modal for Followed and Following Users */}
-      <Modal visible={isModalVisible} transparent animationType="slide">
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>{modalTitle}</Text>
-          <FlatList
-            data={modalData}
-            renderItem={renderFollowItem}
-            keyExtractor={(item) => item.id}
-          />
-          <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
     </View>
   );
 };
@@ -128,6 +121,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
+  },
+  usernameText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
   },
   profilePicture: {
     width: 100,
@@ -141,15 +140,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
-  },
-  followContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
-  },
-  followText: {
-    fontSize: 16,
-    color: '#007BFF',
   },
   latestHeader: {
     fontSize: 18,
@@ -169,33 +159,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   itemTitle: {
-    fontSize: 16,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#fff',
-  },
-  modalItem: {
-    fontSize: 16,
-    color: '#fff',
-    marginVertical: 5,
-  },
-  closeButton: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#007BFF',
-    borderRadius: 5,
-  },
-  closeButtonText: {
-    color: '#fff',
     fontSize: 16,
   },
 });

@@ -3,14 +3,16 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { Categories } from '../constants/Categories';
 import {useNavigation} from "@react-navigation/native";
+import {useCategories} from "../context/CategoryContext";
 
 export default function CategoriesScreen() {
   const navigation = useNavigation();
+  const { categories, loading, error } = useCategories();
   return (
     <View style={styles.body}>
       <Text style={styles.title}>Select a Category</Text>
       <View style={styles.categoriesContainer}>
-        {Categories.map((category) => (
+        {categories.map((category) => (
           <TouchableOpacity
             key={category.value}
             style={styles.categoryButton}

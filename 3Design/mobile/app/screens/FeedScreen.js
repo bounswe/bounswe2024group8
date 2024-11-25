@@ -14,6 +14,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { AuthContext } from "../context/AuthContext";
 import { Categories } from "../constants/Categories";
+import {useCategories} from "../context/CategoryContext";
 
 export default function FeedScreen() {
   const flatListRef = useRef(null);
@@ -21,6 +22,7 @@ export default function FeedScreen() {
 
   const route = useRoute();
   const category = route.params ? route.params['category'] : null;
+  const { categories, loading, error } = useCategories();
 
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
@@ -37,7 +39,7 @@ export default function FeedScreen() {
     }
   };
 
-  const categoryName = Categories.find((cat) => cat.value === category)?.label || '3Design';
+  const categoryName = categories.find((cat) => cat.value === category)?.label || '3Design';
 
   const fetchPosts = async () => {
     let fetchedPosts = [];
@@ -277,10 +279,12 @@ export default function FeedScreen() {
               content={item.text}
               model={item.fileUrl}
               id={item.postId}
+              userId={item.user.id}
+              username={item.user.nickName}
               navigation={navigation}
               disableScroll={disableScroll}
               clearFilteredPosts={clearFilteredPosts}
-              filterPosts={filterPostsCallback}
+              filterPostsCallback={filterPostsCallback}
             />
           )}
         />
