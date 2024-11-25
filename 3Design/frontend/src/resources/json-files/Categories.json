@@ -1,7 +1,13 @@
 [
-    {"text": "Characters", "id": "characters"},
-    {"text": "Enviroments", "id": "enviroments"},
-    {"text": "Props", "id": "props"},
-    {"text": "Vehicles", "id": "vehicles"},
-    {"text": "Animations", "id": "animations"}
+    {"name": "Characters", "id": "1", "description": "Models of humans, animals, and fantastical creatures for storytelling or design.", "followerCount": 0},
+    {"name": "Nature", "id": "2", "description": "Organic models like trees, plants, rocks, and natural landscapes.", "followerCount": 0},
+    {"name": "Architecture", "id": "3", "description": "Designs of buildings, structures, interiors, and urban settings.", "followerCount": 0},
+    {"name": "Vehicles and Machines", "id": "4", "description": "Cars, planes, robots, and mechanical objects in intricate detail.", "followerCount": 0},
+    {"name": "Furniture and Home Decor", "id": "5", "description": "Household items like chairs, tables, lamps, and other interior designs.", "followerCount": 0},
+    {"name": "Minimalist and Abstract", "id": "6", "description": "Simplistic or experimental models emphasizing form and creativity.", "followerCount": 0},
+    {"name": "3D Printing Models", "id": "7", "description": "Models optimized and prepared for 3D printing purposes.", "followerCount": 0},
+    {"name": "Statues and Sculptures", "id": "8", "description": "Artistic creations, including busts, figurines, and decorative models.", "followerCount": 0},
+    {"name": "Props and Accessories", "id": "9", "description": "Everyday objects, tools, weapons, and standalone design elements.", "followerCount": 0},
+    {"name": "Fantasy and Sci-Fi", "id": "10", "description": "Models inspired by futuristic, mythical, or imaginative themes.", "followerCount": 0}
+
 ]

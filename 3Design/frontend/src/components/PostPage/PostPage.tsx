@@ -8,37 +8,62 @@ import DiscussionPost from "../DiscussionPost/Page/DiscussionPost";
 import SideBar from "../SideBar/SideBar";
 import PageHeader from "../PageHeader/PageHeader";
 import styles from "./PostPage.module.css"
+import { Skeleton } from "antd";
+import axios from "axios";
 
 
 const PostPage = () => {
     const { id } = useParams();
     const [postData, setPostData] = useState<DPost | null>(null);
+    const [publishedAnnotations, setPublishedAnnotations] = useState([]);
 
     useEffect(() => {
-        setPostData(getPostFromId(id)); 
+        fetchPostData();
      }, []);
 
+    const fetchPostData = async () =>{
+        try{
+            const postRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/posts/new/${id}`,
+                {
+                    headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+                }
+            );
+            const annotationRes = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/annotations/get?postId=${id}`,
+                {
+                    headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+                }
+            );
+            setPublishedAnnotations(annotationRes.data);
+            setPostData(postRes.data);
+        }
+        catch(e){
+            setPublishedAnnotations(require("../../resources/json-files/MockAnnotations.json"));
+            setPostData(getPostFromId(id)); 
+        }
+    } 
 
     if (!id){
         return <div>404</div>;
     }
-    if(!postData){
-        return <div>Loading</div>;   
-    }
     
-
     return (
     <>
             <PageHeader/>
             <div className='flex'>
                 <SideBar active={""}/>
                 <div className={styles.mainContainer}>
-                    {postData.visual ? 
+                    {
+                        postData ? 
+                        (postData.isVisualPost ? 
                     
-                        <GalleryPost  postData={postData}/>
-                    :
-                        <DiscussionPost postData={postData}/> 
+                            <GalleryPost publishedAnnotationsProps={publishedAnnotations} postData={postData}/>
+                        :
+                            <DiscussionPost publishedAnnotationsProps={publishedAnnotations} postData={postData}/> 
+                        )    
+                        : 
+                        <Skeleton active avatar paragraph={{ rows: 4 }} />
                     }
+                    
                 </div> 
                 
             </div>

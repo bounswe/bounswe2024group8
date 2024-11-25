@@ -1,0 +1,96 @@
+/* Main container */
+.mainContainer{
+    width: 70%;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.postContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 740px;
+    overflow-y: scroll;
+}
+
+
+
+
+
+.profileHeaderButtonsContainer{
+    width: 100%; /* Adjust as needed */
+    height: 40%; /* Same as width for a square */
+    padding: 1px;
+    border: 1px solid black;  /* Define the border style */
+    border-radius: 0;  /* This ensures it stays as a rectangle (default) */
+    flex-direction: row;
+}
+
+.scrollableList{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+    height: 400px;
+    overflow-y: scroll;
+}
+
+.profileHeaderDetailsAvatar {
+    width: 100px; /* Adjust as needed */
+    height: 100px; /* Same as width for a square */
+    padding: 1px;
+    object-fit: cover; /* Crop and fill */
+    border-radius: 50%; /* Circular shape */
+}
+.profileHeaderButtonsFollowButton {
+    padding: 3px;
+    width: 150px;
+    height: 40px;
+    background-color: #383434;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+.profileHeaderButtonsFollowButton:hover {
+    background-color: #181414;
+}
+.profileHeaderButtonsFollowingButton {
+    margin-top: 3px;
+    width: 150px;
+    height: 40px;
+    background-color: #383434;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+.profileHeaderButtonsFollowingButton:hover {
+    background-color: #181414;
+}
+.profileHeaderButtonsFollowersButton {
+    margin-top: 3px;
+    width: 150px;
+    height: 40px;
+    background-color: #383434;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+.profileHeaderButtonsFollowersButton:hover {
+    background-color: #181414;
+}
+
+/* Dialog Parent Containers */
+
+/* Dialog Sub Containers */
+
+/* Dialog Elements */

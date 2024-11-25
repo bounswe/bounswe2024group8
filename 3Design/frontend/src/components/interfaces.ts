@@ -1,43 +1,45 @@
-export interface CustomProfile{
+export interface Profile{
+    id: number,
     username: string,
-    profilePhoto: string,
-    tournamentPoints : string
+    avatarUrl: string,
+    tournamentPoints: number
 }
 
 export interface Category{
-    text: string,
-    id: string
+    name: string,
+    id: string,
+    description: string,
+    followerCount: number
 }
 
 
 export interface DComment{
-    id: number,
-    user:CustomProfile,
-    body: string,
-    memberId: number,
-    postId: number,
-    likeCount: number,
-    dislikeCount: number,
-    liked: boolean,
-    disliked: boolean
+        commentId: number;
+        text: string;
+        user:CustomUser;
+        likes: number;
+        dislikes: number;
+        reactionType: string;
 }
 
 export interface DPost{
-    id: number,
+    postId: number,
     title: string,
-    body: string,
-    memberId: number,
+    text: string,
+    user: CustomUser,
     tags: Tag[],
-    category: string,
-    visual: boolean,
+    categoryId: number,
+    isVisualPost: boolean,
     //reaction list, bookmark list, comment list
-    challangeTo: number|null,
+    challengedPostId: number|null,
     fileUrl: string|null,
-    likeCount: number,
-    dislikeCount: number,
+    likes: number,
+    dislikes: number,
+    comments: number,
     liked: boolean,
     disliked: boolean,
-    bookmark: boolean
+    bookmark: boolean,
+    reactionType: string
 }
 
 export interface Tag{
@@ -46,17 +48,78 @@ export interface Tag{
 }
 
 export interface SendAnnotationData{
-    target: SendAnnotationTarget,
-    body: string
+    postId : number, 
+    userId : number, 
+    startIndex: number | null, 
+    endIndex: number | null, 
+    content: string,
 }
 
 
-export interface SendAnnotationTarget{
-    selector: SendAnnotationTargetSelector,
-    source: number
+
+export interface CustomUser{
+    id : number,
+    profilePictureUrl: string | null,
+    nickName: string,
+    experience: number
 }
 
-export interface SendAnnotationTargetSelector{
-    start: number | null,
-    end: number | null
+
+export interface DisplayedAnnotationData{
+    userId: string,
+    username: string,
+    annotation: string,
+    annotatedText : string
+}
+
+export interface RecievedAnnotationData{
+    context: string,
+    id : string,
+    type: string,
+    bodyValue: string,
+    created: string,
+    creator: RecievedAnnotationCreator,
+    target: RecievedAnnotationTarget
+}
+
+
+interface RecievedAnnotationCreator{
+    id: string,
+    type: string,
+    nickname: string
+}
+
+interface RecievedAnnotationTarget{
+    selector: RecievedAnnotationTargetSelector,
+    source: string
+}
+interface RecievedAnnotationTargetSelector{
+    type: string,
+    start: number,
+    end: number
+}
+
+export interface Tournament{
+    id: number,
+    startTime: string,
+    endTime : string,
+    categoryId: number,
+    isFinished : boolean
+}
+
+export interface TournamentEntry{
+    id: number,
+    user: CustomUser,
+    postId: number,
+    tournament: Tournament,
+    score : number,
+    finishedPosition : number
+}
+
+export interface Achievement{
+    id: number,
+    name: string,
+    description: string,
+    point: number,
+    earnedAt: string
 }

@@ -63,7 +63,7 @@ const RegisterPage = () => {
         setRegisterLoading(true);
         try{
             //AJAX POST Request
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/register`,{email:email,password:password,firstName:username,lastName:""});
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/register`,{email:email,password:password,userName:username});
             window.location.href = "/login";
         }
         catch(e){

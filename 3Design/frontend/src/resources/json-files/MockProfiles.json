@@ -1,0 +1,32 @@
+[
+    {    
+        "id": 1,
+        "username": "turkerdm1",
+        "avatarUrl": "/default_pp.png",
+        "tournamentPoints": "1111"
+    },
+    {    
+        "id": 2,
+        "username": "turkerdm2",
+        "avatarUrl": "/default_pp.png",
+        "tournamentPoints": "2222"
+    },
+    {    
+        "id": 3,
+        "username": "turkerdm3",
+        "avatarUrl": "/default_pp.png",
+        "tournamentPoints": "3333"
+    },
+    {    
+        "id": 4,
+        "username": "turkerdm4",
+        "avatarUrl": "/default_pp.png",
+        "tournamentPoints": "4444"
+    },
+    {    
+        "id": 5,
+        "username": "turkerdm5",
+        "avatarUrl": "/default_pp.png",
+        "tournamentPoints": "5555"
+    }
+]

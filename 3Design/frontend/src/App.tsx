@@ -6,6 +6,9 @@ import LoginPage from './components/Login/LoginPage';
 import HomePage from './components/HomePage/HomePage';
 import RegisterPage from './components/RegisterPage/RegisterPage';
 import PostPage from './components/PostPage/PostPage';
+import SearchResults from './components/SearchResults/SearchResults';
+import LeaderboardPage from './components/TournamentLeaderboard/LeaderboardPage';
+import ProfilePage from './components/ProfilePage/ProfilePage';
 
 function App() {
   return (
@@ -40,6 +43,30 @@ function App() {
           path="/register"
           element={
             <RegisterPage/>
+          }
+        />
+        <Route
+          path="/search/:query"
+          element={
+            <SearchResults/>
+          }
+        />
+        <Route
+          path="/search"
+          element={
+            <SearchResults/>
+          }
+        />
+        <Route
+          path="/tournament/:category"
+          element={
+            <LeaderboardPage/>
+          }
+        />
+        <Route
+          path="/profile/:id"
+          element={
+            <ProfilePage/>
           }
         />
       </Routes>
