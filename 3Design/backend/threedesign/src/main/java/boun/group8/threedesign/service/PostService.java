@@ -123,14 +123,14 @@ public class PostService {
 
     }
 
-    public PostResponse getPostResponseByIdElseThrow(Long id) {
+    public PostResponse getPostResponseByIdElseThrow(User user, Long id) {
         Post post = getPostByIdElseThrow(id);
 
         if (post == null) {
             throw new ThreeDesignDatabaseException("Post not found with ID: " + id);
         }
 
-        return convertPostToPostResponse(post.getUser(), post);
+        return convertPostToPostResponse(user, post);
     }
 
     public List<PostResponse> searchPosts(User user, String keyword) {
