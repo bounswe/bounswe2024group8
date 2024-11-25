@@ -32,6 +32,7 @@ export default function FeedScreen() {
 
   const [remainingTime, setRemainingTime] = useState(null);
   const [isLoadingTime, setIsLoadingTime] = useState(true);
+  const [showTournamentBox, setShowTournamentBox] = useState(false);
 
   const disableScroll = (isDisabled) => {
     if (flatListRef.current) {
@@ -133,40 +134,41 @@ export default function FeedScreen() {
   };
 
   // Fetch remaining time for the tournament
-  useEffect(() => {
-    if (category) {
-      const url = `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/tournaments/leaderboard/${category.value}`;
-      axios
-        .get(url, {
-          headers: {
-            Authorization: `Bearer ${user.accessToken}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-        .then((response) => {
-          //console.log('Response Data:', response.data);
+  // Fetch remaining time for the tournament
+    useEffect(() => {
+      if (category) {
+        const url = `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/tournaments/leaderboard/${category.value}`;
+        axios
+          .get(url, {
+            headers: {
+              Authorization: `Bearer ${user.accessToken}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+          .then((response) => {
+            const endTimeISO = response.data[0]?.tournament?.endTime;
 
-          // Assume the endTime is in ISO 8601 format and located at response.data[0].tournament.endTime
-          const endTimeISO = response.data[0]?.tournament?.endTime;
+            if (endTimeISO) {
+              const endTime = new Date(endTimeISO).getTime();
+              const now = Date.now();
+              const timeLeftInSeconds = Math.floor((endTime - now) / 1000);
 
-          if (endTimeISO) {
-            const endTime = new Date(endTimeISO).getTime(); // Convert to timestamp in milliseconds
-            const now = Date.now(); // Current timestamp in milliseconds
-            const timeLeftInSeconds = Math.floor((endTime - now) / 1000); // Calculate remaining time in seconds
+              setRemainingTime(timeLeftInSeconds);
+              setShowTournamentBox(true); // Show the tournament box
+            } else {
+              console.error('endTime not found in the response');
+              setShowTournamentBox(false); // Do not show the tournament box
+            }
 
-            setRemainingTime(timeLeftInSeconds);
-          } else {
-            console.error('endTime not found in the response');
-          }
-
-          setIsLoadingTime(false);
-        })
-        .catch((error) => {
-          console.error('Failed to fetch remaining time', error.response?.data || error.message);
-          setIsLoadingTime(false);
-        });
-    }
-  }, [category]);
+            setIsLoadingTime(false);
+          })
+          .catch((error) => {
+            console.error('Failed to fetch remaining time', error.response?.data || error.message);
+            setIsLoadingTime(false);
+            setShowTournamentBox(false); // Do not show the tournament box
+          });
+      }
+    }, [category]);
 
   // Timer countdown
   useEffect(() => {
@@ -202,51 +204,51 @@ export default function FeedScreen() {
   };
 
   return (
-    <View style={styles.body}>
-      {/* Category Name */}
-      <Text style={styles.categoryName}>{categoryName}</Text>
+      <View style={styles.body}>
+        {/* Category Name */}
+        <Text style={styles.categoryName}>{categoryName}</Text>
 
-      {/* Follow/Unfollow Button - Only show if category is not null */}
-      {category && (
-        <TouchableOpacity
-          style={styles.followButton}
-          onPress={handleFollowUnfollow}
-        >
-          <Text style={styles.followButtonText}>
-            {isFollowing ? 'Unfollow' : 'Follow'} Category
-          </Text>
-        </TouchableOpacity>
-      )}
-
-      {/* Reset Category Button (Top Right) */}
-      {category && (
-        <TouchableOpacity
-          style={styles.resetButton}
-          onPress={handleResetCategory}
-        >
-          <Text style={styles.resetButtonText}>X</Text>
-        </TouchableOpacity>
-      )}
-
-      {/* Weekly Tournament Box */}
-      {category && (
-        <View style={styles.tournamentBox}>
-          <Text style={styles.tournamentTitle}>Weekly Tournament for {category.label} Category</Text>
-        {isLoadingTime ? (
-            <ActivityIndicator size="small" color={Colors.dark} />
-          ) : (
-            <Text style={styles.timerText}>
-              Time left: {formatTime(remainingTime)}
-            </Text>
-          )}
+        {/* Follow/Unfollow Button */}
+        {category && (
           <TouchableOpacity
-            style={styles.leaderboardButton}
-            onPress={handleLeaderboardPress}
+            style={styles.followButton}
+            onPress={handleFollowUnfollow}
           >
-            <Text style={styles.leaderboardButtonText}>See Leaderboard</Text>
+            <Text style={styles.followButtonText}>
+              {isFollowing ? 'Unfollow' : 'Follow'} Category
+            </Text>
           </TouchableOpacity>
-        </View>
-      )}
+        )}
+
+        {/* Reset Category Button */}
+        {category && (
+          <TouchableOpacity
+            style={styles.resetButton}
+            onPress={handleResetCategory}
+          >
+            <Text style={styles.resetButtonText}>X</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Weekly Tournament Box */}
+        {category && showTournamentBox && (
+          <View style={styles.tournamentBox}>
+            <Text style={styles.tournamentTitle}>Weekly Tournament for {category.label} Category</Text>
+            {isLoadingTime ? (
+              <ActivityIndicator size="small" color={Colors.dark} />
+            ) : (
+              <Text style={styles.timerText}>
+                Time left: {formatTime(remainingTime)}
+              </Text>
+            )}
+            <TouchableOpacity
+              style={styles.leaderboardButton}
+              onPress={handleLeaderboardPress}
+            >
+              <Text style={styles.leaderboardButtonText}>See Leaderboard</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
       {/* Toggle Buttons */}
       <View style={styles.toggleContainer}>
