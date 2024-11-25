@@ -21,32 +21,33 @@ export default function LeaderboardScreen({ route, navigation }) {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-      if (category) {
-        const url = `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/tournaments/leaderboard/${category.value}`;
-        axios
-          .get(url, {
-            headers: {
-              Authorization: `Bearer ${user.accessToken}`,
-              'Content-Type': 'multipart/form-data',
-            },
-          })
-          .then((response) => {
-            console.log(response.data[0])
-            // Assume the endTime is in ISO 8601 format and located at response.data[0].tournament.endTime
-
-          })
-          .catch((error) => {
-            console.error('Failed to fetch remaining time', error.response?.data || error.message);
-            setLoading(false);
-          });
-      }
-    }, [category]);
+    if (category) {
+      const url = `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/tournaments/leaderboard/${category.value}`;
+      axios
+        .get(url, {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then((response) => {
+          console.log(response.data[0]);
+          setLeaderboardData(response.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+          setError('Failed to load leaderboard data.');
+        });
+    }
+  }, [category]);
 
   const renderItem = ({ item, index }) => (
     <View style={styles.row}>
       <Text style={styles.cell}>{index + 1}</Text>
-      <Text style={styles.cell}>{item.user}</Text>
+      <Text style={styles.cell}>{item.user.nickName}</Text>
       <Text style={styles.cell}>{item.score}</Text>
+      <Text style={styles.cell}>{item.postId}</Text>
     </View>
   );
 
@@ -77,6 +78,7 @@ export default function LeaderboardScreen({ route, navigation }) {
         <Text style={styles.headerCell}>Ranking</Text>
         <Text style={styles.headerCell}>User</Text>
         <Text style={styles.headerCell}>Score</Text>
+        <Text style={styles.headerCell}>Post</Text>
       </View>
       <FlatList
         data={leaderboardData}
