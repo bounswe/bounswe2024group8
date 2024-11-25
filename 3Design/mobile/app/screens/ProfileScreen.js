@@ -8,7 +8,6 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 
 const ProfilePage = () => {
   const route = useRoute();
-  const { userId } = route.params;  // Get the username passed from PostScreen
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState([]);
@@ -19,6 +18,7 @@ const ProfilePage = () => {
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [showVisual, setShowVisual] = useState(false);
   const { user } = useContext(AuthContext);
+  const userId  = route.params?.userId || user.userId;
 
   const fetchUserPosts = async () => {
     try {
