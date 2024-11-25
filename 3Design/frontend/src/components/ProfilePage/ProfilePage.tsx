@@ -6,6 +6,8 @@ import SideBar from "../SideBar/SideBar";
 import PageHeader from "../PageHeader/PageHeader";
 import styles from "./ProfilePage.module.css"
 import { Profile } from '../interfaces'
+import { Dialog } from "@mui/material";
+import ProfileDisplayer from "./ProfilePageDialogDisplayer/ProfilePageDialogDisplayer";
 
 const ProfilePage = () => {
   
@@ -14,19 +16,77 @@ const ProfilePage = () => {
   const [isCurrentUserProfile, setIsCurrentUserProfile] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false); // State to control dialog visibility
-  const [profilesList, setProfilesList] = useState<Profile[]>([]); // Store the list of profiles
+  const [followerProfilesList, setFollowerProfilesList] = useState<number[]>([]); // Store the list of profiles
+  const [followingProfilesList, setFollowingProfilesList] = useState<number[]>([]); // Store the list of profiles
 
 
   const currentUserId = localStorage.getItem("user_id");
   
 
+  const getProfileInfo = async () => {
+    /* Request TODO
+  try{
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/annotations/get?postId=${profileId}`,
+          {
+              headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+          }
+      );
+      setProfileInfo(res.data);
+  }
+  catch(e){
+
+  } 
+  */
+
+  setProfile({"id": 5,
+    "username": "turkerdm5",
+    "avatarUrl": "/default_pp.png",
+    "tournamentPoints": 5555});
+  };
+
+
+  const getFollowerUserIds = async () => {
+    /* Request TODO
+  try{
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/annotations/get?postId=${profileId}`,
+          {
+              headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+          }
+      );
+      setProfileInfo(res.data);
+  }
+  catch(e){
+
+  } 
+  */
+
+  setFollowerProfilesList([1,2,3,4]);
+  };
+
+  const getFollowingUserIds = async () => {
+            /* Request TODO
+        try{
+            const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/annotations/get?postId=${profileId}`,
+                {
+                    headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+                }
+            );
+            setProfileInfo(res.data);
+        }
+        catch(e){
+
+        } 
+        */
+
+        setFollowingProfilesList([1,2,3]);
+  };
+
+
   useEffect(() => {
-    const fetchedProfile = getProfileFromId(id); // Fetch profile based on `id`
-    if (fetchedProfile) {
-        setProfile(fetchedProfile);
-    } else {
-        setProfile(null); // Set to null if profile not found
-    }
+    getFollowerUserIds();
+    getFollowingUserIds();
+
+
     // Check if the profile belongs to the current user
     if (id === currentUserId) {
         setIsCurrentUserProfile(true);
@@ -35,8 +95,6 @@ const ProfilePage = () => {
     }
 
     // Fetch the list of profiles (you can replace this with actual API call or mock data)
-    const fetchedProfiles = getProfilesList();
-    setProfilesList(fetchedProfiles);
     
   }, [id]); // Re-run effect if `id` changes
 
@@ -77,82 +135,80 @@ const ProfilePage = () => {
         <SideBar active={""}/>
         <div className={styles.mainContainer}>
 
-          {/* Profile page minor header */}
-          <div>
+          {/* Profile Header Container*/}
+          <div className={styles.profileHeaderContainer}>
 
-            <img
-              src={profile.avatarUrl || "/default_pp.png"}
-              alt="Profile Avatar"
-              className={styles.profileAvatar}
-            />
+            {/* Profile Header Details Container */}
+            <div className={styles.profileHeaderDetailsContainer}>
+              
+              {/* Profile Header Details Avatar */}
+              <img
+                src={profile.avatarUrl || "/default_pp.png"}
+                alt="Profile Avatar"
+                className={styles.profileHeaderDetailsAvatar}
+              />
 
-            <h1 className="font-bold">{profile.username}</h1>
+              {/* Profile Header Details Nickname */}
+              <h1 className="font-bold">{profile.username}</h1>
 
-            <p>Exp Points: {profile.tournamentPoints}</p>
+              {/* Profile Header Details Exp Points */}
+              <p className="font-bold">Exp Points: {profile.tournamentPoints}</p>
 
-            {!isCurrentUserProfile && (
-                <button
-                  className={styles.profileFollowButton}
-                  onClick={() => console.log("follow")}
-                >
-                  Follow +
-                </button>
-              )
-            }
-
-            <button
-              className={styles.profileDialogButton}
-              onClick={() => console.log("followed")}
-            >
-              Followed Users
-            </button>
-            <button
-              className={styles.profileDialogButton}
-              onClick={() => console.log("followers")}
-            >
-              Followers
-            </button>
-            
-            {/* Dialog button section */}
-            <div>
-              <button
-                className={styles.profileDialogButton}
-                onClick={() => setIsDialogOpen(true)} // Open the dialog
-              >
-                Show More Options
-              </button>
             </div>
 
-            {/* Dialog section */}
-            {isDialogOpen && (
-                <div className={styles.scrollableList}>
-                {profilesList.length > 0 ? (
-                  profilesList.map((profile) => (
-                    <div key={profile.id} className={styles.profileItem}>
-                        <img
-                          src={profile.avatarUrl || "/default_pp.png"}
-                          alt={profile.username}
-                          className={styles.profileAvatar}
-                        />
-                        <div>
-                          <span>{profile.username}</span>
-                          <div className={styles.tournamentPoints}>
-                            Tournament Points: {profile.tournamentPoints}
-                          </div>
-                        </div>
-                      </div>
+            {/* Profile Header Buttons Container */}
+            <div className={styles.profileHeaderButtonsContainer}>
+
+              {/* Profile Header Buttons Follow */}
+              {!isCurrentUserProfile && (
+                  <button
+                    className={styles.profileHeaderButtonsFollowButton}
+                    onClick={() => console.log("follow")}
+                  >
+                    Follow +
+                  </button>
+                )
+              }
+
+              {/* Profile Header Buttons Following */}
+              <button
+                className={styles.profileHeaderButtonsFollowingButton}
+                onClick={() => console.log("following")}
+              >
+                Following
+              </button>
+
+              {/* Profile Header Buttons Followers */}
+              <button
+                className={styles.profileHeaderButtonsFollowersButton}
+                onClick={() => setIsDialogOpen(true)} // Open the dialog
+              >
+                Followers
+              </button>
+            </div>
+            
+            {/* Dialog section TODO */}
+            <Dialog open={isDialogOpen}>
+              <div className={styles.scrollableList}>
+                {followerProfilesList.length > 0 ? (
+                  followerProfilesList.map((profile) => (
+                    <ProfileDisplayer profileId={profile}></ProfileDisplayer>
                     ))
                   ) : (
                     <p>No profiles available</p>
                   )}
                 </div>
-              
-              )
-            }
+            </Dialog>
 
           </div>
 
-          {/* Content section */}
+          {/* Profile Content Container */}
+          <div className={styles.profileContentContainer}>
+
+            {/* Profile Content Container */}
+
+
+          </div>
           {/* Tab Buttons */}
           <div style={{ marginTop: '1rem' }}>
             <div style={{ display: 'flex', gap: '1rem' }}>

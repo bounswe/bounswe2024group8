@@ -1,16 +1,94 @@
+/* Main container */
 .mainContainer{
-    width: 60%;
+    width: 80%;
     padding: 1rem;
     display: flex;
     flex-direction: column;
 }
-.profileAvatar {
+
+
+
+/* Profile Page Parent Containers */
+.profileHeaderContainer {
+    width: 100%; /* Adjust as needed */
+    height: 20%; /* Same as width for a square */
+    padding: 1px;
+    object-fit: cover; /* Crop and fill */
+    border: 2px solid black;  /* Define the border style */
+    border-radius: 0;  /* This ensures it stays as a rectangle (default) */
+    flex-direction: column;
+}
+.profileContentContainer {
+    width: 100%; /* Adjust as needed */
+    height: 80%; /* Same as width for a square */
+    padding: 1px;
+    border: 2px solid blue;  /* Define the border style */
+    border-radius: 0;  /* This ensures it stays as a rectangle (default) */
+    flex-direction: column;
+}
+
+
+
+/* Profile Page Sub Containers */
+.profileHeaderDetailsContainer {
+    width: 100%; /* Adjust as needed */
+    height: 60%; /* Same as width for a square */
+    padding: 1px;
+    border: 1px solid black;  /* Define the border style */
+    border-radius: 0;  /* This ensures it stays as a rectangle (default) */
+    flex-direction: column;
+}
+.profileHeaderButtonsContainer{
+    width: 100%; /* Adjust as needed */
+    height: 40%; /* Same as width for a square */
+    padding: 1px;
+    border: 1px solid black;  /* Define the border style */
+    border-radius: 0;  /* This ensures it stays as a rectangle (default) */
+    flex-direction: row;
+}
+.profileContentTabsContainer {
+    width: 100%; /* Adjust as needed */
+    height: 80%; /* Same as width for a square */
+    padding: 1px;
+    border: 1px solid blue;  /* Define the border style */
+    border-radius: 0;  /* This ensures it stays as a rectangle (default) */
+    flex-direction: row;
+}
+.profileContentTabContentContainer {
+    width: 100%; /* Adjust as needed */
+    height: 80%; /* Same as width for a square */
+    padding: 1px;
+    border: 1px solid blue;  /* Define the border style */
+    border-radius: 0;  /* This ensures it stays as a rectangle (default) */
+    flex-direction: row;
+}
+
+
+
+/* Profile Page Elements */
+.profileHeaderDetailsAvatar {
     width: 100px; /* Adjust as needed */
     height: 100px; /* Same as width for a square */
+    padding: 1px;
     object-fit: cover; /* Crop and fill */
     border-radius: 50%; /* Circular shape */
-  }
-.profileFollowButton {
+}
+.profileHeaderButtonsFollowButton {
+    padding: 3px;
+    width: 150px;
+    height: 40px;
+    background-color: #383434;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+.profileHeaderButtonsFollowButton:hover {
+    background-color: #181414;
+}
+.profileHeaderButtonsFollowingButton {
     margin-top: 3px;
     width: 150px;
     height: 40px;
@@ -22,14 +100,12 @@
     font-size: 16px;
     transition: background-color 0.3s ease;
 }
-
-.profileFollowButton:hover {
+.profileHeaderButtonsFollowingButton:hover {
     background-color: #181414;
 }
-
-.profileDialogButton{
+.profileHeaderButtonsFollowersButton {
     margin-top: 3px;
-    width: 200px;
+    width: 150px;
     height: 40px;
     background-color: #383434;
     color: white;
@@ -39,76 +115,19 @@
     font-size: 16px;
     transition: background-color 0.3s ease;
 }
-
-.profileDialogButton:hover {
+.profileHeaderButtonsFollowersButton:hover {
     background-color: #181414;
 }
 
-/* Add a backdrop for the dialog */
-.dialogBackdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Ensure the dialog is on top */
-  }
-  
-  /* Style for dialog content */
-  .dialogContent {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 300px;
-    max-width: 80%;
-  }
-  
-  /* Dialog header and body styling */
-  .dialogHeader {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .dialogBody {
-    font-size: 16px;
-    margin-bottom: 20px;
-  }
-  
-  /* Dialog footer styling */
-  .dialogFooter {
-    text-align: right;
-  }
-  
-  /* Scrollable List Container */
-  .scrollableList {
-    max-height: 300px; /* Set maximum height */
-    overflow-y: auto; /* Enable vertical scrolling */
-    margin-bottom: 15px;
-  }
-  
-  .profileItem {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .profileAvatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
-  }
-  
-  .profileItem span {
-    font-size: 16px;
-    color: #333;
-  }
-  
-  
+/* Dialog Parent Containers */
+
+/* Dialog Sub Containers */
+
+/* Dialog Elements */
+
+
+
+
+
+
+

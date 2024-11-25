@@ -52,18 +52,16 @@ export function limitPostBodies(x:string){
     return count > 1024;
 }
 
-export function getProfileFromId(id: string | undefined){
+export function getProfileFromId(id: number | undefined){
     if (!id){
         return null;
     }
-    const intId = parseInt(id);
     const profiles = require("../resources/json-files/MockProfiles.json");
     for (let i = 0; i < profiles.length; i++) {
         const element: Profile = profiles[i];
-        if (element.id == intId){
+        if (element.id == id){
             return element;
         }
-        
     }
     return null;
 }
