@@ -31,7 +31,6 @@ export default function LeaderboardScreen({ route, navigation }) {
           },
         })
         .then((response) => {
-          console.log(response.data[0]);
           setLeaderboardData(response.data);
           setLoading(false);
         })
