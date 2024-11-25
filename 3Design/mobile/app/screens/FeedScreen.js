@@ -27,7 +27,7 @@ export default function FeedScreen() {
     }
   };
 
-  const categoryName = Categories.find((cat) => cat.value === category)?.label || 'All Categories';
+  const categoryName = Categories.find((cat) => cat.value === category)?.label || '3Design';
 
   const fetchPosts = async () => {
     let fetchedPosts = [];
@@ -142,16 +142,16 @@ export default function FeedScreen() {
       {/* Toggle Buttons */}
       <View style={styles.toggleContainer}>
         <TouchableOpacity
-          style={[styles.toggleButton, !showVisual && styles.activeToggle]}
-          onPress={() => setShowVisual(false)}
-        >
-          <Text style={styles.toggleText}>Text Posts</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
           style={[styles.toggleButton, showVisual && styles.activeToggle]}
           onPress={() => setShowVisual(true)}
         >
-          <Text style={styles.toggleText}>Visual Posts</Text>
+          <Text style={styles.toggleText}>Designs</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.toggleButton, !showVisual && styles.activeToggle]}
+          onPress={() => setShowVisual(false)}
+        >
+          <Text style={styles.toggleText}>Discussion</Text>
         </TouchableOpacity>
       </View>
 
