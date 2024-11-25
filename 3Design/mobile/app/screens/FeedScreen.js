@@ -1,5 +1,12 @@
 import React, { useContext, useRef, useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import { Colors } from '../constants/Colors';
 import Post from '../components/Post';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -20,6 +27,9 @@ export default function FeedScreen() {
   const [showVisual, setShowVisual] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const { user } = useContext(AuthContext);
+
+  const [remainingTime, setRemainingTime] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const disableScroll = (isDisabled) => {
     if (flatListRef.current) {
@@ -68,7 +78,7 @@ export default function FeedScreen() {
           }
         );
         fetchedPosts.push(...response.data);
-      } catch(e){}
+      } catch (e) {}
     }
     console.log(fetchedPosts);
     setPosts(fetchedPosts);
@@ -84,7 +94,7 @@ export default function FeedScreen() {
 
   const filterPostsCallback = () => {
     filterPosts(posts, showVisual);
-  }
+  };
 
   useEffect(() => {
     fetchPosts();
@@ -103,22 +113,72 @@ export default function FeedScreen() {
           'Content-Type': 'application/json',
         },
       });
-      setIsFollowing((prevState) => !prevState); // Update the button text only after a successful request
+      setIsFollowing((prevState) => !prevState);
       console.log(`Successfully ${isFollowing ? 'unfollowed' : 'followed'} category.`);
     } catch (error) {
       console.error(`Failed to ${isFollowing ? 'unfollow' : 'follow'} category:`, error);
     }
   };
 
-
   // Reset the category to null and reload the feed
   const handleResetCategory = () => {
-    navigation.setParams({ category: null }); // Set the category to null
+    navigation.setParams({ category: null });
   };
 
   const clearFilteredPosts = () => {
     setFilteredPosts([]);
     console.log('Filtered posts cleared.');
+  };
+
+  // Fetch remaining time for the tournament
+  useEffect(() => {
+    if (category) {
+      axios
+        .get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/tournament/${category}/remaining-time`)
+        .then((response) => {
+          const timeLeftInSeconds = response.data.remainingTime; // Assuming backend returns time in seconds
+          setRemainingTime(timeLeftInSeconds);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('Failed to fetch remaining time', error);
+          setLoading(false);
+        });
+    }
+  }, [category]);
+
+  // Timer countdown
+  useEffect(() => {
+    let timerInterval;
+    if (remainingTime > 0) {
+      // Start a timer to count down
+      timerInterval = setInterval(() => {
+        setRemainingTime((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(timerInterval);
+            return 0;
+          } else {
+            return prevTime - 1;
+          }
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timerInterval);
+  }, [remainingTime]);
+
+  const formatTime = (timeInSeconds) => {
+    const days = Math.floor(timeInSeconds / (24 * 3600));
+    const hours = Math.floor((timeInSeconds % (24 * 3600)) / 3600);
+    const minutes = Math.floor((timeInSeconds % 3600) / 60);
+    const seconds = timeInSeconds % 60;
+    return `${days}d, ${hours}h, ${minutes}m, ${seconds}s`;
+  };
+
+  const handleLeaderboardPress = () => {
+    navigation.navigate('Leaderboard', {
+      categoryId: category,
+      categoryName: categoryName,
+    });
   };
 
   return (
@@ -146,6 +206,26 @@ export default function FeedScreen() {
         >
           <Text style={styles.resetButtonText}>X</Text>
         </TouchableOpacity>
+      )}
+
+      {/* Weekly Tournament Box */}
+      {category && (
+        <View style={styles.tournamentBox}>
+          <Text style={styles.tournamentTitle}>Weekly Tournament for {category.label} Category</Text>
+        {loading ? (
+            <ActivityIndicator size="small" color={Colors.dark} />
+          ) : (
+            <Text style={styles.timerText}>
+              Time left: {formatTime(remainingTime)}
+            </Text>
+          )}
+          <TouchableOpacity
+            style={styles.leaderboardButton}
+            onPress={handleLeaderboardPress}
+          >
+            <Text style={styles.leaderboardButtonText}>See Leaderboard</Text>
+          </TouchableOpacity>
+        </View>
       )}
 
       {/* Toggle Buttons */}
@@ -254,4 +334,37 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
   },
+ tournamentBox: {
+   marginTop: 10,
+   padding: 15,
+   borderWidth: 2,
+   borderColor: Colors.dark,
+   borderRadius: 8,
+   backgroundColor: Colors.lightGray,
+   alignItems: 'center',
+ },
+ tournamentTitle: {
+   fontSize: 18,
+   fontWeight: 'bold',
+   color: Colors.dark,
+   textAlign: 'center',
+   marginBottom: 8, // Space between the title and timer
+ },
+ timerText: {
+   fontSize: 16,
+   color: Colors.dark,
+   textAlign: 'center',
+   marginBottom: 12, // Space between the timer and button
+ },
+ leaderboardButton: {
+   backgroundColor: Colors.primary,
+   paddingVertical: 8,
+   paddingHorizontal: 12,
+   borderRadius: 5,
+ },
+ leaderboardButtonText: {
+   color: Colors.dark,
+   fontSize: 16,
+   fontWeight: '600',
+ },
 });
