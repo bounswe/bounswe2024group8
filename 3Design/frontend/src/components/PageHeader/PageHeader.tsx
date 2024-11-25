@@ -86,7 +86,7 @@ const PageHeader = () => {
         }
         try{
             setChangePasswordConfig(prev => ({...prev, sending: true}));
-            await axios.put(`${process.env.REACT_APP_API_URL}/${localStorage.getItem("user_id")}/change-password`,
+            await axios.put(`${process.env.REACT_APP_API_URL}/api/v1/users/${localStorage.getItem("user_id")}/change-password`,
             null,
             {headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`},
                 params: {password : changePasswordConfig.newPassword}
@@ -96,7 +96,8 @@ const PageHeader = () => {
             message.success("Password successfully changed.");
             setChangePasswordConfig({dialog: false, newPassword: "", sending: false});
         }catch(e){
-            message.error("Something went wrong.")
+            message.error("Something went wrong.");
+            setChangePasswordConfig(prev => ({...prev, sending: false}));
         }
     }
     
@@ -155,6 +156,7 @@ const PageHeader = () => {
                         <p className='font-bold text-lg'>Change Your Password</p>
                         <TextField
                         label="Your New Password"
+                        type='password'
                         value={changePasswordConfig.newPassword}
                         onChange={(e) => setChangePasswordConfig(prev => ({...prev, newPassword: e.target.value}))}
                         />
