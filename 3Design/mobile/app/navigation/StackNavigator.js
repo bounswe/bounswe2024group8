@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import TabNavigator from './TabNavigator';
+import PostScreen from "../screens/PostScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,7 +23,18 @@ export default function StackNavigator() {
       <Stack.Screen
         name='Home'
         component={TabNavigator}
-        options={{ headerShown: false }}
+        options={{
+          headerShown: false,
+          unmountOnBlur: true,
+        }}
+      />
+      <Stack.Screen
+        name="Post"
+        component={PostScreen}
+        options={{
+          title: 'Post',
+          unmountOnBlur: true,
+        }}
       />
     </Stack.Navigator>
   );
