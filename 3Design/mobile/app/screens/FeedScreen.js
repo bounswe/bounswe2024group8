@@ -90,15 +90,22 @@ export default function FeedScreen() {
     filterPosts(posts, showVisual);
   }, [showVisual, posts]);
 
-  const handleFollowUnfollow = () => {
-    setIsFollowing((prevState) => !prevState);
-    axios.post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/categories/follow/${category}`, {
-      headers: {
-        Authorization: `Bearer ${user.accessToken}`,
-        'Content-Type': 'multipart/form-data',
-      },
-    })
+  const handleFollowUnfollow = async () => {
+    try {
+      const url = `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/categories/follow/${category}`;
+      await axios.post(url, null, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      setIsFollowing((prevState) => !prevState); // Update the button text only after a successful request
+      console.log(`Successfully ${isFollowing ? 'unfollowed' : 'followed'} category.`);
+    } catch (error) {
+      console.error(`Failed to ${isFollowing ? 'unfollow' : 'follow'} category:`, error);
+    }
   };
+
 
   // Reset the category to null and reload the feed
   const handleResetCategory = () => {
