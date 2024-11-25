@@ -98,7 +98,7 @@ public class AnnotationService {
                     new AnnotationResponse.CreatorDTO(
                             BACKEND_URL + "users/" + annotation.getUserId(),
                             "Person",
-                            user.getUsername()
+                            user.getNickName()
                     ),
                     annotation.getCreated(),
                     new AnnotationResponse.TargetDTO(
@@ -139,7 +139,7 @@ public class AnnotationService {
                 new AnnotationResponse.CreatorDTO(
                         BACKEND_URL + "users/" + annotation.getUserId(),
                         "Person",
-                        user.getUsername()
+                        user.getNickName()
                 ),
                 annotation.getCreated(),
                 new AnnotationResponse.TargetDTO(
