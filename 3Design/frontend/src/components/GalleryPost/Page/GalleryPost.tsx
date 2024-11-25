@@ -304,7 +304,7 @@ const fetchCommentData = async () => {
                     </div>
                     {data.isVisualPost && data.challengedPostId !== null ?
                     <div className="flex items-center mb-2"> 
-                    <Shield sx={{ backgroundColor: 'white', color: grey[500] }} className='ml-5'/>
+                    <Shield sx={{ color: grey[500] }} className='ml-5'/>
                     <p style={{ color: grey[500] }} className='ml-2'><a href={`/post/${data.challengedPostId}`}>
     <u>Challenged to post</u>
   </a></p>
