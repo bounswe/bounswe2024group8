@@ -26,6 +26,8 @@ public class UserService {
 
     final FileService fileService;
 
+    final PasswordEncoder passwordEncoder;
+
     public User getUserByEmail(String email) {
 
         User user = userRepository.findByEmail(email);
@@ -122,6 +124,23 @@ public class UserService {
         }
     }
 
+    public Boolean updatePassword(User user, Long userId, String newPassword){
+
+        if (!user.getId().equals(userId)) {
+            throw new ThreeDesignDatabaseException("You can only update your own password");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new ThreeDesignDatabaseException("Error while saving new password");
+        }
+
+        return true;
+
+    }
 
 //    public Boolean updatePassword(User user, String newPassword){
 //

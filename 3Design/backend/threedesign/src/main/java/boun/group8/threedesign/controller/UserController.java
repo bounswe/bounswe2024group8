@@ -3,6 +3,8 @@ package boun.group8.threedesign.controller;
 import boun.group8.threedesign.model.Following;
 import boun.group8.threedesign.model.User;
 import boun.group8.threedesign.service.UserService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -76,6 +78,17 @@ public class UserController {
 
         userService.uploadProfilePicture(user.getId(), file);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{userId}/change-password")
+    public ResponseEntity<Boolean> updatePassword(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long userId,
+            @Valid @NotEmpty @RequestParam String password) {
+
+        Boolean result = userService.updatePassword(user, userId, password);
+
+        return ResponseEntity.ok(result);
     }
 
 
