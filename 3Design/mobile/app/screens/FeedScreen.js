@@ -40,7 +40,7 @@ export default function FeedScreen() {
     }
   };
 
-  const categoryName = categories.find((cat) => cat.value === category)?.label || '3Design';
+  const categoryName = categories.find((cat) => cat.value === category.value)?.label || '3Design';
 
   const fetchPosts = async () => {
     let fetchedPosts = [];
@@ -60,7 +60,7 @@ export default function FeedScreen() {
     } else {
       try {
         let response = await axios.get(
-          `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${category}/nonvisual`,
+          `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${category.value}/nonvisual`,
           {
             headers: {
               Authorization: `Bearer ${user.accessToken}`,
@@ -72,7 +72,7 @@ export default function FeedScreen() {
       } catch (e) {}
       try {
         let response = await axios.get(
-          `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${category}/visual`,
+          `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/category/${category.value}/visual`,
           {
             headers: {
               Authorization: `Bearer ${user.accessToken}`,
@@ -109,7 +109,8 @@ export default function FeedScreen() {
 
   const handleFollowUnfollow = async () => {
     try {
-      const url = `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/categories/follow/${category}`;
+      const url = `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/categories/follow/${category.value}`;
+      console.log(url);
       await axios.post(url, null, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
