@@ -166,7 +166,7 @@ const dislikeClicked = async (event:any) =>{
                     </div>
                     { data.isVisualPost && data.challengedPostId !== null ?
                     <div className="flex items-center mb-2"> 
-                    <Shield sx={{ backgroundColor: 'white', color: grey[500] }} className='ml-5'/>
+                    <Shield sx={{ color: grey[500] }} className='ml-5'/>
                     <p style={{ color: grey[500] }} className='ml-2'>Challenged to <a>post</a></p>
                     </div>: null
                     }
