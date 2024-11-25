@@ -12,9 +12,10 @@ const ProfilePage = () => {
   const [userData, setUserData] = useState({});
   const [modalTitle, setModalTitle] = useState('');
   const [latestPosts, setLatestPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
+  const [showVisual, setShowVisual] = useState(false);
   const { user } = useContext(AuthContext);
-  console.log(user);
 
   const fetchUserPosts = async () => {
     try {
@@ -22,8 +23,8 @@ const ProfilePage = () => {
         headers: { Authorization: `Bearer ${user.accessToken}` },
       });
       setLatestPosts(response.data);
+      filterPosts(response.data, true);
       setLoadingPosts(false);
-      console.log(response.data);
     } catch (error) {
       console.error('Error fetching posts:', error);
       setLoadingPosts(false);
@@ -34,12 +35,25 @@ const ProfilePage = () => {
   const fetchUserData = async () => {
     try {
       const response = await axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/users/${user.userId}`, {
-        headers: { Authorization: `Bearer ${user.accessToken}` },
+        headers: {Authorization: `Bearer ${user.accessToken}`},
       });
       setUserData(response.data);
     } catch (error) {
       console.error('Error fetching userdata:', error);
     }
+  };
+
+  const filterPosts = (allPosts, showVisual) => {
+    setFilteredPosts(allPosts);
+  };
+
+  const filterPostsCallback = () => {
+    filterPosts(latestPosts, showVisual);
+  };
+
+  const clearFilteredPosts = () => {
+    setFilteredPosts([]);
+    console.log('Filtered posts cleared.');
   };
 
   useEffect(() => {
@@ -48,7 +62,6 @@ const ProfilePage = () => {
   }, [user]);
 
   const navigation = useNavigation();
-
   const renderFollowItem = ({ item }) => (
     <Text style={styles.modalItem}>{item.name}</Text>
   );
@@ -85,12 +98,44 @@ const ProfilePage = () => {
       {/*  </TouchableOpacity>*/}
       {/*</View>*/}
 
+      {/*/!* Followed and Following *!/*/}
+      {/*<View style={styles.followContainer}>*/}
+      {/*  <TouchableOpacity onPress={() => openModal(user.followed, 'Followed Users')}>*/}
+      {/*    <Text style={styles.followText}>Followed: {user.followed.length}</Text>*/}
+      {/*  </TouchableOpacity>*/}
+      {/*  <TouchableOpacity onPress={() => openModal(user.following, 'Following Users')}>*/}
+      {/*    <Text style={styles.followText}>Following: {user.following.length}</Text>*/}
+      {/*  </TouchableOpacity>*/}
+      {/*</View>*/}
+
+      {/*/!* Toggle Buttons for Discussion / Designs *!/*/}
+      {/*<View style={styles.toggleContainer}>*/}
+      {/*  <TouchableOpacity*/}
+      {/*    style={[styles.toggleButton, showVisual && styles.activeToggle]}*/}
+      {/*    onPress={() => {*/}
+      {/*      setShowVisual(true);*/}
+      {/*      filterPosts(latestPosts, true);*/}
+      {/*    }}*/}
+      {/*  >*/}
+      {/*    <Text style={styles.toggleText}>Designs</Text>*/}
+      {/*  </TouchableOpacity>*/}
+      {/*  <TouchableOpacity*/}
+      {/*    style={[styles.toggleButton, !showVisual && styles.activeToggle]}*/}
+      {/*    onPress={() => {*/}
+      {/*      setShowVisual(false);*/}
+      {/*      filterPosts(latestPosts, false);*/}
+      {/*    }}*/}
+      {/*  >*/}
+      {/*    <Text style={styles.toggleText}>Discussion</Text>*/}
+      {/*  </TouchableOpacity>*/}
+      {/*</View>*/}
+
       {/* Latest Posts */}
       <Text style={styles.latestHeader}>Latest Posts:</Text>
       <GestureHandlerRootView>
         <FlatList
           ref={flatListRef}
-          data={latestPosts}
+          data={filteredPosts}
           keyExtractor={(item) => item.postId.toString()}
           removeClippedSubviews={false}
           keyboardShouldPersistTaps="handled"
@@ -98,12 +143,14 @@ const ProfilePage = () => {
           renderItem={({ item }) => (
             <Post
               title={item.title}
-              content={item.content}
+              content={item.text}
               model={item.fileUrl}
               username={item.user.nickName}
-              id={item.id}
+              id={item.postId}
               navigation={navigation}
               disableScroll={disableScroll}
+              clearFilteredPosts={clearFilteredPosts}
+              filterPostsCallback={filterPostsCallback}
             />
           )}
         />

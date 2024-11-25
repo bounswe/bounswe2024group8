@@ -57,7 +57,11 @@ class Post extends Component {
                   content: content,
                   model: model,
                   username: username,
+                  filterPostsCallback: filterPostsCallback,
                 });
+                if(clearFilteredPosts) {
+                  clearFilteredPosts();
+                }
               }
               }>
               <Text style={styles.postTitle}>{title}</Text>
