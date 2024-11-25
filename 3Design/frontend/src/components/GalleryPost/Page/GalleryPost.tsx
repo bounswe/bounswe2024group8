@@ -446,7 +446,7 @@ const fetchCommentData = async () => {
               <div className={styles.annotationDataContainer}>
                   {currentAnnotations.map((item, index) => (
                     <div key={`ant_container_${index}`} className={`flex flex-col gap-2 pb-4 ${styles.singleAnnotationContainer}`}>
-                      <a className='text-blue-600' href={`/profile/${item.userId}`}><u>{item.username}</u></a>
+                      <a className='text-blue-600' href={`/profile/${item.userId.split("/").pop()}`}><u>{item.username}</u></a>
                       <div className={`${styles.ellipsis} font-bold`} title= {`Annotated text: "${item.annotatedText}"`}>Annotated text: "{item.annotatedText}"</div>
                       <p>{item.annotation}</p>
                     </div>

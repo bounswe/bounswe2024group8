@@ -86,10 +86,15 @@ const PageHeader = () => {
         }
         try{
             setChangePasswordConfig(prev => ({...prev, sending: true}));
-
-            // PUT Request
+            await axios.put(`${process.env.REACT_APP_API_URL}/${localStorage.getItem("user_id")}/change-password`,
+            null,
+            {headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`},
+                params: {password : changePasswordConfig.newPassword}
+            }
+            );
+            
             message.success("Password successfully changed.");
-            setChangePasswordConfig({dialog: false, newPassword: "", sending: false})
+            setChangePasswordConfig({dialog: false, newPassword: "", sending: false});
         }catch(e){
             message.error("Something went wrong.")
         }
@@ -131,7 +136,7 @@ const PageHeader = () => {
                         <Avatar sx={{ width: 100, height: 100 }} src={profileInfo.profilePictureUrl ?? "/default_pp.png"}/>
                     </button>
                     <input accept='.png,.jpg,.jpeg' type='file' style={{display: "none"}} ref={imageRef} onChange={changeProfilePicture}/>
-                    <button className={`btn btn-link ${styles.usernameText}`}>{profileInfo.nickName}</button>
+                    <button onClick={() => window.location.href = `/profile/${localStorage.getItem("user_id")}`} className={`btn btn-link ${styles.usernameText}`}>{profileInfo.nickName}</button>
                     <p>User Experience Points: {profileInfo.experience}</p>
                     <div className='flex justify-center gap-4 items-center'>
                         <button className='btn btn-primary text-white' onClick={() => setProfileDialog(false)}>Back to Gallery</button>
