@@ -120,8 +120,21 @@ const Comment = ({commentData} : Props) => {
     return (
         <div className="pb-4 border-b border-t border-gray-300 w-full"> 
           <div className="flex items-center mt-2"> 
+          <button onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `/profile/${data.user?.id}`;
+                    }
+            } style={{ cursor: 'pointer'}}>
             <img src={data.user.profilePictureUrl || "/default_pp.png"} className="mr-2 w-7 h-7 rounded-full pixelated" /> 
+            </button>
+            <button onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `/profile/${data.user?.id}`;
+                    }
+            } style={{ cursor: 'pointer'}}>
             <p className="font-bold mr-2 mb-2">{data.user.nickName}</p> 
+            </button>
+          
           </div>
           <p className="flex items-center ml-11 w-11/12 break-words">{data.text}</p>
           <div className='flex gap-6 mt-1'>
