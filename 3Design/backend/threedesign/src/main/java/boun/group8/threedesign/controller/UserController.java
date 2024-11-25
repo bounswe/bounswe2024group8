@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -71,10 +72,12 @@ public class UserController {
         return ResponseEntity.ok(following);
     }
 
-    @PostMapping("/profile-picture/upload")
+    @PostMapping(value = "/profile-picture/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @Operation(summary = "Upload a profile picture", description = "Allows a user to upload a profile picture.")
     public ResponseEntity<String> uploadProfilePicture(
             @AuthenticationPrincipal User user,
-            @RequestParam("file") MultipartFile file) {
+//            @Parameter(description = "Profile picture file to upload", schema = @Schema(type = "string", format = "binary"))
+            @RequestPart("file") MultipartFile file) {
 
         userService.uploadProfilePicture(user.getId(), file);
         return ResponseEntity.ok().build();
