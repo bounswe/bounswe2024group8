@@ -33,7 +33,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     //        "ORDER BY p.id DESC")
     //List<PostResponse> findAllPostsAndUserReactionsByUserDefault(@Param("user") User user, @Param("userId") Long userId);
 
-    @Query("SELECT p FROM Post p WHERE p.categoryId IN (SELECT uc.categoryId FROM UserCategory uc WHERE uc.userId = :userId) ORDER BY p.id DESC")
+    @Query("SELECT p FROM Post p WHERE p.categoryId IN (SELECT uc.categoryId FROM UserCategory uc WHERE uc.userId = :userId)"+
+            "OR p.user.id IN (SELECT f.followedUserId FROM Following f WHERE f.followerUserId = :userId) ORDER BY p.id DESC")
     List<Post> findAllPostsByUserDefault(@Param("userId") Long userId);
 
 
@@ -88,6 +89,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p JOIN Reaction r ON p.id = r.post.id WHERE r.user.id = :userId AND r.bookmark = true")
     List<Post> findAllBookmarkedPosts(@Param("userId") Long userId);
+
+    int countByUserId(Long userId);
 
 
 }

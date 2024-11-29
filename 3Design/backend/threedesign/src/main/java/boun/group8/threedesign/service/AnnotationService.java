@@ -30,16 +30,7 @@ public class AnnotationService {
 
     final PostRepository postRepository;
 
-    String BACKEND_URL = "https://localhost:8080/api/v1/"; //TODO: CHANGE THIS
-
-    public List<Annotation> getAnnotationsByPostId(Long postId) {
-
-        return annotationRepository.findAllByPostId(postId);
-    }
-
-    public List<Annotation> getAnnotationsByCommentId(Long commentId) {
-        return annotationRepository.findAllByCommentId(commentId);
-    }
+    String BACKEND_URL = "http://localhost:8080/api/v1/"; //TODO: CHANGE THIS
 
     public Annotation addAnnotation(Long postId, Long commentId, Long userId, Integer startIndex, Integer endIndex, String content) {
 
@@ -82,15 +73,14 @@ public class AnnotationService {
         }
 
         String getUrl;
-        String annotationUrl;
         if (postId != null) {
             annotations = annotationRepository.findAllByPostId(postId);
             getUrl = "posts/" + postId;
-            annotationUrl =  "annotations/get?postId" + postId;
+//            annotationUrl =  "annotations/get?postId=" + postId;
         } else if (commentId != null) {
             annotations = annotationRepository.findAllByCommentId(commentId);
             getUrl = "comments/"+commentId;
-            annotationUrl = "annotations/get?commentId" + commentId;
+//            annotationUrl = "annotations/get?commentId=" + commentId;
         } else {
             throw new IllegalArgumentException("Either postId or commentId must be provided.");
         }
@@ -99,15 +89,16 @@ public class AnnotationService {
             User user = userRepository.findById(annotation.getUserId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
+            String annotationUrl = "annotations/" + annotation.getId();
             return new AnnotationResponse(
                     "http://www.w3.org/ns/anno.jsonld",
                     BACKEND_URL + annotationUrl,
                     "Annotation",
                     annotation.getContent(),
                     new AnnotationResponse.CreatorDTO(
-                            BACKEND_URL + "users/" + getUrl,
+                            BACKEND_URL + "users/" + annotation.getUserId(),
                             "Person",
-                            user.getUsername()
+                            user.getNickName()
                     ),
                     annotation.getCreated(),
                     new AnnotationResponse.TargetDTO(
@@ -133,12 +124,13 @@ public class AnnotationService {
         String getUrl;
         if (annotation.getPostId() != null) {
             getUrl = "posts/" + annotation.getPostId();
-            annotationUrl =  "annotations/get?postId" + annotation.getPostId();
+//            annotationUrl =  "annotations/get?postId=" + annotation.getPostId();
         } else {
             getUrl = "comments/"+annotation.getCommentId();
-            annotationUrl = "annotations/get?commentId" + annotation.getCommentId();
+//            annotationUrl = "annotations/get?commentId=" + annotation.getCommentId();
         }
 
+        annotationUrl = "annotations/" + id;
         return new AnnotationResponse(
                 "http://www.w3.org/ns/anno.jsonld",
                 BACKEND_URL + annotationUrl,
@@ -147,7 +139,7 @@ public class AnnotationService {
                 new AnnotationResponse.CreatorDTO(
                         BACKEND_URL + "users/" + annotation.getUserId(),
                         "Person",
-                        user.getUsername()
+                        user.getNickName()
                 ),
                 annotation.getCreated(),
                 new AnnotationResponse.TargetDTO(

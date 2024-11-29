@@ -16,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class CommentService {
     final CommentRepository commentRepository;
     final ReactionRepository reactionRepository;
     final PostRepository postRepository;
+    final TournamentService tournamentService;
 
 
     public CommentReactionResponse reactToComment(User user, ReactionType reactionType, Long commentId) {
@@ -93,10 +95,15 @@ public class CommentService {
     }
 
 
-
+    @Transactional
     public Comment createComment(User user, CommentCreateRequest request) {
 
         Post post = postRepository.getPostById(request.getPostId());
+
+        List<Comment> oldComments = commentRepository.findByPostIdAndUserId(post.getId(), user.getId());
+        if (oldComments.isEmpty() && !post.getUser().getId().equals(user.getId())) {
+            tournamentService.updatePostScoreIfPossible(post, 3);
+        }
 
         Comment comment = Comment.builder()
                 .text(request.getText())
@@ -134,9 +141,5 @@ public class CommentService {
             throw new ThreeDesignDatabaseException("Post not found");
 
         return commentRepository.findAllCommentsAndReactionsByPostAndUser(user.getId(), postId);
-    }
-
-    public List<Comment> getCommentsByPostAndUser(Long userId, Long postId) {
-        return commentRepository.findCommentsByPostAndUser(userId, postId);
     }
 }

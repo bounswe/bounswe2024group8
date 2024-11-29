@@ -13,11 +13,13 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -32,20 +34,33 @@ public class PostController {
     final CommentService commentService;
 
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Post> createPost(
             @AuthenticationPrincipal User user,
-            @ModelAttribute PostCreateRequest request) throws IOException {
+            @Valid @ModelAttribute PostCreateRequest request,
+            @RequestPart(required = false) MultipartFile file) throws Exception {
 
+        request.setFile(file);
         Post createdPost = postService.createPost(user, request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<Post> getPostById(@PathVariable Long id) {
 
         Post post = postService.getPostByIdElseThrow(id);
+
+        return ResponseEntity.ok(post);
+    }
+
+    @GetMapping("/new/{id}")
+    public ResponseEntity<PostResponse> getPostResponseById(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id) {
+
+        PostResponse post = postService.getPostResponseByIdElseThrow(user, id);
 
         return ResponseEntity.ok(post);
     }

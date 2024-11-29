@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text} from "react-native";
+import {View, StyleSheet, Text, TouchableOpacity} from "react-native";
 import OBJViewer from '../components/ObjectViewer';
 
 class Post extends Component {
@@ -11,13 +11,32 @@ class Post extends Component {
   }
 
   render() {
-    const { title, content, model, disableScroll } = this.props;
+    const { title, content, model, id, userId, username, navigation, disableScroll , clearFilteredPosts, filterPostsCallback} = this.props;
 
     if(model) {
       return (
         <View style={styles.postContainer}>
+          {username && <Text style={styles.username}>{username}</Text>}
           <View>
-            <Text style={styles.postTitle}>{title}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                console.log("clicked");
+                navigation.navigate('Post', {
+                  postId: id,
+                  title: title,
+                  content: content,
+                  model: model,
+                  username: username,
+                  userId: userId,
+                  filterPostsCallback: filterPostsCallback,
+                });
+                if(clearFilteredPosts) {
+                  clearFilteredPosts();
+                }
+              }
+            }>
+              <Text style={styles.postTitle}>{title}</Text>
+            </TouchableOpacity>
             <Text style={styles.postContent}>{content}</Text>
           </View>
           <View style={styles.modelView}>
@@ -28,8 +47,27 @@ class Post extends Component {
     } else {
       return (
         <View style={styles.postContainer}>
+          {username && <Text style={styles.username}>{username}</Text>}
           <View>
-            <Text style={styles.postTitle}>{title}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                console.log("clicked");
+                navigation.navigate('Post', {
+                  postId: id,
+                  title: title,
+                  content: content,
+                  model: model,
+                  username: username,
+                  userId: userId,
+                  filterPostsCallback: filterPostsCallback,
+                });
+                if(clearFilteredPosts) {
+                  clearFilteredPosts();
+                }
+              }
+              }>
+              <Text style={styles.postTitle}>{title}</Text>
+            </TouchableOpacity>
             <Text style={styles.postContent}>{content}</Text>
           </View>
         </View>
@@ -65,6 +103,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 300,
     backgroundColor: 'white',
+  },
+  username: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#555',
+    marginBottom: 5,
+    fontStyle: 'italic',
   },
 });
 

@@ -17,7 +17,7 @@ import boun.group8.threedesign.repository.CategoryRepository;
 
 import boun.group8.threedesign.payload.PostCreateRequest;
 import boun.group8.threedesign.repository.PostRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -39,11 +39,11 @@ public class PostService {
     final WikidataService wikidataService;
     final UserService userService;
     final CommentService commentService;
+    final TournamentService tournamentService;
 
 
 
     final CategoryRepository categoryRepository;
-    final TournamentService tournamentService;
 
     @Transactional
     public Post createPost(User user, PostCreateRequest request) throws IOException {
@@ -83,15 +83,7 @@ public class PostService {
     }
 
     private void validatePostRequest(PostCreateRequest request) {
-        if (request.getTitle() == null || request.getTitle().isBlank()) {
-            throw new ThreeDesignDatabaseException("Title not found");
-        }
-        if (request.getText() == null || request.getText().isBlank()) {
-            throw new ThreeDesignDatabaseException("Text not found");
-        }
-        if (request.getIsVisualPost() == null) {
-            throw new ThreeDesignDatabaseException("Select post type");
-        }
+
         if (!categoryRepository.existsById(request.getCategoryId())) {
             throw new ThreeDesignDatabaseException("Category does not exist");
         }
@@ -129,6 +121,16 @@ public class PostService {
 
         return post;
 
+    }
+
+    public PostResponse getPostResponseByIdElseThrow(User user, Long id) {
+        Post post = getPostByIdElseThrow(id);
+
+        if (post == null) {
+            throw new ThreeDesignDatabaseException("Post not found with ID: " + id);
+        }
+
+        return convertPostToPostResponse(user, post);
     }
 
     public List<PostResponse> searchPosts(User user, String keyword) {
@@ -190,7 +192,37 @@ public class PostService {
         return result;
     }
 
+    public PostResponse convertPostToPostResponse(User user, Post post) {
+        Reaction reaction = reactionRepository.findByPostIdAndUserId(post.getId(), user.getId());
+        ReactionType reactionType = ReactionType.NONE;
+        Boolean bookmark = false;
 
+        if (reaction != null) {
+            reactionType = reaction.getReactionType();
+            bookmark = reaction.getBookmark();
+        }
+
+        return PostResponse.builder()
+                .postId(post.getId())
+                .text(post.getText())
+                .user(post.getUser())
+                .title(post.getTitle())
+                .likes(post.getLikes())
+                .dislikes(post.getDislikes())
+                .comments(post.getComments())
+                .categoryId(post.getCategoryId())
+                .isVisualPost(post.getIsVisualPost())
+                .fileUrl(post.getFileUrl())
+                .challengedPostId(post.getChallengedPostId())
+                .tags(post.getTags())
+                .createdAt(post.getCreatedAt())
+                .reactionId(reaction == null ? -1L : reaction.getId())
+                .reactionType(reactionType)
+                .bookmark(bookmark)
+                .build();
+    }
+
+    @Transactional
     public ReactionResponse reactToPost(User user, ReactionRequest request, Long postId) {
 
         Long userId = user.getId();
@@ -206,7 +238,7 @@ public class PostService {
         if (reaction != null) {
 
             ReactionType oldReactionType = reaction.getReactionType();
-            reaction.setBookmark(bookmark);
+            boolean oldBookmark = reaction.getBookmark();
 
             if (oldReactionType.equals(ReactionType.LIKE)) {
                 if (reactionType.equals(ReactionType.DISLIKE)) {
@@ -231,6 +263,17 @@ public class PostService {
             }
 
             reaction.setReactionType(reactionType);
+            reaction.setBookmark(bookmark);
+
+
+            if (!post.getUser().getId().equals(user.getId())) {
+                int oldReactionScore = tournamentService.calculateReactionScore(oldReactionType, oldBookmark);
+                int newReactionScore = tournamentService.calculateReactionScore(reactionType, bookmark);
+
+                tournamentService.updatePostScoreIfPossible(post, newReactionScore - oldReactionScore);
+            }
+
+
             reactionRepository.save(reaction);
             postRepository.save(post);
         } else {
@@ -247,6 +290,10 @@ public class PostService {
                 post.setLikes(post.getLikes() + 1);
             } else if (reactionType.equals(ReactionType.DISLIKE)) {
                 post.setDislikes(post.getDislikes() + 1);
+            }
+
+            if (!post.getUser().equals(user)) {
+                tournamentService.updatePostScoreIfPossible(post, tournamentService.calculateReactionScore(reactionType, bookmark));
             }
             postRepository.save(post);
         }
@@ -268,7 +315,15 @@ public class PostService {
             return new ArrayList<>();
         }
 
-        return convertPostsToPostResponses(user, posts);
+        Set<Post> postSet = new HashSet<>();
+
+        postSet.addAll(posts);
+
+        List<Post> sortedPosts = postSet.stream()
+                .sorted(Comparator.comparing(Post::getId).reversed())
+                .collect(Collectors.toList());
+
+        return convertPostsToPostResponses(user, sortedPosts);
     }
 
     public List<PostResponse> getVisualPostsByCategory(User user, Long categoryId) {

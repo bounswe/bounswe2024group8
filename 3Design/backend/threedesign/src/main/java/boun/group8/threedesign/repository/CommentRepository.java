@@ -21,8 +21,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "ORDER BY c.createdAt DESC")
     List<CommentResponse> findAllCommentsAndReactionsByPostAndUser(@Param("userId") Long userId, @Param("postId") Long postId);
 
-    @Query("SELECT c FROM Comment c WHERE c.post.id = :postId AND c.user.id = :userId")
-    List<Comment> findCommentsByPostAndUser(@Param("userId") Long userId, @Param("postId") Long postId);
+    List<Comment> findByPostIdAndUserId(Long postId, Long userId);
+
+
+    int countByUserId(Long userId);
 
 
 }

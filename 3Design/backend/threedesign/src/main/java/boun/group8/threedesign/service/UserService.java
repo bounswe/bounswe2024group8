@@ -24,6 +24,10 @@ public class UserService {
 
     final FollowingRepository followingRepository;
 
+    final FileService fileService;
+
+    final PasswordEncoder passwordEncoder;
+
     public User getUserByEmail(String email) {
 
         User user = userRepository.findByEmail(email);
@@ -96,7 +100,47 @@ public class UserService {
         return followingRepository.findAllByFollowerUserId(userId).stream().map(Following::getFollowedUserId).toList();
     }
 
+    public void uploadProfilePicture(Long id, MultipartFile file) {
 
+        User user = userRepository.findUserById(id);
+
+        if (user == null) {
+            throw new ThreeDesignDatabaseException("User not found with id: " + id);
+        }
+
+        String url;
+        try {
+            url = fileService.uploadFile(file, "profile-pictures");
+        } catch (Exception e) {
+            throw new ThreeDesignDatabaseException("Error while uploading profile picture");
+        }
+
+        user.setProfilePictureUrl(url);
+
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new ThreeDesignDatabaseException("Error while saving profile picture");
+        }
+    }
+
+    public Boolean updatePassword(User user, Long userId, String newPassword){
+
+        if (!user.getId().equals(userId)) {
+            throw new ThreeDesignDatabaseException("You can only update your own password");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new ThreeDesignDatabaseException("Error while saving new password");
+        }
+
+        return true;
+
+    }
 
 //    public Boolean updatePassword(User user, String newPassword){
 //

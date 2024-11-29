@@ -1,27 +1,24 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors } from '../constants/Colors';
+import { Categories } from '../constants/Categories';
+import {useNavigation} from "@react-navigation/native";
+import {useCategories} from "../context/CategoryContext";
 
 export default function CategoriesScreen() {
-  const categories = [
-    'Characters',
-    'Environments',
-    'Props',
-    'Vehicles',
-    'Animations',
-  ];
-
+  const navigation = useNavigation();
+  const { categories, loading, error } = useCategories();
   return (
     <View style={styles.body}>
       <Text style={styles.title}>Select a Category</Text>
       <View style={styles.categoriesContainer}>
-        {categories.map((category, index) => (
+        {categories.map((category) => (
           <TouchableOpacity
-            key={index}
+            key={category.value}
             style={styles.categoryButton}
-            onPress={() => {}}
+            onPress={() => {navigation.navigate('Feed', { category: category})}}
           >
-            <Text style={styles.categoryButtonText}>{category}</Text>
+            <Text style={styles.categoryButtonText}>{category.label}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -35,7 +32,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light,
     padding: 20,
     justifyContent: 'center', // Center items vertically
-    alignItems: 'center',    // Center items horizontally
+    alignItems: 'center', // Center items horizontally
   },
   title: {
     fontSize: 24,
