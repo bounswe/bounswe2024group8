@@ -26,12 +26,6 @@ const DViewer = ({filePath}: Props) => {
         }
 
         let viewer = new OV.EmbeddedViewer (parentDiv!, {
-        camera: new OV.Camera(
-            new OV.Coord3D(-150.0, 200.0, 300.0),
-            new OV.Coord3D(0.0, 0.0, 0.0),
-            new OV.Coord3D(0.0, 1.0, 0.0),
-            45.0
-        ),
         backgroundColor: new OV.RGBAColor(255, 255, 255, 255),
         defaultColor: new OV.RGBColor(0, 100, 100),
         edgeSettings : new OV.EdgeSettings (false, new OV.RGBColor (0, 0, 0), 1),
