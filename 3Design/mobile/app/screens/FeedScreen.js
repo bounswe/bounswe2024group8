@@ -83,7 +83,7 @@ export default function FeedScreen() {
         fetchedPosts.push(...response.data);
       } catch (e) {}
     }
-    console.log(fetchedPosts);
+    //console.log(fetchedPosts);
     setPosts(fetchedPosts);
     filterPosts(fetchedPosts, showVisual);
   };
