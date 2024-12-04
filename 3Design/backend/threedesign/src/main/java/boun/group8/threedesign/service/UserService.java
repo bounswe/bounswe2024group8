@@ -3,6 +3,7 @@ package boun.group8.threedesign.service;
 import boun.group8.threedesign.exception.custom.ThreeDesignDatabaseException;
 import boun.group8.threedesign.model.Following;
 import boun.group8.threedesign.model.User;
+import boun.group8.threedesign.payload.UserResponse;
 import boun.group8.threedesign.repository.FollowingRepository;
 import boun.group8.threedesign.repository.UserRepository;
 import lombok.AccessLevel;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -45,6 +47,23 @@ public class UserService {
         }
 
         return user;
+    }
+
+    public UserResponse getUserResponseById(User user, Long id) {
+        User userById = userRepository.findUserById(id);
+
+        if (userById == null) {
+            throw new ThreeDesignDatabaseException("User not found with id: " + id);
+        }
+
+        return UserResponse.builder()
+                .userId(userById.getId())
+                .email(userById.getEmail())
+                .nickName(userById.getNickName())
+                .profilePictureUrl(userById.getProfilePictureUrl())
+                .experience(userById.getExperience())
+                .isFollowed(followingRepository.findByFollowerUserIdAndFollowedUserId(user.getId(), userById.getId()) != null)
+                .build();
     }
 
     public Following followUser(Long followerUserId, Long followedUserId) {
@@ -140,6 +159,27 @@ public class UserService {
 
         return true;
 
+    }
+
+    public List<UserResponse> searchUsers(User user, String keyword) {
+        List<User> results = userRepository.findByNickNameContainingIgnoreCase(keyword);
+
+        if (results.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return convertToUserResponse(user, results);
+    }
+
+    public List<UserResponse> convertToUserResponse(User user, List<User> users) {
+        return users.stream().map(u -> UserResponse.builder()
+                .userId(u.getId())
+                .email(u.getEmail())
+                .nickName(u.getNickName())
+                .profilePictureUrl(u.getProfilePictureUrl())
+                .experience(u.getExperience())
+                .isFollowed(followingRepository.findByFollowerUserIdAndFollowedUserId(user.getId(), u.getId()) != null)
+                .build()).toList();
     }
 
 //    public Boolean updatePassword(User user, String newPassword){
