@@ -17,6 +17,8 @@ public class GoogleCloudStorageCDNService implements CDNService {
 
     final String bucketName;
 
+    final String PUBLIC_URL = "https://storage.googleapis.com/";
+
     public GoogleCloudStorageCDNService(@Value("${gcp.bucket.name}") String bucketName) {
         this.storage = StorageOptions.getDefaultInstance().getService();
         this.bucketName = bucketName;
@@ -27,11 +29,9 @@ public class GoogleCloudStorageCDNService implements CDNService {
     public String uploadFile(byte[] fileBytes, String folderName, String fileName) throws IOException {
         BlobId blobId = BlobId.of(bucketName, folderName + "/" + fileName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-        var created = storage.create(blobInfo, fileBytes);
+        storage.create(blobInfo, fileBytes);
 
-        return created.getMediaLink();
-
-
+        return PUBLIC_URL + bucketName + "/" + folderName + "/" + fileName;
     }
 
 
