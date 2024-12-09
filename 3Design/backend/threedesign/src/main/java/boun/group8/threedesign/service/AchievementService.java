@@ -25,11 +25,12 @@ public class AchievementService {
     final ReactionRepository reactionRepository;
     final AnnotationRepository annotationRepository;
     final UserRepository userRepository;
+    private final FollowingRepository followingRepository;
 
     List<Achievement> achievements;
 
     public AchievementService(final AchievementRepository achievementRepository,
-                              final UserAchievementRepository userAchievementRepository, final CommentRepository commentRepository, PostRepository postRepository, ReactionRepository reactionRepository, AnnotationRepository annotationRepository, UserRepository userRepository) {
+                              final UserAchievementRepository userAchievementRepository, final CommentRepository commentRepository, PostRepository postRepository, ReactionRepository reactionRepository, AnnotationRepository annotationRepository, UserRepository userRepository, FollowingRepository followingRepository) {
         this.achievementRepository = achievementRepository;
         this.userAchievementRepository = userAchievementRepository;
         this.commentRepository = commentRepository;
@@ -37,6 +38,7 @@ public class AchievementService {
         this.reactionRepository = reactionRepository;
         this.annotationRepository = annotationRepository;
         this.userRepository = userRepository;
+        this.followingRepository = followingRepository;
         initializeAchievements();
     }
 
@@ -91,7 +93,7 @@ public class AchievementService {
         updateAchievements();
 
         for (boun.group8.threedesign.model.enums.Achievement achievement : boun.group8.threedesign.model.enums.Achievement.values()) {
-            achievement.setRepositories(userAchievementRepository, commentRepository, postRepository, reactionRepository, annotationRepository, userRepository);
+            achievement.setRepositories(userAchievementRepository, commentRepository, postRepository, reactionRepository, annotationRepository, userRepository, followingRepository);
         }
 
     }

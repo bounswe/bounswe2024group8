@@ -11,5 +11,7 @@ public interface AnnotationRepository extends JpaRepository<Annotation, Long> {
 
     List<Annotation> findAllByCommentId(Long commentId);
 
+    int countByUserId(Long userId);
+
 
 }

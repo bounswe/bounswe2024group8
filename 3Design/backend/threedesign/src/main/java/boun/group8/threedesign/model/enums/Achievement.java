@@ -40,6 +40,35 @@ public enum Achievement {
         }
     },
 
+    BOOKWORM(5L, "Bookworm", "Bookmark a design", 10) {
+        @Override
+        public boolean meetsCriteria(User user) { return reactionRepository.countByUserIdAndBookmark(user.getId(), true) >= 1; }
+    },
+
+    CRITIC(6L, "Critic", "Dislike a design", 10) {
+        @Override
+        public boolean meetsCriteria(User user) { return reactionRepository.countByUserIdAndReactionType(user.getId(), ReactionType.DISLIKE) >= 1; }
+    },
+
+    ICON(7L, "Icon", "Have 5 followers", 10) {
+        @Override
+        public boolean meetsCriteria(User user) { return followingRepository.countByFollowedUserId(user.getId()) >= 5; }
+    },
+
+    CHALLENGER(8L, "Challenger", "Challenge a post", 10) {
+        @Override
+        public boolean meetsCriteria(User user) { return postRepository.countChallengingPostsByUser(user.getId()) >= 5; }
+    },
+
+    GENIUS(9L, "Genius", "Annotate a design", 10) {
+        @Override
+        public boolean meetsCriteria(User user) { return annotationRepository.countByUserId(user.getId()) >= 1; }
+    },
+
+    ARTIST(10L, "Artist", "Receive 5 likes with a post", 10) {
+        @Override
+        public boolean meetsCriteria(User user) { return postRepository.countByUserIdAndAndLikes(user.getId(), 5) >= 1; }
+    },
     ;
 
     private final long id;
@@ -53,6 +82,7 @@ public enum Achievement {
     public ReactionRepository reactionRepository;
     public AnnotationRepository annotationRepository;
     public UserRepository userRepository;
+    public FollowingRepository followingRepository;
 
 
     Achievement(long id, String name, String description, int point) {
@@ -62,13 +92,14 @@ public enum Achievement {
         this.point = point;
     }
 
-    public void setRepositories(UserAchievementRepository userAchievementRepository, CommentRepository commentRepository, PostRepository postRepository, ReactionRepository reactionRepository, AnnotationRepository annotationRepository, UserRepository userRepository) {
+    public void setRepositories(UserAchievementRepository userAchievementRepository, CommentRepository commentRepository, PostRepository postRepository, ReactionRepository reactionRepository, AnnotationRepository annotationRepository, UserRepository userRepository, FollowingRepository followingRepository) {
         this.userAchievementRepository = userAchievementRepository;
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.reactionRepository = reactionRepository;
         this.annotationRepository = annotationRepository;
         this.userRepository = userRepository;
+        this.followingRepository = followingRepository;
     }
 
 
