@@ -2,6 +2,8 @@ package boun.group8.threedesign.controller;
 
 import boun.group8.threedesign.model.Following;
 import boun.group8.threedesign.model.User;
+import boun.group8.threedesign.payload.PostResponse;
+import boun.group8.threedesign.payload.UserResponse;
 import boun.group8.threedesign.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -41,6 +43,16 @@ public class UserController {
         User user = userService.getUserById(id);
 
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<UserResponse> getUserResponseById(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id) {
+
+        UserResponse userResponse = userService.getUserResponseById(user, id);
+
+        return ResponseEntity.ok(userResponse);
     }
 
     @PostMapping("/follow")
@@ -90,6 +102,20 @@ public class UserController {
             @Valid @NotEmpty @RequestParam String password) {
 
         Boolean result = userService.updatePassword(user, userId, password);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserResponse>> search(
+            @AuthenticationPrincipal User user,
+            @RequestParam String keyword) {
+
+        var result = userService.searchUsers(user, keyword);
+
+        if (result.isEmpty() ) {
+            return ResponseEntity.notFound().build();
+        }
 
         return ResponseEntity.ok(result);
     }
