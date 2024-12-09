@@ -92,5 +92,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     int countByUserId(Long userId);
 
+    @Query("SELECT COUNT(p) FROM Post p WHERE p.user.id = :userId AND p.challengedPostId IS NOT NULL")
+    int countChallengingPostsByUser(@Param("userId") Long userId);
 
+    int countByUserIdAndAndLikes(Long userId, Integer likes);
 }
