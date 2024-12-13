@@ -1,15 +1,38 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, Button, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TextInput,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
 import axios from 'axios';
 import { Colors } from '../constants/Colors';
-import { AuthContext } from "../context/AuthContext";
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { AuthContext } from '../context/AuthContext';
+import { MaterialIcons } from '@expo/vector-icons';
 import OBJViewer from '../components/ObjectViewer';
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useNavigation } from "@react-navigation/native";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 export default function PostScreen({ route }) {
-  const { postId, title, content, model, username, userId, filterPostsCallback } = route.params;
+  const {
+    postId,
+    title,
+    content,
+    model,
+    username,
+    userId,
+    filterPostsCallback,
+    reactionType,
+  } = route.params;
+  const [isLiked, setIsLiked] = useState(
+    reactionType === 'LIKE' ? true : false
+  );
+  const [isDisliked, setIsDisliked] = useState(
+    reactionType === 'DISLIKE' ? true : false
+  );
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
   const [comments, setComments] = useState([]);
@@ -18,9 +41,10 @@ export default function PostScreen({ route }) {
   const navigation = useNavigation();
 
   const fetchPostData = () => {
-    axios.get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}`, {
-      headers: { Authorization: `Bearer ${user.accessToken}` },
-    })
+    axios
+      .get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}`, {
+        headers: { Authorization: `Bearer ${user.accessToken}` },
+      })
       .then((response) => {
         const { likes, dislikes } = response.data;
         setLikes(likes);
@@ -33,10 +57,14 @@ export default function PostScreen({ route }) {
 
   const fetchComments = () => {
     axios
-      .get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/comments/post/${postId}`, {
-        headers: { Authorization: `Bearer ${user.accessToken}` },
-      })
+      .get(
+        `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/comments/post/${postId}`,
+        {
+          headers: { Authorization: `Bearer ${user.accessToken}` },
+        }
+      )
       .then((response) => {
+        //console.log(response.data);
         setComments(response.data);
       })
       .catch((error) => {
@@ -64,53 +92,143 @@ export default function PostScreen({ route }) {
   }, [navigation, filterPostsCallback]);
 
   const likePost = () => {
-    axios.post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}/react`, {
-      "reactionType": "LIKE",
-      "bookmark": false
-    }, {
-      headers: { Authorization: `Bearer ${user.accessToken}` },
-    })
-      .then(() => setLikes((prevLikes) => prevLikes + 1))
-      .catch((error) => console.error(error));
+    if (isLiked) {
+      axios
+        .post(
+          `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}/react`,
+          {
+            reactionType: 'NONE',
+            bookmark: false,
+          },
+          {
+            headers: { Authorization: `Bearer ${user.accessToken}` },
+          }
+        )
+        .then((response) => {
+          setLikes(response.data.likes);
+          setDislikes(response.data.dislikes);
+          setIsLiked(false);
+        })
+        .catch((error) => console.error(error));
+    } else {
+      axios
+        .post(
+          `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}/react`,
+          {
+            reactionType: 'LIKE',
+            bookmark: false,
+          },
+          {
+            headers: { Authorization: `Bearer ${user.accessToken}` },
+          }
+        )
+        .then((response) => {
+          setLikes(response.data.likes);
+          setDislikes(response.data.dislikes);
+          setIsLiked(true);
+          setIsDisliked(false);
+        })
+        .catch((error) => console.error(error));
+    }
   };
 
   const dislikePost = () => {
-    axios.post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}/react`, {
-      "reactionType": "DISLIKE",
-      "bookmark": false
-    }, {
-      headers: { Authorization: `Bearer ${user.accessToken}` },
-    })
-      .then(() => setDislikes((prevDislikes) => prevDislikes + 1))
-      .catch((error) => console.error(error));
+    if (isDisliked) {
+      axios
+        .post(
+          `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}/react`,
+          {
+            reactionType: 'NONE',
+            bookmark: false,
+          },
+          {
+            headers: { Authorization: `Bearer ${user.accessToken}` },
+          }
+        )
+        .then((response) => {
+          setLikes(response.data.likes);
+          setDislikes(response.data.dislikes);
+          setIsDisliked(false);
+        })
+        .catch((error) => console.error(error));
+    } else {
+      axios
+        .post(
+          `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}/react`,
+          {
+            reactionType: 'DISLIKE',
+            bookmark: false,
+          },
+          {
+            headers: { Authorization: `Bearer ${user.accessToken}` },
+          }
+        )
+        .then((response) => {
+          setLikes(response.data.likes);
+          setDislikes(response.data.dislikes);
+          setIsDisliked(true);
+          setIsLiked(false);
+        })
+        .catch((error) => console.error(error));
+    }
   };
 
-  const likeComment = (commentId) => {
-    axios.post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/comment/${commentId}/react?reactionType=LIKE`, {}, {
-      headers: { Authorization: `Bearer ${user.accessToken}` },
-    })
-      .then(() => {
+  const likeComment = (comment) => {
+    axios
+      .post(
+        `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/comment/${
+          comment.commentId
+        }/react?reactionType=${
+          comment.reactionType === 'LIKE' ? 'NONE' : 'LIKE'
+        }`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${user.accessToken}` },
+        }
+      )
+      .then((response) => {
         setComments((prevComments) =>
-          prevComments.map((comment) =>
-            comment.commentId === commentId
-              ? { ...comment, likes: comment.likes + 1 }
-              : comment
+          prevComments.map((currentComment) =>
+            currentComment.commentId === comment.commentId
+              ? {
+                  ...currentComment,
+                  likes: response.data.likes,
+                  dislikes: response.data.dislikes,
+                  reactionType:
+                    comment.reactionType === 'LIKE' ? 'NONE' : 'LIKE',
+                }
+              : currentComment
           )
         );
       })
       .catch((error) => console.error(error));
   };
 
-  const dislikeComment = (commentId) => {
-    axios.post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/comment/${commentId}/react?reactionType=DISLIKE`, {}, {
-      headers: { Authorization: `Bearer ${user.accessToken}` },
-    })
-      .then(() => {
+  const dislikeComment = (comment) => {
+    axios
+      .post(
+        `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/comment/${
+          comment.commentId
+        }/react?reactionType=${
+          comment.reactionType === 'DISLIKE' ? 'NONE' : 'DISLIKE'
+        }`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${user.accessToken}` },
+        }
+      )
+      .then((response) => {
         setComments((prevComments) =>
-          prevComments.map((comment) =>
-            comment.commentId === commentId
-              ? { ...comment, dislikes: comment.dislikes + 1 }
-              : comment
+          prevComments.map((currentComment) =>
+            currentComment.commentId === comment.commentId
+              ? {
+                  ...currentComment,
+                  likes: response.data.likes,
+                  dislikes: response.data.dislikes,
+                  reactionType:
+                    comment.reactionType === 'DISLIKE' ? 'NONE' : 'DISLIKE',
+                }
+              : currentComment
           )
         );
       })
@@ -118,14 +236,19 @@ export default function PostScreen({ route }) {
   };
 
   const submitComment = () => {
-    axios.post(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/comment`, {
-      "postId": postId,
-      "text": newComment,
-    }, {
-      headers: {
-        Authorization: `Bearer ${user.accessToken}`,
-      },
-    })
+    axios
+      .post(
+        `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/comment`,
+        {
+          postId: postId,
+          text: newComment,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        }
+      )
       .then(() => {
         setNewComment(''); // Clear the comment input
         fetchComments(); // Re-fetch comments after submission
@@ -156,11 +279,19 @@ export default function PostScreen({ route }) {
 
       <View style={styles.reactionsContainer}>
         <TouchableOpacity style={styles.iconButton} onPress={likePost}>
-          <Icon name="thumbs-up" size={20} color="green" />
+          <MaterialIcons
+            name={isLiked ? 'thumb-up' : 'thumb-up-off-alt'}
+            size={40}
+            color={Colors.dark}
+          />
           <Text style={styles.iconButtonText}>{likes}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton} onPress={dislikePost}>
-          <Icon name="thumbs-down" size={20} color="red" />
+          <MaterialIcons
+            name={isDisliked ? 'thumb-down' : 'thumb-down-off-alt'}
+            size={40}
+            color={Colors.dark}
+          />
           <Text style={styles.iconButtonText}>{dislikes}</Text>
         </TouchableOpacity>
       </View>
@@ -173,13 +304,35 @@ export default function PostScreen({ route }) {
           <View style={styles.comment}>
             <Text style={styles.commentUsername}>{item.user.nickName}</Text>
             <Text>{item.text}</Text>
-            <View style={styles.reactionsContainer}>
-              <TouchableOpacity style={styles.iconButton} onPress={() => likeComment(item.commentId)}>
-                <Icon name="thumbs-up" size={15} color="green" />
+            <View style={styles.commentReactionsContainer}>
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={() => likeComment(item)}
+              >
+                <MaterialIcons
+                  name={
+                    item.reactionType === 'LIKE'
+                      ? 'thumb-up'
+                      : 'thumb-up-off-alt'
+                  }
+                  size={30}
+                  color={Colors.dark}
+                />
                 <Text style={styles.iconButtonText}>{item.likes}</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.iconButton} onPress={() => dislikeComment(item.commentId)}>
-                <Icon name="thumbs-down" size={15} color="red" />
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={() => dislikeComment(item)}
+              >
+                <MaterialIcons
+                  name={
+                    item.reactionType === 'DISLIKE'
+                      ? 'thumb-down'
+                      : 'thumb-down-off-alt'
+                  }
+                  size={30}
+                  color={Colors.dark}
+                />
                 <Text style={styles.iconButtonText}>{item.dislikes}</Text>
               </TouchableOpacity>
             </View>
@@ -195,16 +348,15 @@ export default function PostScreen({ route }) {
       <View style={styles.newCommentContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Add a comment"
+          placeholder='Add a comment'
           value={newComment}
           onChangeText={setNewComment}
         />
-        <Button title="Submit" onPress={submitComment} />
+        <Button title='Submit' onPress={submitComment} />
       </View>
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -260,8 +412,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    gap: 10, // Space between buttons
+  },
+  commentReactionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     marginTop: 10,
-    gap: 15, // Space between buttons
+    gap: 10, // Space between buttons
   },
   iconButton: {
     flexDirection: 'row',
