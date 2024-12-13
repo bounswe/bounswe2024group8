@@ -85,7 +85,6 @@ export default function FeedScreen() {
         fetchedPosts.push(...response.data);
       } catch (e) {}
     }
-    //console.log(fetchedPosts);
     setPosts(fetchedPosts);
     filterPosts(fetchedPosts, showVisual);
   };
@@ -305,6 +304,7 @@ export default function FeedScreen() {
               id={item.postId}
               userId={item.user.id}
               username={item.user.nickName}
+              reactionType={item.reactionType}
               navigation={navigation}
               disableScroll={disableScroll}
               clearFilteredPosts={clearFilteredPosts}
