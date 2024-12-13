@@ -64,6 +64,7 @@ export default function PostScreen({ route }) {
         }
       )
       .then((response) => {
+        //console.log(response.data);
         setComments(response.data);
       })
       .catch((error) => {
@@ -103,8 +104,9 @@ export default function PostScreen({ route }) {
             headers: { Authorization: `Bearer ${user.accessToken}` },
           }
         )
-        .then(() => {
-          setLikes((prevLikes) => prevLikes - 1);
+        .then((response) => {
+          setLikes(response.data.likes);
+          setDislikes(response.data.dislikes);
           setIsLiked(false);
         })
         .catch((error) => console.error(error));
@@ -120,13 +122,11 @@ export default function PostScreen({ route }) {
             headers: { Authorization: `Bearer ${user.accessToken}` },
           }
         )
-        .then(() => {
-          setLikes((prevLikes) => prevLikes + 1);
+        .then((response) => {
+          setLikes(response.data.likes);
+          setDislikes(response.data.dislikes);
           setIsLiked(true);
-          if (isDisliked) {
-            setDislikes((prevDislikes) => prevDislikes - 1);
-            setIsDisliked(false);
-          }
+          setIsDisliked(false);
         })
         .catch((error) => console.error(error));
     }
@@ -145,8 +145,9 @@ export default function PostScreen({ route }) {
             headers: { Authorization: `Bearer ${user.accessToken}` },
           }
         )
-        .then(() => {
-          setDislikes((prevDislikes) => prevDislikes - 1);
+        .then((response) => {
+          setLikes(response.data.likes);
+          setDislikes(response.data.dislikes);
           setIsDisliked(false);
         })
         .catch((error) => console.error(error));
@@ -162,55 +163,72 @@ export default function PostScreen({ route }) {
             headers: { Authorization: `Bearer ${user.accessToken}` },
           }
         )
-        .then(() => {
-          setDislikes((prevDislikes) => prevDislikes + 1);
+        .then((response) => {
+          setLikes(response.data.likes);
+          setDislikes(response.data.dislikes);
           setIsDisliked(true);
-
-          if (isLiked) {
-            setLikes((prevLikes) => prevLikes - 1);
-            setIsLiked(false);
-          }
+          setIsLiked(false);
         })
         .catch((error) => console.error(error));
     }
   };
 
-  const likeComment = (commentId) => {
+  const likeComment = (comment) => {
     axios
       .post(
-        `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/comment/${commentId}/react?reactionType=LIKE`,
+        `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/comment/${
+          comment.commentId
+        }/react?reactionType=${
+          comment.reactionType === 'LIKE' ? 'NONE' : 'LIKE'
+        }`,
         {},
         {
           headers: { Authorization: `Bearer ${user.accessToken}` },
         }
       )
-      .then(() => {
+      .then((response) => {
         setComments((prevComments) =>
-          prevComments.map((comment) =>
-            comment.commentId === commentId
-              ? { ...comment, likes: comment.likes + 1 }
-              : comment
+          prevComments.map((currentComment) =>
+            currentComment.commentId === comment.commentId
+              ? {
+                  ...currentComment,
+                  likes: response.data.likes,
+                  dislikes: response.data.dislikes,
+                  reactionType:
+                    comment.reactionType === 'LIKE' ? 'NONE' : 'LIKE',
+                }
+              : currentComment
           )
         );
       })
       .catch((error) => console.error(error));
   };
 
-  const dislikeComment = (commentId) => {
+  const dislikeComment = (comment) => {
     axios
       .post(
-        `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/comment/${commentId}/react?reactionType=DISLIKE`,
+        `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/comment/${
+          comment.commentId
+        }/react?reactionType=${
+          comment.reactionType === 'DISLIKE' ? 'NONE' : 'DISLIKE'
+        }`,
         {},
         {
           headers: { Authorization: `Bearer ${user.accessToken}` },
         }
       )
-      .then(() => {
+      .then((response) => {
         setComments((prevComments) =>
-          prevComments.map((comment) =>
-            comment.commentId === commentId
-              ? { ...comment, dislikes: comment.dislikes + 1 }
-              : comment
+          prevComments.map((currentComment) =>
+            currentComment.commentId === comment.commentId
+              ? {
+                  ...currentComment,
+                  likes: response.data.likes,
+                  dislikes: response.data.dislikes,
+                  reactionType:
+                    comment.reactionType === 'DISLIKE' ? 'NONE' : 'DISLIKE',
+                }
+              : currentComment
           )
         );
       })
@@ -289,10 +307,14 @@ export default function PostScreen({ route }) {
             <View style={styles.commentReactionsContainer}>
               <TouchableOpacity
                 style={styles.iconButton}
-                onPress={() => likeComment(item.commentId)}
+                onPress={() => likeComment(item)}
               >
                 <MaterialIcons
-                  name='thumb-up-off-alt'
+                  name={
+                    item.reactionType === 'LIKE'
+                      ? 'thumb-up'
+                      : 'thumb-up-off-alt'
+                  }
                   size={30}
                   color={Colors.dark}
                 />
@@ -300,10 +322,14 @@ export default function PostScreen({ route }) {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.iconButton}
-                onPress={() => dislikeComment(item.commentId)}
+                onPress={() => dislikeComment(item)}
               >
                 <MaterialIcons
-                  name='thumb-down-off-alt'
+                  name={
+                    item.reactionType === 'DISLIKE'
+                      ? 'thumb-down'
+                      : 'thumb-down-off-alt'
+                  }
                   size={30}
                   color={Colors.dark}
                 />
