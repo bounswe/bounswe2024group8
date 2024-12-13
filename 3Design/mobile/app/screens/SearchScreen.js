@@ -75,12 +75,15 @@ export default function SearchScreen({ navigation }) {
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.input}
-            placeholder="Search"
+            placeholder='Search'
             value={query}
             onChangeText={(text) => setQuery(text)}
             onSubmitEditing={() => fetchPosts(showVisual)}
           />
-          <TouchableOpacity style={styles.button} onPress={() => fetchPosts(showVisual)}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => fetchPosts(showVisual)}
+          >
             <Text style={styles.buttonText}>Search</Text>
           </TouchableOpacity>
         </View>
@@ -91,19 +94,19 @@ export default function SearchScreen({ navigation }) {
             style={[styles.toggleButton, showVisual && styles.activeToggle]}
             onPress={toggleShowVisual}
           >
-            <Text style={styles.toggleText}>Designs</Text>
+            <Text style={styles.toggleText}>Gallery</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.toggleButton, !showVisual && styles.activeToggle]}
             onPress={toggleShowVisual}
           >
-            <Text style={styles.toggleText}>Discussions</Text>
+            <Text style={styles.toggleText}>Discussion</Text>
           </TouchableOpacity>
         </View>
 
         {/* Display Loading Indicator, Error Message, or Search Results */}
         {loading ? (
-          <ActivityIndicator size="large" color={Colors.primary} />
+          <ActivityIndicator size='large' color={Colors.primary} />
         ) : error ? (
           <Text style={styles.errorText}>{error}</Text>
         ) : (
@@ -138,7 +141,6 @@ export default function SearchScreen({ navigation }) {
     </GestureHandlerRootView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
