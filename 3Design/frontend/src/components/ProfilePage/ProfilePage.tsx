@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import SideBar from "../SideBar/SideBar";
@@ -8,7 +8,7 @@ import { Achievement, CustomUser, DPost } from '../interfaces'
 import { CircularProgress, Dialog, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from "@mui/material";
 import ProfileDisplayer from "./ProfilePageDialogDisplayer/ProfilePageDialogDisplayer"
 import axios, { AxiosError } from "axios";
-import { message, Skeleton } from "antd";
+import { message, Pagination, Skeleton } from "antd";
 import GalleryPost from "../GalleryPost/Clickable/GalleryPost";
 import DiscussionPost from "../DiscussionPost/Clickable/DiscussionPost";
 import StarsIcon from '@mui/icons-material/Stars';
@@ -35,6 +35,9 @@ const ProfilePage = () => {
   const [achievementDialog, setAchievementDialog] = useState(false);
 
   const currentUserId = localStorage.getItem("user_id");
+
+  const [activePage, setActivePage] = useState(1);
+  const pageSize = 3;
 
   const fetchPosts = async () => {
     setDisplayedPosts(null);
@@ -219,6 +222,10 @@ const ProfilePage = () => {
     fetchPosts(); 
   }, [activeTab])
 
+  const changePage = (x: number) => {
+    setActivePage(x);
+  }
+
 
   if (id == undefined || id == null){
     window.location.href = "/home";
@@ -377,7 +384,7 @@ const ProfilePage = () => {
                     color: activeTab === index ? 'white' : 'black',
                     borderRadius: '5px',
                   }}
-                  onClick={() => setActiveTab(index)}
+                  onClick={() => {setActivePage(1);setActiveTab(index)}}
                 >
                   {content}
                 </button>
@@ -395,11 +402,12 @@ const ProfilePage = () => {
                 (displayedPosts.length == 0 ?
                 <p>There are currently no posts here.</p> :
                 <div className={styles.postContainer}>
-                    {displayedPosts.map((item) => (
+                    {displayedPosts.slice((activePage-1)*pageSize, activePage*pageSize).map((item) => (
                     item.isVisualPost ?
                     <GalleryPost key={item.postId} postData={item}/> :
                     <DiscussionPost key={item.postId} postData={item}/>
                     ))}
+                    <Pagination align="center" current={activePage} pageSize={pageSize} total={displayedPosts.length} onChange={changePage}/>
                 </div>)
                 
                 }
