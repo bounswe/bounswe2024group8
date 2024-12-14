@@ -4,7 +4,7 @@ import styles from "../GalleryPost.module.css"
 import DViewer from '../../DViewer/DViewer'
 import { ChevronRight,Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined } from '@mui/icons-material'
 import { Dialog, IconButton, Menu, MenuItem, TextField } from '@mui/material'
-import { formatInteractions,getCategoryById } from '../../tsfunctions'
+import { formatInteractions,getCategoryById, parsePostString } from '../../tsfunctions'
 import Comment from '../../Comment/Comment'
 import MockComments from '../../../resources/json-files/Comments.json'
 import ChallengePost from '../../CreatePost/ChallengePost'
@@ -357,23 +357,24 @@ const fetchCommentData = async () => {
               </div>
           </div>
           <div className='flex flex-col gap-2'>
-            {modelAppearence ?
             <div className='border-gray-500 border-2 non-clickable-div'>
               <DViewer filePath={data.fileUrl!}/>
             </div>
-            :
-            <div onClick={event => event.stopPropagation() } className={`flex justify-center items-center non-clickable-div ${styles.previewContainer}`} style={{backgroundImage: "url(/previewmodel.jpg)"}} >
-                <button onClick={() => {
-        
-                  setModelAppearence(true)}} className={`btn ${styles.viewModelBtn}`}>View Model</button>
-            </div>
-            }
+
             <p className='font-bold text-lg'>{data.title}</p>
             {
               annotationsVisible ? 
               <PostAnnotation annotations={publishedAnnotations} postBody={postData.text} setAnnotationsVisible={setDisplayedAnnotation}/>
               :
-              <p ref={bodyRef} onMouseUp={!annotationsVisible ? setAnnotation : () => (null)}>{data.text}</p>
+              <div>
+                <p ref={bodyRef} onMouseUp={!annotationsVisible ? setAnnotation : () => (null)}>{parsePostString(data.text)[0]}</p>
+                <br></br>
+                {parsePostString(data.text).slice(1).map((item, index) => (
+                  <p className='text-gray-400' key={index}>{item}</p>
+                ))
+                
+                }   
+              </div>
             }
           </div>
           <div className='flex gap-6'>
