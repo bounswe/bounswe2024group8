@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import styles from "./SearchResults.module.css";
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { DPost } from '../interfaces';
-import { Skeleton } from 'antd';
+import { Pagination, Skeleton } from 'antd';
 import GalleryPost from '../GalleryPost/Clickable/GalleryPost';
 import DiscussionPost from '../DiscussionPost/Clickable/DiscussionPost';
 import SideBar from '../SideBar/SideBar';
@@ -25,6 +25,14 @@ const SearchResults = () => {
     const [searchLoading, setSearchLoading] = useState(true);
     const [searchType, setSearchType] = useState(true);
     const [userResults, setUserResults] = useState<UserResponse[]>([]);
+
+    const [searchParams] = useSearchParams();
+    const passedPageNumber = searchParams.get("p") ?? "";
+    let pageNumber = 1;
+    if (/^\d+$/.test(passedPageNumber)){
+        pageNumber = parseInt(passedPageNumber);
+    }
+    const pageSize = 3;
 
     if (query == undefined || query == null){
         window.location.href = "/home";
@@ -103,12 +111,16 @@ const SearchResults = () => {
                         (
                         searchResults.length == 0 ? 
                         <p>No post results for this query</p> :
-                        searchResults.map((item, index) => (
-                            item.isVisualPost ?
-                            <GalleryPost  key={`g_${item.isVisualPost}`} postData={item}/> 
-                            :
-                            <DiscussionPost  key={`d_${item.isVisualPost}`} postData={item} />
-                        ))
+                        <>
+                            {searchResults.slice((pageNumber-1)*pageSize, (pageNumber)*pageSize).map((item, index) => (
+                                item.isVisualPost ?
+                                <GalleryPost  key={`g_${item.postId}`} postData={item}/> 
+                                :
+                                <DiscussionPost  key={`d_${item.postId}`} postData={item} />
+                                ))
+                            }
+                            <Pagination align='center' pageSize={pageSize} current={pageNumber} total={searchResults.length} onChange={(x)=>window.location.href = `/search/${query}?p=${x}`}/>
+                        </>
                         ) :
                         (
                             userResults.length == 0 ? 
