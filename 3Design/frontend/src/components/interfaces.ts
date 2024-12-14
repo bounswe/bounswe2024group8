@@ -123,3 +123,9 @@ export interface Achievement{
     point: number,
     earnedAt: string
 }
+
+export interface DesignProperty{
+    property: string,
+    value: string,
+    options: string[]
+}

@@ -74,4 +74,35 @@ export function getProfilesList(){
       { id: 4, username: "profile4", avatarUrl: "/profile4.png", tournamentPoints: 250 },
       // Add more profiles as needed
     ];
-  };
+};
+
+
+
+export function parsePostString(input: string): string[] {
+    const result: string[] = [];
+    let current = '';
+    for (let i = 0; i < input.length; i++) {
+        if (input[i] === '&') {
+            if (input[i + 1] === '&') {
+                current += '&'; // Skip parsing and keep the ampersands
+                i++; // Skip the next ampersand
+            } else {
+                result.push(current); // Add the current string to the result
+                current = ''; // Reset for the next part
+            }
+        } else {
+            current += input[i];
+        }
+    }
+    // Add any remaining string after the loop
+    if (current) {
+        result.push(current);
+    }
+    return result;
+}
+
+export function mergePostString(input: string[]): string {
+    return input
+        .map(str => str.replace(/&/g, '&&')) // Double each ampersand in the strings
+        .join('&'); // Concatenate the strings with a single ampersand
+}

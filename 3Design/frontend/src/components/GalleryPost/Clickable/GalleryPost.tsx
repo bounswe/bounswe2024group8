@@ -5,7 +5,7 @@ import DViewer from '../../DViewer/DViewer'
 import { ChevronRight,Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined } from '@mui/icons-material'
 import { IconButton, Menu, MenuItem } from '@mui/material'
 import { grey } from '@mui/material/colors';
-import { formatInteractions,getCategoryById } from '../../tsfunctions'
+import { formatInteractions,getCategoryById, parsePostString } from '../../tsfunctions'
 import axios from 'axios'
 interface Props{
   postData: DPost,
@@ -197,19 +197,13 @@ const dislikeClicked = async (event:any) =>{
                     </div>
         </div>
         <div className='flex flex-col gap-2'>
-          {modelAppearence ?
           <div className='border-gray-500 border-2 non-clickable-div'>
             <DViewer filePath={data.fileUrl!}/> 
           </div> 
-          :
-          <div onClick={event => event.stopPropagation() } className={`flex justify-center items-center non-clickable-div ${styles.previewContainer}`} style={{backgroundImage: "url(/previewmodel.jpg)"}} >
-              <button onClick={() => {
-                
-                setModelAppearence(true)}} className={`btn ${styles.viewModelBtn}`}>View Model</button>
-          </div>
-          }
           <p className='font-bold text-lg'>{data.title}</p>
-          <p ref={bodyRef}>{data.text}</p>
+          <div>
+                {parsePostString(data.text)[0]}
+           </div>     
         </div>
         <div className='flex gap-6'>
           <div className='flex items-center'>
