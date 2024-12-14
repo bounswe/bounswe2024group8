@@ -108,6 +108,12 @@ export default function TabNavigator({ navigation, route }) {
             },
             unmountOnBlur: true,
           }}
+          listeners={{
+            tabPress: (e) => {
+              e.preventDefault(); // Prevent default tab navigation
+              navigation.navigate('Profile', { userId: null }); // Reset params explicitly
+            },
+          }}
         />
       </Tab.Navigator>
     </SafeAreaView>
