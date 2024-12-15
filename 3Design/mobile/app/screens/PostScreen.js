@@ -18,7 +18,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 
 export default function PostScreen({ route }) {
-  const {
+  let {
     postId,
     title,
     content,
@@ -28,6 +28,9 @@ export default function PostScreen({ route }) {
     filterPostsCallback,
     reactionType,
   } = route.params;
+
+  content = parseString(content)[0];
+
   const [isLiked, setIsLiked] = useState(
     reactionType === 'LIKE' ? true : false
   );
