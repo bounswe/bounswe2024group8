@@ -1,6 +1,5 @@
 package boun.group8.threedesign.repository;
 
-import boun.group8.threedesign.model.Post;
 import boun.group8.threedesign.model.Reaction;
 import boun.group8.threedesign.model.enums.ReactionType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,5 +17,7 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
     int countByUserIdAndReactionType(Long userId, ReactionType reactionType);
 
     int countByUserIdAndBookmark(Long userId, Boolean bookmark);
+
+    void deleteAllByPostId(Long postId);
 
 }
