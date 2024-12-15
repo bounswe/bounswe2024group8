@@ -84,37 +84,37 @@ export default function PostScreen({ route }) {
   };
 
   const fetchAnnotations = () => {
-    // axios
-    //   .get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}/annotations`, {
-    //     headers: { Authorization: `Bearer ${user.accessToken}` },
-    //   })
-    //   .then((response) => {
-    //     setAnnotations(response.data);
-    //   })
-    //   .catch((error) => console.error('Error fetching annotations:', error));
+    axios
+      .get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/annotations/get?postId=${postId}`, {
+        headers: { Authorization: `Bearer ${user.accessToken}` },
+      })
+      .then((response) => {
+        setAnnotations(response.data);
+      })
+      .catch((error) => console.error('Error fetching annotations:', error));
 
-    setAnnotations([
-      {
-        "@context": "http://www.w3.org/ns/anno.jsonld",
-        "id": "http://example.org/anno6",
-        "type": "Annotation",
-        "bodyValue": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
-        "creator": {
-          "id": "http://example.org/uer1s",
-          "type": "Person",
-          "nickname": "User 1"
-        },
-        "created": "2021-06-01T12:00:00Z",
-        "target": {
-          "source": "http://example.org/ebook1",
-          "selector": {
-            "type": "TextPositionSelector",
-            "start": 5,
-            "end": 10
-          }
-        }
-      },
-    ])
+    // setAnnotations([
+    //   {
+    //     "@context": "http://www.w3.org/ns/anno.jsonld",
+    //     "id": "http://example.org/anno6",
+    //     "type": "Annotation",
+    //     "bodyValue": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+    //     "creator": {
+    //       "id": "http://example.org/uer1s",
+    //       "type": "Person",
+    //       "nickname": "User 1"
+    //     },
+    //     "created": "2021-06-01T12:00:00Z",
+    //     "target": {
+    //       "source": "http://example.org/ebook1",
+    //       "selector": {
+    //         "type": "TextPositionSelector",
+    //         "start": 5,
+    //         "end": 10
+    //       }
+    //     }
+    //   },
+    // ])
   };
 
   const handleAnnotationPress = (annotation) => {
