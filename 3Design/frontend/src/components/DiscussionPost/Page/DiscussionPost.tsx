@@ -173,7 +173,7 @@ const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
         }
         const selectedText = selection.toString();
     
-        if (selectedText && selection.anchorNode && bodyRef.current!.contains(selection.anchorNode)) {
+        if (selectedText && selection.anchorNode && selection.focusNode && bodyRef.current!.contains(selection.anchorNode) && bodyRef.current!.contains(selection.focusNode)) {
           const startI = selection.anchorOffset;
           const endI = selection.focusOffset;
           console.log(`Start: ${startI} End: ${endI}`);
@@ -237,10 +237,8 @@ const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
                     Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
                 }}
             );
-            console.log(res.data);
         }
         catch(e){
-            console.log(e);
         }
         setData((prev) => ({...prev, bookmark: !prev.bookmark}));
     }
