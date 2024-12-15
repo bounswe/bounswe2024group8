@@ -106,7 +106,7 @@ const CreatePost = () => {
     var fd = new FormData();
 
     fd.append('title', title);
-    fd.append('text', content);
+    fd.append('text', content.replace(/&/g, '&&'));
     fd.append('categoryId', category);
     fd.append('isVisualPost', isVisual);
     fd.append('tags', JSON.stringify(tags));
