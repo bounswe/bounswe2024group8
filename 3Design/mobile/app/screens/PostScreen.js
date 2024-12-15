@@ -260,6 +260,29 @@ export default function PostScreen({ route }) {
     navigation.navigate('Profile', { userId: userId });
   };
 
+  function parseString(input) {  // returns string[]
+    const result = [];
+    let current = '';
+    for (let i = 0; i < input.length; i++) {
+      if (input[i] === '&') {
+        if (input[i + 1] === '&') {
+          current += '&'; // Skip parsing and keep the ampersands
+          i++; // Skip the next ampersand
+        } else {
+          result.push(current); // Add the current string to the result
+          current = ''; // Reset for the next part
+        }
+      } else {
+        current += input[i];
+      }
+    }
+    // Add any remaining string after the loop
+    if (current) {
+      result.push(current);
+    }
+    return result;
+  }
+
   return (
     <View style={styles.container}>
       {username && (
@@ -268,7 +291,7 @@ export default function PostScreen({ route }) {
         </TouchableOpacity>
       )}
       <Text style={styles.title}>{title}</Text>
-      <Text style={styles.content}>{content}</Text>
+      <Text style={styles.content}>{parseString(content)[0]}</Text>
       {model && (
         <View style={styles.modelContainer}>
           <GestureHandlerRootView>
