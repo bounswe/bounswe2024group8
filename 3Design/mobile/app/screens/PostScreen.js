@@ -7,6 +7,7 @@ import {
   TextInput,
   Button,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
 import axios from 'axios';
 import { Colors } from '../constants/Colors';
@@ -37,6 +38,9 @@ export default function PostScreen({ route }) {
   const [dislikes, setDislikes] = useState(0);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [annotations, setAnnotations] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedAnnotation, setSelectedAnnotation] = useState(null);
   const { user } = useContext(AuthContext);
   const navigation = useNavigation();
 
@@ -76,8 +80,82 @@ export default function PostScreen({ route }) {
       });
   };
 
+  const fetchAnnotations = () => {
+    // axios
+    //   .get(`${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${postId}/annotations`, {
+    //     headers: { Authorization: `Bearer ${user.accessToken}` },
+    //   })
+    //   .then((response) => {
+    //     setAnnotations(response.data);
+    //   })
+    //   .catch((error) => console.error('Error fetching annotations:', error));
+
+    setAnnotations([
+      {
+        "@context": "http://www.w3.org/ns/anno.jsonld",
+        "id": "http://example.org/anno6",
+        "type": "Annotation",
+        "bodyValue": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+        "creator": {
+          "id": "http://example.org/uer1s",
+          "type": "Person",
+          "nickname": "User 1"
+        },
+        "created": "2021-06-01T12:00:00Z",
+        "target": {
+          "source": "http://example.org/ebook1",
+          "selector": {
+            "type": "TextPositionSelector",
+            "start": 5,
+            "end": 10
+          }
+        }
+      },
+    ])
+  };
+
+  const handleAnnotationPress = (annotation) => {
+    setSelectedAnnotation(annotation);
+    setModalVisible(true);
+  };
+
+  const renderAnnotatedText = () => {
+    if (!annotations || annotations.length === 0) {
+      return <Text style={styles.content}>{content}</Text>;
+    }
+
+    const parts = [];
+    let currentIndex = 0;
+
+    annotations.forEach((annotation, index) => {
+      const { start, end } = annotation.target.selector;
+      if (start > currentIndex) {
+        parts.push(content.slice(currentIndex, start));
+      }
+
+      parts.push(
+        <Text
+          key={`annotation-${index}`}
+          style={styles.annotatedText}
+          onPress={() => handleAnnotationPress(annotation)}
+        >
+          {content.slice(start, end)}
+        </Text>
+      );
+
+      currentIndex = end;
+    });
+
+    if (currentIndex < content.length) {
+      parts.push(content.slice(currentIndex));
+    }
+
+    return <Text style={styles.content}>{parts}</Text>;
+  };
+
   useEffect(() => {
     fetchPostData();
+    fetchAnnotations();
   }, [postId]);
 
   useEffect(() => {
@@ -291,7 +369,8 @@ export default function PostScreen({ route }) {
         </TouchableOpacity>
       )}
       <Text style={styles.title}>{title}</Text>
-      <Text style={styles.content}>{parseString(content)[0]}</Text>
+      <View>{renderAnnotatedText()}</View>
+      {/*<Text style={styles.content}>{parseString(content)[0]}</Text>*/}
       {model && (
         <View style={styles.modelContainer}>
           <GestureHandlerRootView>
@@ -377,6 +456,37 @@ export default function PostScreen({ route }) {
         />
         <Button title='Submit' onPress={submitComment} />
       </View>
+
+      {/* Annotation Modal */}
+      <Modal
+        transparent={true}
+        animationType="slide"
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Annotation</Text>
+            {selectedAnnotation && (
+              <View>
+                <Text style={styles.modalText}>
+                  <Text style={styles.modalLabel}>Author: </Text>
+                  {selectedAnnotation.creator.nickname}
+                </Text>
+                <Text style={styles.modalText}>
+                  <Text style={styles.modalLabel}>Created: </Text>
+                  {new Date(selectedAnnotation.created).toLocaleString()}
+                </Text>
+                <Text style={styles.modalText}>
+                  <Text style={styles.modalLabel}>Content: </Text>
+                  {selectedAnnotation.bodyValue}
+                </Text>
+              </View>
+            )}
+            <Button title="Close" onPress={() => setModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -466,5 +576,35 @@ const styles = StyleSheet.create({
     color: '#555',
     marginBottom: 5,
     fontStyle: 'italic',
+  },
+  annotatedText: {
+    color: Colors.primary,
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    padding: 20,
+    backgroundColor: Colors.light,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  modalLabel: {
+    fontWeight: 'bold',
   },
 });
