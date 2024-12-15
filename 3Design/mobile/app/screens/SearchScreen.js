@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -21,33 +21,25 @@ export default function SearchScreen({ navigation }) {
   const { user } = useContext(AuthContext);
   const [query, setQuery] = useState('');
   const [posts, setPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [showVisual, setShowVisual] = useState(false); // Toggle state
-  const [category, setCategory] = useState({ value: 'default' }); // Update with your default category
 
   const API_URL = `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts`;
 
-  const fetchPosts = async (isVisual = false) => {
+  const fetchPosts = async () => {
     Keyboard.dismiss();
     setLoading(true);
     setError('');
 
     try {
-      const url = isVisual
-        ? `${API_URL}/category/${category.value}/visual`
-        : `${API_URL}?param=${encodeURIComponent(query)}`;
+      const url = `${API_URL}?param=${encodeURIComponent(query)}`;
       const response = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${user.accessToken}`,
           'Content-Type': 'application/json',
         },
       });
-
-      const fetchedPosts = response.data;
-      setPosts(fetchedPosts);
-      setFilteredPosts(filterPosts(fetchedPosts, showVisual)); // Apply filtering logic
+      setPosts(response.data);
     } catch (error) {
       console.error('Error fetching search results:', error);
       setError('An error occurred while fetching search results.');
@@ -55,17 +47,6 @@ export default function SearchScreen({ navigation }) {
     } finally {
       setLoading(false);
     }
-  };
-
-  const filterPosts = (allPosts, showVisual) => {
-    return allPosts.filter((post) =>
-      showVisual ? post.isVisualPost : !post.isVisualPost
-    );
-  };
-
-  const toggleShowVisual = () => {
-    setShowVisual((prev) => !prev);
-    setFilteredPosts(filterPosts(posts, !showVisual));
   };
 
   return (
@@ -78,29 +59,13 @@ export default function SearchScreen({ navigation }) {
             placeholder='Search'
             value={query}
             onChangeText={(text) => setQuery(text)}
-            onSubmitEditing={() => fetchPosts(showVisual)}
+            onSubmitEditing={fetchPosts}
           />
           <TouchableOpacity
             style={styles.button}
-            onPress={() => fetchPosts(showVisual)}
+            onPress={fetchPosts}
           >
             <Text style={styles.buttonText}>Search</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Toggle for Visual Posts */}
-        <View style={styles.toggleContainer}>
-          <TouchableOpacity
-            style={[styles.toggleButton, showVisual && styles.activeToggle]}
-            onPress={toggleShowVisual}
-          >
-            <Text style={styles.toggleText}>Gallery</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.toggleButton, !showVisual && styles.activeToggle]}
-            onPress={toggleShowVisual}
-          >
-            <Text style={styles.toggleText}>Discussion</Text>
           </TouchableOpacity>
         </View>
 
@@ -111,30 +76,19 @@ export default function SearchScreen({ navigation }) {
           <Text style={styles.errorText}>{error}</Text>
         ) : (
           <FlatList
-            data={filteredPosts}
+            data={posts}
             keyExtractor={(item) => item.postId.toString()}
-            renderItem={({ item }) =>
-              item.isVisualPost ? (
-                <Post
-                  title={item.title}
-                  content={item.text}
-                  model={item.fileUrl} // 3D Model URL
-                  id={item.postId}
-                  userId={item.user.id}
-                  username={item.user.nickName}
-                  navigation={navigation}
-                />
-              ) : (
-                <Post
-                  title={item.title}
-                  content={item.text}
-                  id={item.postId}
-                  userId={item.user.id}
-                  username={item.user.nickName}
-                  navigation={navigation}
-                />
-              )
-            }
+            renderItem={({ item }) => (
+              <Post
+                title={item.title}
+                content={item.text}
+                model={item.isVisualPost ? item.fileUrl : undefined}
+                id={item.postId}
+                userId={item.user.id}
+                username={item.user.nickName}
+                navigation={navigation}
+              />
+            )}
           />
         )}
       </SafeAreaView>
@@ -172,24 +126,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.buttonText,
-    fontWeight: 'bold',
-  },
-  toggleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginVertical: 10,
-  },
-  toggleButton: {
-    padding: 10,
-    marginHorizontal: 5,
-    borderRadius: 5,
-    backgroundColor: Colors.toggleBackground,
-  },
-  activeToggle: {
-    backgroundColor: Colors.primary,
-  },
-  toggleText: {
-    color: Colors.text,
     fontWeight: 'bold',
   },
   errorText: {
