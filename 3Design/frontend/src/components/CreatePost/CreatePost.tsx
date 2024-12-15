@@ -57,15 +57,16 @@ const CreatePost = ({dialogFunction} : Props) => {
             setTitleError(titleCheck);
             return;
         }
+        if (joinToTournament && fileList.length != 1){
+            message.error("You must add a 3D Model to your post to joining the tournament.");
+            return;
+        }
         setCreating(true);
         try{
 
             const fd = new FormData();
             const isVisual = fileList.length == 1;
-            if (joinToTournament && !isVisual){
-                message.error("You must add a 3D Model to your post to joining the tournament.");
-                return;
-            }
+            
             const tagString = tags.join(", ");
             const fixedCategory = `${category}`;
             let fixedContent = content;
