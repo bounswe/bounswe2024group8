@@ -19,6 +19,7 @@ interface Props{
 
 const GalleryPost = ({postData, publishedAnnotationsProps} : Props) => {
   const [data, setData] = useState<DPost>(postData);
+  const [parsedString, setParsedString] = useState<string[]>(parsePostString(postData.text));
   const [modelAppearence, setModelAppearence] = useState<boolean>(false);
   const bodyRef = useRef<HTMLParagraphElement | null>(null);
   const [annotationData, setAnnotationData] = useState<SendAnnotationData>({content: "", endIndex: null, postId: postData.postId, startIndex: null, userId: parseInt(localStorage.getItem("user_id") ?? "-1")});
@@ -177,7 +178,7 @@ const dislikeClicked = async (event:any) =>{
     }
     const selectedText = selection.toString();
 
-    if (selectedText && selection.anchorNode && bodyRef.current!.contains(selection.anchorNode)) {
+    if (selectedText && selection.anchorNode && selection.focusNode && bodyRef.current!.contains(selection.anchorNode) && bodyRef.current!.contains(selection.focusNode)) {
       const startI = selection.anchorOffset;
       const endI = selection.focusOffset;
       console.log(`Start: ${startI} End: ${endI}`);
@@ -201,7 +202,7 @@ const dislikeClicked = async (event:any) =>{
   }
 
   const startAnnotation = () => {
-    setAnnotatedText(postData.text.slice(annotationData.startIndex!, annotationData.endIndex!));
+    setAnnotatedText(parsedString[0].slice(annotationData.startIndex!, annotationData.endIndex!));
   }
 
   const postAnnotation = async () => {
@@ -364,12 +365,20 @@ const fetchCommentData = async () => {
             <p className='font-bold text-lg'>{data.title}</p>
             {
               annotationsVisible ? 
-              <PostAnnotation annotations={publishedAnnotations} postBody={postData.text} setAnnotationsVisible={setDisplayedAnnotation}/>
+              <div>
+                <PostAnnotation annotations={publishedAnnotations} postBody={parsedString[0]} setAnnotationsVisible={setDisplayedAnnotation}/>
+                {parsedString.length > 1 && <br></br>}
+                {parsedString.slice(1).map((item, index) => (
+                  <p className='text-gray-400' key={index}>{item}</p>
+                ))}
+              </div>
               :
               <div>
-                <p ref={bodyRef} onMouseUp={!annotationsVisible ? setAnnotation : () => (null)}>{parsePostString(data.text)[0]}</p>
-                <br></br>
-                {parsePostString(data.text).slice(1).map((item, index) => (
+                <p ref={bodyRef} onMouseUp={!annotationsVisible ? setAnnotation : () => (null)}>{parsedString[0]}</p>
+                
+
+                {parsedString.length > 1 && <br></br>}
+                {parsedString.slice(1).map((item, index) => (
                   <p className='text-gray-400' key={index}>{item}</p>
                 ))
                 

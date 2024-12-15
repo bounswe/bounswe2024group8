@@ -1,10 +1,10 @@
 import { UploadOutlined,AddCircleOutline,Clear } from '@mui/icons-material'
-import { CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material'
+import { CircularProgress, Dialog, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 import { Button, GetProp, message, Upload, UploadFile, UploadProps } from 'antd'
 import React, { SetStateAction, useEffect, useState } from 'react'
-import { Category } from '../interfaces'
+import { Category, DesignProperty } from '../interfaces'
 import axios, { AxiosError } from 'axios'
-import { limitPostBodies } from '../tsfunctions'
+import { limitPostBodies, mergePostString } from '../tsfunctions'
 
 const categories:Category[] = require('../../resources/json-files/Categories.json');
 interface Props{
@@ -32,6 +32,9 @@ const ChallengePost = ({dialogFunction, challengedPostId, categoryId} : Props) =
     const [joinToTournament, setTournament] = useState(false);
 
     const [creatingPost, setCreating] = useState(false);
+
+    const [designProperties, setDesignProperties] = useState<DesignProperty[]>(require("../../resources/json-files/DesignProperties.json"));
+    const [propertyWindow, setPropertyWindow] = useState(false);
 
 
     const validateTitle = () => {
@@ -67,8 +70,16 @@ const ChallengePost = ({dialogFunction, challengedPostId, categoryId} : Props) =
             const fd = new FormData();
             const tagString = tags.join(", ");
             const fixedCategory = `${categoryId}`;
+            let fixedContent = content;
+            const stringLst = [fixedContent];
+            for (let prop of designProperties){
+                if (prop.value != ""){
+                    stringLst.push(`${prop.property} : ${prop.value}`);
+                }
+            }
+            fixedContent = mergePostString(stringLst);
             fd.append("title", title);
-            fd.append("text", content);
+            fd.append("text", fixedContent);
             fd.append("categoryId", fixedCategory);
             fd.append("isVisualPost", "true");
             fd.append("challengedPostId", `${challengedPostId}`);
@@ -181,11 +192,43 @@ const ChallengePost = ({dialogFunction, challengedPostId, categoryId} : Props) =
             >
                 <Button icon={<UploadOutlined />}>Select File</Button>
             </Upload>
+            <Button onClick={() => setPropertyWindow(true)} disabled={fileList.length == 0} type='primary' className='w-1/2'>Design Properties</Button>
             <div className='flex gap-2 mr-0 ml-auto'>
                 <button className='btn btn-outline' onClick={() => dialogFunction(false)}>Cancel</button>
                 <button disabled={creatingPost} onClick={sendPost} className='btn btn-primary' >Challenge Post</button>
                 {creatingPost && <CircularProgress style={{fontSize: "8px"}}/>}
             </div>
+            <Dialog maxWidth="sm" fullWidth open={propertyWindow}>
+                <div className='flex flex-col p-4 gap-4'>
+                    <p className='font-bold text-lg'>Design Properties</p>
+                    {designProperties.map((item,index) => (
+                        item.options.length == 0 ? 
+                        <TextField
+                        className='w-5/6'
+                        label={item.property}
+                        value={item.value} onChange={e => setDesignProperties(prev => {
+                            const temp = [...prev];
+                            temp[index] = {...temp[index], value: e.target.value};
+                            return temp;
+                        })
+                        }
+                        /> :
+                        <FormControl className='w-5/6'>
+                            <InputLabel id={`prop_${index}`}>{item.property}</InputLabel>
+                            <Select label={item.property} labelId={`prop_${index}`} value={item.value} onChange={e => setDesignProperties(prev => {
+                                const temp = [...prev];
+                                temp[index] = {...temp[index], value: e.target.value};
+                                return temp;
+                            })}>
+                                {item.options.map((c, i) => <MenuItem key={i} value={c}>{c}</MenuItem>)}
+                            </Select>
+                        </FormControl>
+                    ))}
+                    <div className='flex justify-end'>
+                        <button className='btn btn-outline' onClick={() => setPropertyWindow(false)}>Done</button>
+                    </div>
+                </div>
+            </Dialog>
         </div>
 
     )
