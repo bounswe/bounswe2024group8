@@ -5,6 +5,7 @@ import RegisterScreen from '../screens/RegisterScreen';
 import TabNavigator from './TabNavigator';
 import PostScreen from "../screens/PostScreen";
 import LeaderboardScreen from '../screens/LeaderboardScreen';
+import ProfilePage from '../screens/ProfileScreen'; // Import ProfilePage
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +42,12 @@ export default function StackNavigator() {
         name="Leaderboard"
         component={LeaderboardScreen}
         options={{ title: 'Leaderboard' }}
+      />
+      {/* Add the ProfilePage route */}
+      <Stack.Screen
+        name="ProfilePage"
+        component={ProfilePage}
+        options={{ title: 'User Profile' }}
       />
     </Stack.Navigator>
   );

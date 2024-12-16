@@ -7,11 +7,12 @@ import {
   ActivityIndicator,
   Platform,
   StatusBar,
+  Image,
+  TouchableOpacity
 } from 'react-native';
 import axios from 'axios';
 import { Colors } from '../constants/Colors';
 import { AuthContext } from "../context/AuthContext";
-import { Categories } from "../constants/Categories";
 
 export default function LeaderboardScreen({ route, navigation }) {
   const { category } = route.params;
@@ -41,12 +42,46 @@ export default function LeaderboardScreen({ route, navigation }) {
     }
   }, [category]);
 
+  const handleViewPost = (item) => {
+    const postUrl = `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/posts/${item.postId}`;
+    axios
+      .get(postUrl, {
+        headers: { Authorization: `Bearer ${user.accessToken}` },
+      })
+      .then((response) => {
+        const postData = response.data;
+        navigation.navigate('Post', {
+          postId: item.postId,
+          username: item.user.nickName,
+          userId: item.user.id,
+          title: postData.title,
+          content: postData.text,
+          model: postData.fileUrl,
+        });
+      })
+      .catch((error) => console.error(error));
+  };
+
   const renderItem = ({ item, index }) => (
     <View style={styles.row}>
       <Text style={styles.cell}>{index + 1}</Text>
-      <Text style={styles.cell}>{item.user.nickName}</Text>
+      <TouchableOpacity
+        style={styles.userCell}
+        onPress={() => navigation.navigate('ProfilePage', { userId: item.user.id })}
+      >
+        <Image
+          source={{ uri: item.user.profilePictureUrl }}
+          style={styles.profileImage}
+        />
+        <Text style={styles.userName}>{item.user.nickName}</Text>
+      </TouchableOpacity>
       <Text style={styles.cell}>{item.score}</Text>
-      <Text style={styles.cell}>{item.postId}</Text>
+      <TouchableOpacity
+        style={styles.viewPostButton}
+        onPress={() => handleViewPost(item)}
+      >
+        <Text style={styles.viewPostButtonText}>View Post</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -127,6 +162,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
   },
+  userCell: {
+    flex: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginRight: 8,
+  },
+  userName: {
+    fontSize: 16,
+    textAlign: 'center',
+  },
   loaderContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -140,5 +191,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     fontWeight: '500',
+  },
+  viewPostButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  viewPostButtonText: {
+    color: Colors.dark,
+    fontSize: 16,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
 });

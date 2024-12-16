@@ -89,6 +89,15 @@
     background-color: #181414;
 }
 
+.ppButton > *{
+    transition: linear 0.3s;
+}
+
+.ppButton:hover > *{
+    opacity: 0.5;
+    filter: brightness(0.6);
+}
+
 /* Dialog Parent Containers */
 
 /* Dialog Sub Containers */

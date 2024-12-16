@@ -15,11 +15,7 @@ const HomePage = () => {
     const { id } = useParams();
 
     const passedId = id || "";
-    const passedPageNumber = useLocation().search.split("=")[1] ?? "";
-    let pageNumber = 1;
-    if (/^\d+$/.test(passedPageNumber)){
-        pageNumber = parseInt(passedPageNumber);
-    }
+
     useLayoutEffect(() => {
         if (!localStorage.getItem("jwt_token")) {
             window.location.href = "/login";
@@ -31,7 +27,7 @@ const HomePage = () => {
             <PageHeader/>
             <div className='flex'>
                 <SideBar active={passedId}/>
-                {!passedId ? <GenericFeed pageNumber={pageNumber}/> : <Feed pageNumber={pageNumber} category={passedId}/>}
+                {!passedId ? <GenericFeed /> : <Feed category={passedId}/>}
                 
             </div>
             <Button onClick={() => setPostDialog(true)} style={{position: "fixed", bottom: "20px", right: "20px"}} type="primary" shape="round" icon={<Add />} size={'large'}>

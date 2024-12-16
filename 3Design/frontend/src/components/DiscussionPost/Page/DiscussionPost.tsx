@@ -2,14 +2,15 @@ import React, { memo, SetStateAction, useCallback, useEffect, useRef, useState }
 import { DisplayedAnnotationData, DPost, RecievedAnnotationData, SendAnnotationData, DComment } from '../../interfaces'
 import styles from "../DiscussionPost.module.css"
 import DViewer from '../../DViewer/DViewer'
-import { Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined,ChevronRight } from '@mui/icons-material'
-import { Dialog, IconButton, Menu, MenuItem, TextField} from '@mui/material'
+import {Tag, Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined,ChevronRight, Edit, Delete } from '@mui/icons-material'
+import { Chip, CircularProgress, Dialog, IconButton, Menu, MenuItem, TextField} from '@mui/material'
 import { grey } from '@mui/material/colors';
 import { formatInteractions,getCategoryById } from '../../tsfunctions'
-import { message, Switch } from 'antd'
+import { Button, message, Switch } from 'antd'
 import Comment from '../../Comment/Comment'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import PostAnnotation from '../../Annotations/PostAnnotation'
+import EditPost from '../../CreatePost/EditPost'
 interface Props{
     postData: DPost,
     publishedAnnotationsProps: RecievedAnnotationData[]
@@ -17,7 +18,6 @@ interface Props{
 
 const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
     const [data, setData] = useState<DPost>(postData);
-    console.log(data);
     const bodyRef = useRef<HTMLParagraphElement | null>(null);
     const [annotationData, setAnnotationData] = useState<SendAnnotationData>({content: "", endIndex: null, postId: postData.postId, startIndex: null, userId: parseInt(localStorage.getItem("user_id") ?? "-1")});
 
@@ -28,10 +28,16 @@ const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
   
     const [annotatedText, setAnnotatedText] = useState("");
     const [annotationSending, setAnnotatingSending] = useState(false);
+    const [annatotionButton, setAnnotationButton] = useState({top: 0, left: 0, show: false});
   
     const [publishedAnnotations, setPublishedAnnotations] = useState<RecievedAnnotationData[]>(publishedAnnotationsProps);
     const [comments, setComments] = useState<DComment[]>([]);
     const [comment, setComment] = useState("");
+
+    const [editDialog, setEditDialog] = useState(false);
+    const [deleteDialog, setDeleteDialog] = useState(false);
+    const [deletingPost, setDeletingPost] = useState(false);
+
     const setDisplayedAnnotation = useCallback((x: DisplayedAnnotationData[]) =>{
         setCurrentAnnotations(x);
       }, []);
@@ -163,22 +169,34 @@ const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
         setData((prev) => ({...prev,reactionType:"DISLIKE",dislikes: prev.dislikes + 1}));
     }
 
+    const clickedP = () => {
+        setTimeout(() => {
+          setAnnotation();
+        }, 100);
+      }
+
     const setAnnotation = () =>{
         if (!!annotatedText){
           return;
         }
         const selection = window.getSelection();
         if (!selection){
+          setAnnotationButton({top: 0, left: 0, show: false});
           return;
         }
         const selectedText = selection.toString();
     
-        if (selectedText && selection.anchorNode && bodyRef.current!.contains(selection.anchorNode)) {
+        if (selectedText && selection.anchorNode && selection.focusNode && bodyRef.current!.contains(selection.anchorNode) && bodyRef.current!.contains(selection.focusNode)) {
           const startI = selection.anchorOffset;
           const endI = selection.focusOffset;
           console.log(`Start: ${startI} End: ${endI}`);
+
+          const selectionRange = selection.getRangeAt(0);
+          const rect = selectionRange.getBoundingClientRect();
+          setAnnotationButton({top: rect.top + window.scrollY + rect.height, left: rect.left + window.scrollX + rect.width / 2, show: true});  
           setAnnotationData(prev => ({...prev, startIndex: Math.min(startI, endI),endIndex: Math.max(endI, startI)}) );
         } else {
+          setAnnotationButton({top: 0, left: 0, show: false});
           setAnnotationData(prev => ({...prev, startIndex: null,endIndex: null}) );
         }
     }
@@ -225,6 +243,28 @@ const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
         }
     }, [comment]);
 
+    const deletePost = async () => {
+        setDeletingPost(true);
+        try{
+          await axios.delete(`${process.env.REACT_APP_API_URL}/api/v1/posts/${data.postId}`, 
+            {headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
+            }}
+          );
+          message.success("Your post is successfully deleted.");
+          setTimeout(() => {
+              window.location.href = `/home/${data.categoryId}`;
+          }, 500);
+        }catch(e){
+          if (e instanceof AxiosError && e.response && e.response.data && e.response.data.message){
+              message.error(e.response.data.message);
+          }
+          else{
+              message.error("Something went wrong. Your post cannot be deleted.");
+          }
+          setDeletingPost(false);
+        }
+      }
 
     const handleBookmark = async (event:any) => {
         event.stopPropagation();
@@ -237,10 +277,8 @@ const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
                     Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
                 }}
             );
-            console.log(res.data);
         }
         catch(e){
-            console.log(e);
         }
         setData((prev) => ({...prev, bookmark: !prev.bookmark}));
     }
@@ -330,18 +368,53 @@ const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
                                 <BorderColor/>
                                 Annotate
                             </MenuItem>
+                            {
+                                data.user.id == parseInt(localStorage.getItem("user_id") ?? "-1") && 
+                                <MenuItem onClick={() => setEditDialog(true)} className='gap-2'>
+                                    <Edit/>
+                                    Edit Post
+                                </MenuItem>}
+        
+                                {
+                                data.user.id == parseInt(localStorage.getItem("user_id") ?? "-1") && 
+                                <MenuItem onClick={() => setDeleteDialog(true)} className='gap-2'>
+                                    <Delete/>
+                                    Delete Post
+                                </MenuItem>}
                             
                         </Menu>
                     </div>
                 </div>
+                {annatotionButton.show && !annotationsVisible && (
+                    <Button
+                    icon={<BorderColor />}
+                    type="default"
+                    style={{
+                        position: 'absolute',
+                        top: `${annatotionButton.top}px`,
+                        left: `${annatotionButton.left}px`,
+                        transform: 'translateX(-50%)',
+                        marginTop: '8px',
+                        zIndex: 10
+                    }}
+                    onClick={startAnnotation}
+                    >
+                    Annotate
+                    </Button>
+                )}
                 <div className='flex flex-col gap-2'>
                     <p className='font-bold text-lg'>{data.title}</p>
                     {
                     annotationsVisible ? 
                     <PostAnnotation annotations={publishedAnnotations} postBody={postData.text} setAnnotationsVisible={setDisplayedAnnotation}/>
                     :
-                    <p ref={bodyRef} onMouseUp={!annotationsVisible ? setAnnotation : () => (null)}>{data.text}</p>
+                    <p ref={bodyRef} onMouseUp={!annotationsVisible ? clickedP : () => (null)}>{data.text}</p>
                     }
+                    <div className='flex gap-2 pt-5'>
+                        {data.tags.map((item) => (
+                            <Chip icon={<Tag/>} label={item} variant='outlined' onClick={() => window.location.href = `/tagsearch/${item}`}/>
+                            ))}   
+                    </div>
                 </div>
                 <div className='flex gap-6'>
                     <div className='flex items-center'>
@@ -404,20 +477,41 @@ const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
             
                 {annotationsVisible && currentAnnotations.length != 0 && 
                 <div className={styles.annotationContainer}>
-                    <div className='flex'>
-                        <p className='font-semibold text-lg pt-2'>Annotations</p>
-                        <button onClick={() => setDisplayedAnnotation([])} className='btn btn-ghost mr-0 ml-auto'>X</button>
+                <div className="flex">
+                  <p className="font-semibold text-lg pt-2">Annotations</p>
+                  <button
+                    onClick={() => setDisplayedAnnotation([])}
+                    className="btn btn-ghost mr-0 ml-auto"
+                  >
+                    ✖
+                  </button>
                 </div>
                 <div className={styles.annotationDataContainer}>
                   {currentAnnotations.map((item, index) => (
-                    <div key={`ant_container_${index}`} className={`flex flex-col gap-2 pb-4 ${styles.singleAnnotationContainer}`}>
-                      <a className='text-blue-600' href={`/profile/${item.userId}`}><u>{item.username}</u></a>
-                      <div className={`${styles.ellipsis} font-bold`} title= {`Annotated text: "${item.annotatedText}"`}>Annotated text: "{item.annotatedText}"</div>
+                    <div
+                      key={`ant_container_${index}`}
+                      className={`flex flex-col gap-2 ${styles.singleAnnotationContainer}`}
+                    >
+                      <a
+                        className="text-blue-600"
+                        href={`/profile/${item.userId.split("/").pop()}`}
+                      >
+                        {item.username}
+                      </a>
+                      <div
+                        className={styles.ellipsis}
+                        title={`Annotated text: "${item.annotatedText}"`}
+                      >
+                        "{item.annotatedText}"
+                      </div>
                       <p>{item.annotation}</p>
                     </div>
                   ))}
                 </div>
-          </div>}
+              </div>
+              
+              
+                }
           <Dialog fullWidth maxWidth="sm" open={!!annotatedText} onClose={() => setAnnotatedText("")}>
             <div className='flex flex-col gap-4 p-4'>
               <p className={`${styles.ellipsis} font-bold`} title={`Annotating Text: ${annotatedText}`}>Annotating Text: {annotatedText}</p>
@@ -432,6 +526,21 @@ const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
                 <button onClick={() => setAnnotatedText("")} className='btn btn-error'>Close</button>
                 <button disabled={annotationSending} onClick={postAnnotation} className='btn btn-outline'>Publish</button>
               </div>    
+            </div>
+          </Dialog>
+
+          <Dialog maxWidth="sm" fullWidth open={editDialog} onClose={() => setEditDialog(false)}>
+              <EditPost dialogFunction={setEditDialog} postData={data}/>
+          </Dialog>    
+          <Dialog open={deleteDialog} onClose={() => setDeleteDialog(false)}> 
+            <div className='flex flex-col gap-4 p-4'>
+              <p className='font-bold text-lg'>Delete Post</p>
+              <p>Are you sure? This post will be deleted permanently.</p>
+              <div className='flex gap-4 justify-end'>
+                <button className='btn btn-outline' onClick={() => setDeleteDialog(false)}>Cancel</button>
+                <button disabled={deletingPost} onClick={deletePost} className='btn btn-error' >Delete Post</button>
+                {deletingPost && <CircularProgress style={{fontSize: "8px"}}/>}
+              </div>
             </div>
           </Dialog>
         </div>
