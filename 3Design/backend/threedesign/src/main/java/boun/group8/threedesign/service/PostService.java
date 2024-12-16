@@ -7,16 +7,10 @@ import boun.group8.threedesign.model.User;
 
 import boun.group8.threedesign.model.enums.ReactionType;
 
-import boun.group8.threedesign.payload.PostResponse;
+import boun.group8.threedesign.payload.*;
 
-import boun.group8.threedesign.payload.ReactionRequest;
-import boun.group8.threedesign.payload.ReactionResponse;
-import boun.group8.threedesign.repository.ReactionRepository;
-import boun.group8.threedesign.repository.UserRepository;
-import boun.group8.threedesign.repository.CategoryRepository;
+import boun.group8.threedesign.repository.*;
 
-import boun.group8.threedesign.payload.PostCreateRequest;
-import boun.group8.threedesign.repository.PostRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +38,9 @@ public class PostService {
 
 
     final CategoryRepository categoryRepository;
+    private final CommentRepository commentRepository;
+    private final TournamentEntryRepository tournamentEntryRepository;
+    private final AnnotationRepository annotationRepository;
 
     @Transactional
     public Post createPost(User user, PostCreateRequest request) throws IOException {
@@ -395,5 +392,72 @@ public class PostService {
 
         List<Post> results = new ArrayList<>(postRepository.findPostsByTag(tag));
         return convertPostsToPostResponses(user, results);
+    }
+  
+    @Transactional
+    public PostResponse updatePost(User user, Long id, PostUpdateRequest request) {
+
+        Post post = getPostByIdElseThrow(id);
+
+
+
+        if (!post.getUser().getId().equals(user.getId())) {
+            throw new ThreeDesignDatabaseException("You can only update your own posts");
+        }
+
+        if (tournamentService.isPostInTournament(id)) {
+            throw new ThreeDesignDatabaseException("You cannot update a post that is in a tournament");
+        }
+
+        String newText = request.getText();
+        MultipartFile file = request.getFile();
+
+        if (!post.getIsVisualPost() && file != null) {
+            throw new ThreeDesignDatabaseException("You cannot add a file to a discussion post");
+        }
+
+
+        if (newText != null) {
+            post.setText(newText);
+            annotationRepository.deleteAllByPostId(id);
+        }
+
+        if (file != null) {
+            try {
+                String fileUrl = handleFileUpload(file);
+                post.setFileUrl(fileUrl);
+            } catch (IOException e) {
+                throw new ThreeDesignDatabaseException("Failed to upload file", e);
+            }
+        }
+
+        postRepository.save(post);
+
+        return convertPostToPostResponse(user, post);
+    }
+
+    @Transactional
+    public void deletePost(User user, Long id) {
+
+        Post post = getPostByIdElseThrow(id);
+
+        if (!post.getUser().getId().equals(user.getId())) {
+            throw new ThreeDesignDatabaseException("You can only delete your own posts");
+        }
+
+        if (tournamentService.isPostInTournament(id)) {
+            throw new ThreeDesignDatabaseException("You cannot delete a post that is in a tournament");
+        }
+
+        commentService.deleteCommentsByPostId(id);
+
+        reactionRepository.deleteAllByPostId(id);
+
+        annotationRepository.deleteAllByPostId(id);
+
+        tournamentEntryRepository.deleteByPostId(id);
+
+        postRepository.deleteById(id);
+
     }
 }
