@@ -7,7 +7,7 @@ import {
   FlatList,
   TouchableOpacity,
   Modal,
-  Alert,
+  ActivityIndicator
 } from 'react-native';
 import Post from '../components/Post';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -19,17 +19,24 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 const ProfilePage = () => {
   const route = useRoute();
+  const navigation = useNavigation();
+  const { user } = useContext(AuthContext);
+
+  // Use the userId from params if provided; else fallback to currently logged-in user's userId
+  const userId = route.params?.userId || user.userId;
 
   const [isAchievementsVisible, setAchievementsVisible] = useState(false);
   const [achievements, setAchievements] = useState([]);
-
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState(null);
   const [latestPosts, setLatestPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
+
   const [loadingPosts, setLoadingPosts] = useState(true);
+  const [loadingUserData, setLoadingUserData] = useState(true);
+  const [loadingAchievements, setLoadingAchievements] = useState(true);
+
   const [showVisual, setShowVisual] = useState(false);
-  const { user } = useContext(AuthContext);
-  const userId = route.params?.userId || user.userId;
+  const flatListRef = useRef(null);
 
   const fetchUserPosts = async () => {
     try {
@@ -41,17 +48,15 @@ const ProfilePage = () => {
       );
       setLatestPosts(response.data);
       filterPosts(response.data, true);
-      setLoadingPosts(false);
     } catch (error) {
-      // console.error('Error fetching posts:', error);
+      console.error('Error fetching posts:', error);
+    } finally {
       setLoadingPosts(false);
-      // Alert.alert('Error', 'Failed to fetch posts');
     }
   };
 
   const fetchUserData = async () => {
     try {
-      // Fetch the user profile data by username
       const response = await axios.get(
         `${process.env.EXPO_PUBLIC_VITE_API_URL}/api/v1/users/${userId}`,
         {
@@ -61,6 +66,8 @@ const ProfilePage = () => {
       setUserData(response.data);
     } catch (error) {
       console.error('Error fetching user data:', error);
+    } finally {
+      setLoadingUserData(false);
     }
   };
 
@@ -75,10 +82,13 @@ const ProfilePage = () => {
       setAchievements(response.data);
     } catch (error) {
       console.error('Error fetching achievements:', error);
+    } finally {
+      setLoadingAchievements(false);
     }
   };
 
   const filterPosts = (allPosts, showVisual) => {
+    // Currently not filtering by showVisual, just display all
     setFilteredPosts(allPosts);
   };
 
@@ -88,7 +98,6 @@ const ProfilePage = () => {
 
   const clearFilteredPosts = () => {
     setFilteredPosts([]);
-    console.log('Filtered posts cleared.');
   };
 
   useEffect(() => {
@@ -97,32 +106,48 @@ const ProfilePage = () => {
     fetchAchievements();
   }, [user, userId]);
 
-  const navigation = useNavigation();
-
-  const flatListRef = useRef(null);
-
   const disableScroll = (isDisabled) => {
     if (flatListRef.current) {
       flatListRef.current.setNativeProps({ scrollEnabled: !isDisabled });
     }
   };
 
+  // If we're still loading user data, show a loader
+  if (loadingUserData || loadingPosts || loadingAchievements) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color={Colors.dark} />
+      </View>
+    );
+  }
+
+  // If userData is null even after loading, show a fallback UI
+  if (!userData) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Failed to load user profile.</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      {/* Display Username at the top of the page */}
-      <Text style={styles.usernameText}>{userData.nickName}</Text>
+      {/* User's Nickname (or fallback if unavailable) */}
+      <Text style={styles.usernameText}>
+        {userData?.nickName || 'Unknown User'}
+      </Text>
 
-      {/* Profile Picture */}
+      {/* Profile Picture (with fallback) */}
       <Image
         source={{
-          uri: userData.profilePictureUrl || 'https://via.placeholder.com/100',
+          uri: userData?.profilePictureUrl || 'https://via.placeholder.com/100',
         }}
         style={styles.profilePicture}
       />
 
-      {/* Tournament Points */}
+      {/* Tournament Points (with fallback) */}
       <Text style={styles.pointsText}>
-        Tournament Points: {userData.experience}
+        Tournament Points: {userData?.experience ?? 0}
       </Text>
 
       <TouchableOpacity
@@ -135,21 +160,22 @@ const ProfilePage = () => {
 
       {/* Latest Posts */}
       <Text style={styles.latestHeader}>Latest Posts:</Text>
-      <GestureHandlerRootView>
+      <GestureHandlerRootView style={{ flex: 1 }}>
         <FlatList
           ref={flatListRef}
           data={filteredPosts}
           keyExtractor={(item) => item.postId.toString()}
-          removeClippedSubviews={false}
           keyboardShouldPersistTaps='handled'
-          ListEmptyComponent={<Text>This user hasn't posted yet.</Text>}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>This user hasn't posted yet.</Text>
+          }
           renderItem={({ item }) => (
             <Post
               title={item.title}
               content={item.text}
               model={item.fileUrl}
-              username={item.user.nickName}
-              userId={item.user.id}
+              username={item.user?.nickName}
+              userId={item.user?.id}
               id={item.postId}
               navigation={navigation}
               disableScroll={disableScroll}
@@ -159,6 +185,7 @@ const ProfilePage = () => {
           )}
         />
       </GestureHandlerRootView>
+
       <Modal
         visible={isAchievementsVisible}
         transparent={true}
@@ -168,7 +195,6 @@ const ProfilePage = () => {
         <View style={styles.modalOverlay}>
           <View style={styles.centeredModal}>
             <Text style={styles.modalTitle}>Achievements</Text>
-
             {/* Table Header */}
             <View style={styles.tableHeader}>
               <Text style={styles.headerCell}>Title</Text>
@@ -189,9 +215,11 @@ const ProfilePage = () => {
                     <Text style={styles.tableCell}>{item.description}</Text>
                     <Text style={styles.tableCell}>{item.point}</Text>
                     <Text style={styles.tableCell}>
-                      {new Intl.DateTimeFormat('en-GB').format(
-                        new Date(item.earnedAt)
-                      )}
+                      {item.earnedAt
+                        ? new Intl.DateTimeFormat('en-GB').format(
+                            new Date(item.earnedAt)
+                          )
+                        : ''}
                     </Text>
                   </View>
                 )}
@@ -216,6 +244,17 @@ const ProfilePage = () => {
 };
 
 const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: Colors.red,
+    fontSize: 18,
+    textAlign: 'center',
+    marginTop: 20,
+  },
   container: {
     flex: 1,
     padding: 20,
@@ -245,20 +284,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  itemContainer: {
-    marginBottom: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-  },
-  itemType: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  itemTitle: {
-    fontSize: 16,
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontStyle: 'italic',
   },
   achievementsButton: {
     backgroundColor: Colors.dark,
@@ -284,17 +313,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   centeredModal: {
-    width: '95%', // Adjust width as needed
+    width: '95%',
     backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
     elevation: 5,
   },
   modalTitle: {
@@ -310,7 +335,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 5,
     marginBottom: 5,
-    height: '60',
   },
   headerCell: {
     fontSize: 15,

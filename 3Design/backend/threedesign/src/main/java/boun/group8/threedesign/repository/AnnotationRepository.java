@@ -13,5 +13,7 @@ public interface AnnotationRepository extends JpaRepository<Annotation, Long> {
 
     int countByUserId(Long userId);
 
+    void deleteAllByPostId(Long postId);
+
 
 }
