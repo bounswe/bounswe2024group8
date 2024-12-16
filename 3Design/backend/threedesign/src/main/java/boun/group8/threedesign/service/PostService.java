@@ -388,6 +388,7 @@ public class PostService {
         return convertPostsToPostResponses(user, bookmarkedPosts);
     }
 
+    @Transactional
     public PostResponse updatePost(User user, Long id, PostUpdateRequest request) {
 
         Post post = getPostByIdElseThrow(id);
@@ -429,7 +430,7 @@ public class PostService {
         return convertPostToPostResponse(user, post);
     }
 
-  @Transactional
+    @Transactional
     public void deletePost(User user, Long id) {
 
         Post post = getPostByIdElseThrow(id);
