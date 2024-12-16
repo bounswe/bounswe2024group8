@@ -390,4 +390,10 @@ public class PostService {
 
         return convertPostsToPostResponses(user, bookmarkedPosts);
     }
+
+    public List<PostResponse> searchPostsWithTags(User user, String tag) {
+
+        List<Post> results = new ArrayList<>(postRepository.findPostsByTag(tag));
+        return convertPostsToPostResponses(user, results);
+    }
 }

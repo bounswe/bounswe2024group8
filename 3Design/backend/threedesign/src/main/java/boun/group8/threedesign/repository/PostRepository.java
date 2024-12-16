@@ -26,6 +26,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p LEFT JOIN p.tags t WHERE LOWER(p.text) LIKE LOWER(CONCAT('%',:param,'%')) OR LOWER(p.title) LIKE LOWER(CONCAT('%',:param,'%')) OR LOWER(t) LIKE LOWER(CONCAT('%',:param,'%')) ORDER BY p.createdAt DESC")
     List<Post> findByTextLikeIgnoreCase(@Param("param") String param);
 
+    @Query("SELECT p FROM Post p JOIN p.tags t WHERE t = :tag ORDER BY p.createdAt DESC")
+    List<Post> findPostsByTag(@Param("tag") String tag);
+
     //@Query("SELECT new boun.group8.threedesign.payload.PostResponse(p.id, p.text, p.user, p.title, p.likes, p.dislikes, p.comments, p.categoryId, p.isVisualPost, p.fileUrl, p.challengedPostId, p.tags, p.createdAt, " +
     //        "COALESCE(r.id, -1L), COALESCE(r.reactionType, boun.group8.threedesign.model.enums.ReactionType.NONE), COALESCE(r.bookmark, false)) " +
     //        "FROM Post p LEFT JOIN Reaction r ON p.id = r.post.id AND r.user = :user " +

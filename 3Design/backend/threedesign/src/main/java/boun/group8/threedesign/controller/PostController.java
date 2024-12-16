@@ -79,6 +79,20 @@ public class PostController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("tag/{tag}")
+    public ResponseEntity<List<PostResponse>> searchWithTags(
+            @AuthenticationPrincipal User user,
+            @PathVariable String tag) {
+
+        var result = postService.searchPostsWithTags(user, tag);
+
+        if (result.isEmpty() ) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping("/{postId}/react")
     public ResponseEntity<ReactionResponse> reactPost(
             @AuthenticationPrincipal User userDetails,
