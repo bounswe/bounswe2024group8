@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,7 +7,8 @@ import {
   ActivityIndicator,
   Platform,
   StatusBar,
-  Image
+  Image,
+  TouchableOpacity
 } from 'react-native';
 import axios from 'axios';
 import { Colors } from '../constants/Colors';
@@ -44,14 +45,17 @@ export default function LeaderboardScreen({ route, navigation }) {
   const renderItem = ({ item, index }) => (
     <View style={styles.row}>
       <Text style={styles.cell}>{index + 1}</Text>
-      <View style={styles.userCell}>
-        {/* Display the user's profile picture before their nickname */}
+      {/* Make the user cell clickable */}
+      <TouchableOpacity
+        style={styles.userCell}
+        onPress={() => navigation.navigate('ProfilePage', { userId: item.user.id })}
+      >
         <Image
           source={{ uri: item.user.profilePictureUrl }}
           style={styles.profileImage}
         />
         <Text style={styles.userName}>{item.user.nickName}</Text>
-      </View>
+      </TouchableOpacity>
       <Text style={styles.cell}>{item.score}</Text>
       <Text style={styles.cell}>{item.postId}</Text>
     </View>
