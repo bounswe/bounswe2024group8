@@ -70,17 +70,17 @@
     font-size: 0.9rem;
 }
 
-.text-blue-600 {
+.annotationDataContainer .text-blue-600 {
     color: #1d4ed8;
     font-weight: bold;
     text-decoration: none;
 }
 
-.text-blue-600:hover {
+.annotationDataContainer .text-blue-600:hover {
     text-decoration: underline;
 }
 
-p {
+.annotationDataContainer p {
     margin: 0;
     color: #333;
     line-height: 1.5; 
