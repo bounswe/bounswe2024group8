@@ -30,7 +30,7 @@ public class AnnotationService {
 
     final PostRepository postRepository;
 
-    String BACKEND_URL = "http://localhost:8080/api/v1/"; //TODO: CHANGE THIS
+    String BACKEND_URL = "http://34.32.78.191:8080/api/v1/";
 
     public Annotation addAnnotation(Long postId, Long commentId, Long userId, Integer startIndex, Integer endIndex, String content) {
 
