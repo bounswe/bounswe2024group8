@@ -2,6 +2,29 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import OBJViewer from '../components/ObjectViewer';
 
+function parseString(input) {
+  const result = [];
+  let current = '';
+  for (let i = 0; i < input.length; i++) {
+    if (input[i] === '&') {
+      if (input[i + 1] === '&') {
+        current += '&'; // Skip parsing and keep the ampersands
+        i++; // Skip the next ampersand
+      } else {
+        result.push(current); // Add the current string to the result
+        current = ''; // Reset for the next part
+      }
+    } else {
+      current += input[i];
+    }
+  }
+  // Add any remaining string after the loop
+  if (current) {
+    result.push(current);
+  }
+  return result;
+}
+
 class Post extends Component {
   constructor(props) {
     super(props);
@@ -49,7 +72,7 @@ class Post extends Component {
             >
               <Text style={styles.postTitle}>{title}</Text>
             </TouchableOpacity>
-            <Text style={styles.postContent}>{content}</Text>
+            <Text style={styles.postContent}>{parseString(content)[0]}</Text>
           </View>
           <View style={styles.modelView}>
             <OBJViewer objFilePath={model} />
@@ -80,7 +103,7 @@ class Post extends Component {
             >
               <Text style={styles.postTitle}>{title}</Text>
             </TouchableOpacity>
-            <Text style={styles.postContent}>{content}</Text>
+            <Text style={styles.postContent}>{parseString(content)[0]}</Text>
           </View>
         </View>
       );
