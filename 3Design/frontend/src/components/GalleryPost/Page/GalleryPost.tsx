@@ -10,7 +10,7 @@ import MockComments from '../../../resources/json-files/Comments.json'
 import ChallengePost from '../../CreatePost/ChallengePost'
 import PostAnnotation from '../../Annotations/PostAnnotation'
 import { grey } from '@mui/material/colors';
-import { message, Switch } from 'antd'
+import { Button, message, Switch } from 'antd'
 import axios, { AxiosError } from 'axios'
 import EditPost from '../../CreatePost/EditPost'
 interface Props{
@@ -35,6 +35,8 @@ const GalleryPost = ({postData, publishedAnnotationsProps} : Props) => {
 
   const [annotatedText, setAnnotatedText] = useState("");
   const [annotationSending, setAnnotatingSending] = useState(false);
+
+  const [annatotionButton, setAnnotationButton] = useState({top: 0, left: 0, show: false});
 
   const [publishedAnnotations, setPublishedAnnotations] = useState<RecievedAnnotationData[]>(publishedAnnotationsProps);
   const [comments, setComments] = useState<DComment[]>([]);
@@ -174,12 +176,19 @@ const dislikeClicked = async (event:any) =>{
     setData((prev) => ({...prev,reactionType:"DISLIKE",dislikes: prev.dislikes + 1}));
 }
 
+  const clickedP = () => {
+    setTimeout(() => {
+      setAnnotation();
+    }, 100);
+  }
+
   const setAnnotation = () =>{
     if (!!annotatedText){
       return;
     }
     const selection = window.getSelection();
     if (!selection){
+      setAnnotationButton({top: 0, left: 0, show: false});
       return;
     }
     const selectedText = selection.toString();
@@ -188,8 +197,12 @@ const dislikeClicked = async (event:any) =>{
       const startI = selection.anchorOffset;
       const endI = selection.focusOffset;
       console.log(`Start: ${startI} End: ${endI}`);
+      const selectionRange = selection.getRangeAt(0);
+      const rect = selectionRange.getBoundingClientRect();
+      setAnnotationButton({top: rect.top + window.scrollY + rect.height, left: rect.left + window.scrollX + rect.width / 2, show: true});
       setAnnotationData(prev => ({...prev, startIndex: Math.min(startI, endI),endIndex: Math.max(endI, startI)}) );
     } else {
+      setAnnotationButton({top: 0, left: 0, show: false});
       setAnnotationData(prev => ({...prev, startIndex: null,endIndex: null}) );
     }
   }
@@ -416,7 +429,7 @@ const fetchCommentData = async () => {
               </div>
               :
               <div>
-                <p ref={bodyRef} onMouseUp={!annotationsVisible ? setAnnotation : () => (null)}>{parsedString[0]}</p>
+                <p ref={bodyRef} onMouseUp={!annotationsVisible ? clickedP : () => (null)}>{parsedString[0]}</p>
                 
 
                 {parsedString.length > 1 && <br></br>}
@@ -425,14 +438,32 @@ const fetchCommentData = async () => {
                 ))
                 
                 }
-                <div className='flex gap-2 pt-5'>
-                  {data.tags.map((item) => (
-                    <Chip icon={<Tag/>} label={item} variant='outlined' onClick={() => window.location.href = `/tagsearch/${item}`}/>
-                  ))}   
-                </div>
+                
               </div>
             }
+            <div className='flex gap-2 pt-5'>
+              {data.tags.map((item) => (
+                <Chip icon={<Tag/>} label={item} variant='outlined' onClick={() => window.location.href = `/tagsearch/${item}`}/>
+              ))}   
+            </div>
           </div>
+            {annatotionButton.show && !annotationsVisible && (
+            <Button
+              icon={<BorderColor />}
+              type="default"
+              style={{
+                position: 'absolute',
+                top: `${annatotionButton.top}px`,
+                left: `${annatotionButton.left}px`,
+                transform: 'translateX(-50%)',
+                marginTop: '8px',
+                zIndex: 10
+              }}
+              onClick={startAnnotation}
+            >
+              Annotate
+            </Button>
+          )}
           <div className='flex gap-6'>
           <div className='flex items-center'>
                         <button onClick={likeClicked} className='btn btn-ghost'>
