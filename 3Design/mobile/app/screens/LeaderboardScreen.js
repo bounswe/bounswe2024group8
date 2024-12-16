@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -45,6 +45,7 @@ export default function LeaderboardScreen({ route, navigation }) {
     <View style={styles.row}>
       <Text style={styles.cell}>{index + 1}</Text>
       <View style={styles.userCell}>
+        {/* Display the user's profile picture before their nickname */}
         <Image
           source={{ uri: item.user.profilePictureUrl }}
           style={styles.profileImage}
