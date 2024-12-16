@@ -466,7 +466,7 @@ const fetchCommentData = async () => {
               >
                 <a
                   className="text-blue-600"
-                  href={`/profile/${item.userId}`}
+                  href={`/profile/${item.userId.split("/").pop()}`}
                 >
                   {item.username}
                 </a>

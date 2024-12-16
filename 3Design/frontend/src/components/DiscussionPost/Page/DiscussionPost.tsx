@@ -419,7 +419,7 @@ const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
                     >
                       <a
                         className="text-blue-600"
-                        href={`/profile/${item.userId}`}
+                        href={`/profile/${item.userId.split("/").pop()}`}
                       >
                         {item.username}
                       </a>
