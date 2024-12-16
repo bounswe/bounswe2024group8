@@ -32,7 +32,7 @@ const SearchResults = () => {
     if (/^\d+$/.test(passedPageNumber)){
         pageNumber = parseInt(passedPageNumber);
     }
-    const pageSize = 3;
+    const pageSize = 5;
 
     if (query == undefined || query == null){
         window.location.href = "/home";

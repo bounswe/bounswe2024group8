@@ -2,8 +2,8 @@ import React, { memo, SetStateAction, useCallback, useEffect, useRef, useState }
 import { DPost, SendAnnotationData, DComment, DisplayedAnnotationData, RecievedAnnotationData } from '../../interfaces'
 import styles from "../GalleryPost.module.css"
 import DViewer from '../../DViewer/DViewer'
-import { ChevronRight,Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined, Edit, Delete } from '@mui/icons-material'
-import { CircularProgress, Dialog, IconButton, Menu, MenuItem, TextField } from '@mui/material'
+import { ChevronRight,Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined, Edit, Delete, Tag } from '@mui/icons-material'
+import { Chip, CircularProgress, Dialog, IconButton, Menu, MenuItem, TextField } from '@mui/material'
 import { formatInteractions,getCategoryById, parsePostString } from '../../tsfunctions'
 import Comment from '../../Comment/Comment'
 import MockComments from '../../../resources/json-files/Comments.json'
@@ -424,7 +424,12 @@ const fetchCommentData = async () => {
                   <p className='text-gray-400' key={index}>{item}</p>
                 ))
                 
-                }   
+                }
+                <div className='flex gap-2 pt-5'>
+                  {data.tags.map((item) => (
+                    <Chip icon={<Tag/>} label={item} variant='outlined' onClick={() => window.location.href = `/tagsearch/${item}`}/>
+                  ))}   
+                </div>
               </div>
             }
           </div>

@@ -23,7 +23,7 @@ const Feed = ({category}: Props) => {
     const [searchParams] = useSearchParams();
     const feedType = searchParams.get("type") != "discussion";
     const navigate = useNavigate();
-    const pageSize = 3;
+    const pageSize = 5;
 
     const passedPageNumber = searchParams.get("p") ?? "";
     let pageNumber = 1;

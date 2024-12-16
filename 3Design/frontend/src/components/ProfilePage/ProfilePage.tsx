@@ -38,7 +38,7 @@ const ProfilePage = () => {
   const currentUserId = localStorage.getItem("user_id");
 
   const [activePage, setActivePage] = useState(1);
-  const pageSize = 3;
+  const pageSize = 5;
 
   const imageRef = useRef<HTMLInputElement | null>(null);
   const [changePasswordConfig, setChangePasswordConfig] = useState({dialog: false, newPassword: "", sending:false});

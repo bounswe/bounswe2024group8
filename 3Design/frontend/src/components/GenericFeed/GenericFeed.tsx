@@ -18,7 +18,7 @@ const GenericFeed = () => {
     if (/^\d+$/.test(passedPageNumber)){
         pageNumber = parseInt(passedPageNumber);
     }
-    const pageSize = 3;
+    const pageSize = 5;
 
     useEffect(() => {
         fetchPostData();

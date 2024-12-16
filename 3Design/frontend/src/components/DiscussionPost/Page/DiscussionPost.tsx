@@ -2,8 +2,8 @@ import React, { memo, SetStateAction, useCallback, useEffect, useRef, useState }
 import { DisplayedAnnotationData, DPost, RecievedAnnotationData, SendAnnotationData, DComment } from '../../interfaces'
 import styles from "../DiscussionPost.module.css"
 import DViewer from '../../DViewer/DViewer'
-import { Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined,ChevronRight, Edit, Delete } from '@mui/icons-material'
-import { CircularProgress, Dialog, IconButton, Menu, MenuItem, TextField} from '@mui/material'
+import {Tag, Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined,ChevronRight, Edit, Delete } from '@mui/icons-material'
+import { Chip, CircularProgress, Dialog, IconButton, Menu, MenuItem, TextField} from '@mui/material'
 import { grey } from '@mui/material/colors';
 import { formatInteractions,getCategoryById } from '../../tsfunctions'
 import { message, Switch } from 'antd'
@@ -18,7 +18,6 @@ interface Props{
 
 const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
     const [data, setData] = useState<DPost>(postData);
-    console.log(data);
     const bodyRef = useRef<HTMLParagraphElement | null>(null);
     const [annotationData, setAnnotationData] = useState<SendAnnotationData>({content: "", endIndex: null, postId: postData.postId, startIndex: null, userId: parseInt(localStorage.getItem("user_id") ?? "-1")});
 
@@ -381,6 +380,11 @@ const DiscussionPost = ({postData, publishedAnnotationsProps} : Props) => {
                     :
                     <p ref={bodyRef} onMouseUp={!annotationsVisible ? setAnnotation : () => (null)}>{data.text}</p>
                     }
+                    <div className='flex gap-2 pt-5'>
+                        {data.tags.map((item) => (
+                            <Chip icon={<Tag/>} label={item} variant='outlined' onClick={() => window.location.href = `/tagsearch/${item}`}/>
+                            ))}   
+                    </div>
                 </div>
                 <div className='flex gap-6'>
                     <div className='flex items-center'>
