@@ -412,6 +412,7 @@ public class PostService {
 
         if (newText != null) {
             post.setText(newText);
+            annotationRepository.deleteAllByPostId(id);
         }
 
         if (file != null) {
