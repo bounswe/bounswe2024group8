@@ -201,6 +201,10 @@ public class TournamentService {
         return reactionScore;
     }
 
+    public boolean isPostInTournament(Long postId) {
+        return tournamentEntryRepository.existsByPostId(postId);
+    }
+
     @Transactional
     public void assignPrizes() {
 

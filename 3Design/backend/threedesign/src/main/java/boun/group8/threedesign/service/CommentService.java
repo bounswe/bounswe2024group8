@@ -142,4 +142,16 @@ public class CommentService {
 
         return commentRepository.findAllCommentsAndReactionsByPostAndUser(user.getId(), postId);
     }
+
+    @Transactional
+    public void deleteCommentsByPostId(Long postId) {
+
+        List<Comment> commentsToDelete = commentRepository.findAllByPostId(postId);
+
+        for (Comment comment : commentsToDelete) {
+            reactionRepository.deleteAllByCommentId(comment.getId());
+            commentRepository.deleteById(comment.getId());
+        }
+
+    }
 }

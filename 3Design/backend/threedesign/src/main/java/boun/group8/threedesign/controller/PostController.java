@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -260,6 +261,34 @@ public class PostController {
         }
 
         return ResponseEntity.ok(posts);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id) {
+
+        postService.deletePost(user, id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PostResponse> updatePost(
+            @AuthenticationPrincipal User user,
+            @Valid @ModelAttribute PostUpdateRequest request,
+            @PathVariable Long id,
+            @RequestPart(required = false) MultipartFile file) throws Exception {
+
+        request.setFile(file);
+        PostResponse updatedPost = postService.updatePost(user, id, request);
+
+        if (updatedPost == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(updatedPost);
+
     }
 
 }
