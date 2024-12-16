@@ -449,20 +449,39 @@ const fetchCommentData = async () => {
         </div>
         {annotationsVisible && currentAnnotations.length != 0 && 
           <div className={styles.annotationContainer}>
-              <div className='flex'>
-                  <p className='font-semibold text-lg pt-2'>Annotations</p>
-                  <button onClick={() => setDisplayedAnnotation([])} className='btn btn-ghost mr-0 ml-auto'>X</button>
+          <div className="flex">
+            <p className="font-semibold text-lg pt-2">Annotations</p>
+            <button
+              onClick={() => setDisplayedAnnotation([])}
+              className="btn btn-ghost mr-0 ml-auto"
+            >
+              ✖
+            </button>
+          </div>
+          <div className={styles.annotationDataContainer}>
+            {currentAnnotations.map((item, index) => (
+              <div
+                key={`ant_container_${index}`}
+                className={`flex flex-col gap-2 ${styles.singleAnnotationContainer}`}
+              >
+                <a
+                  className="text-blue-600"
+                  href={`/profile/${item.userId}`}
+                >
+                  {item.username}
+                </a>
+                <div
+                  className={styles.ellipsis}
+                  title={`Annotated text: "${item.annotatedText}"`}
+                >
+                  "{item.annotatedText}"
+                </div>
+                <p>{item.annotation}</p>
               </div>
-              <div className={styles.annotationDataContainer}>
-                  {currentAnnotations.map((item, index) => (
-                    <div key={`ant_container_${index}`} className={`flex flex-col gap-2 pb-4 ${styles.singleAnnotationContainer}`}>
-                      <a className='text-blue-600' href={`/profile/${item.userId.split("/").pop()}`}><u>{item.username}</u></a>
-                      <div className={`${styles.ellipsis} font-bold`} title= {`Annotated text: "${item.annotatedText}"`}>Annotated text: "{item.annotatedText}"</div>
-                      <p>{item.annotation}</p>
-                    </div>
-                  ))}
-              </div>
-          </div>}
+            ))}
+          </div>
+        </div>
+          }
           <Dialog fullWidth maxWidth="sm" open={!!annotatedText} onClose={() => setAnnotatedText("")}>
             <div className='flex flex-col gap-4 p-4'>
               <p className={`${styles.ellipsis} font-bold`} title={`Annotating Text: ${annotatedText}`}>Annotating Text: {annotatedText}</p>

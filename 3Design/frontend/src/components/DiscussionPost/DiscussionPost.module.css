@@ -25,35 +25,64 @@
 }
 
 
-.annotationContainer{
+.annotationContainer {
     height: 500px;
     position: sticky;
     top: 100px;
-    
     width: 29%;
-    background-color: #E0D3AF;
-    border-radius: 10%;
-    padding: 2%;
+    background-color: #f9f6ee;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
 }
 
-.annotationDataContainer{
+.annotationDataContainer {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px; 
     overflow-y: scroll;
     height: 400px;
-    
+    padding-right: 10px;
+}
+
+.singleAnnotationContainer {
+    padding: 15px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.singleAnnotationContainer:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .ellipsis {
-    width: 300px;
+    width: 100%;
     white-space: nowrap; 
     overflow: hidden; 
     text-overflow: ellipsis;
-    position: relative;
-  }
+    color: #555;
+    font-style: italic;
+    font-size: 0.9rem;
+}
 
-.singleAnnotationContainer{
-    border-bottom: black;
-    border-style: dashed;
+.text-blue-600 {
+    color: #1d4ed8;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.text-blue-600:hover {
+    text-decoration: underline;
+}
+
+p {
+    margin: 0;
+    color: #333;
+    line-height: 1.5; 
+    font-size: 0.95rem;
 }
