@@ -20,4 +20,6 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 
     void deleteAllByPostId(Long postId);
 
+    void deleteAllByCommentId(Long commentId);
+
 }

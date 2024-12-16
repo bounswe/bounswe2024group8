@@ -443,7 +443,7 @@ public class PostService {
             throw new ThreeDesignDatabaseException("You cannot delete a post that is in a tournament");
         }
 
-        commentRepository.deleteAllByPostId(id);
+        commentService.deleteCommentsByPostId(id);
 
         reactionRepository.deleteAllByPostId(id);
 

@@ -14,6 +14,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Comment findByPostId(Long postId);
 
+    List<Comment> findAllByPostId(Long postId);
+
     @Query("SELECT new boun.group8.threedesign.payload.CommentResponse(c.id, c.text, c.user, c.likes, c.dislikes, c.createdAt, " +
             "COALESCE(r.id, -1L), COALESCE(r.reactionType, boun.group8.threedesign.model.enums.ReactionType.NONE)) " +
             "FROM Comment c LEFT JOIN Reaction r ON c.id = r.comment.id AND r.user.id = :userId " +
@@ -29,6 +31,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     void deleteByPostId(Long postId);
 
     void deleteAllByPostId(Long postId);
+
+    void deleteById(Long id);
 
 
 }
