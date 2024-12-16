@@ -7,11 +7,11 @@ import {
   ActivityIndicator,
   Platform,
   StatusBar,
+  Image
 } from 'react-native';
 import axios from 'axios';
 import { Colors } from '../constants/Colors';
 import { AuthContext } from "../context/AuthContext";
-import { Categories } from "../constants/Categories";
 
 export default function LeaderboardScreen({ route, navigation }) {
   const { category } = route.params;
@@ -44,7 +44,13 @@ export default function LeaderboardScreen({ route, navigation }) {
   const renderItem = ({ item, index }) => (
     <View style={styles.row}>
       <Text style={styles.cell}>{index + 1}</Text>
-      <Text style={styles.cell}>{item.user.nickName}</Text>
+      <View style={styles.userCell}>
+        <Image
+          source={{ uri: item.user.profilePictureUrl }}
+          style={styles.profileImage}
+        />
+        <Text style={styles.userName}>{item.user.nickName}</Text>
+      </View>
       <Text style={styles.cell}>{item.score}</Text>
       <Text style={styles.cell}>{item.postId}</Text>
     </View>
@@ -126,6 +132,22 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     fontSize: 16,
+  },
+  userCell: {
+    flex: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginRight: 8,
+  },
+  userName: {
+    fontSize: 16,
+    textAlign: 'center',
   },
   loaderContainer: {
     flex: 1,
