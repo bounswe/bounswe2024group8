@@ -292,4 +292,37 @@ public class PostServiceTest {
         assertEquals(post.getId(), result.get(0).getPostId());
     }
 
+    @Test
+    public void deletePost_ThrowsException_WhenUserIsNotOwner() {
+        // Arrange
+        User user = new User();
+        user.setId(1L);
+        User otherUser = new User();
+        otherUser.setId(2L);
+        Post post = new Post();
+        post.setId(1L);
+        post.setUser(otherUser);
+
+        when(postRepository.getPostById(post.getId())).thenReturn(post);
+
+        // Act & Assert
+        assertThrows(ThreeDesignDatabaseException.class, () -> postService.deletePost(user, post.getId()));
+    }
+
+    @Test
+    public void deletePost_ThrowsException_WhenPostIsInTournament() {
+        // Arrange
+        User user = new User();
+        user.setId(1L);
+        Post post = new Post();
+        post.setId(1L);
+        post.setUser(user);
+
+        when(postRepository.getPostById(post.getId())).thenReturn(post);
+        when(tournamentService.isPostInTournament(post.getId())).thenReturn(true);
+
+        // Act & Assert
+        assertThrows(ThreeDesignDatabaseException.class, () -> postService.deletePost(user, post.getId()));
+    }
+
 }
