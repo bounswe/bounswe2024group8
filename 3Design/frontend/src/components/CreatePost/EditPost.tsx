@@ -2,40 +2,38 @@ import { UploadOutlined,AddCircleOutline,Clear } from '@mui/icons-material'
 import { CircularProgress, Dialog, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 import { Button, GetProp, message, Upload, UploadFile, UploadProps } from 'antd'
 import React, { SetStateAction, useEffect, useState } from 'react'
-import { Category, DesignProperty } from '../interfaces'
+import { Category, DesignProperty, DPost } from '../interfaces'
 import axios, { AxiosError } from 'axios'
-import { limitPostBodies, mergePostString } from '../tsfunctions'
+import { limitPostBodies, mergePostString, parsePostString } from '../tsfunctions'
 
 const categories:Category[] = require('../../resources/json-files/Categories.json');
 interface Props{
     dialogFunction: React.Dispatch<SetStateAction<boolean>>,
-    challengedPostId: number,
-    categoryId: number
+    postData: DPost
 }
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
-const ChallengePost = ({dialogFunction, challengedPostId, categoryId} : Props) => {
-    const [title, setTitle] = useState("");
+const EditPost = ({dialogFunction, postData} : Props) => {
+    const [title, setTitle] = useState(postData.title);
     const [titleError, setTitleError] = useState("");
 
-    const [category, setCategory] = useState(`${categoryId}`);
+    const [category, setCategory] = useState(`${postData.categoryId}`);
 
-    const [tags, setTags] = useState<string[]>([]);
+    const [tags, setTags] = useState<string[]>(postData.tags);
     const [currentTag, setCurrentTag] = useState("");
 
-    const [content, setContent] = useState("");
+    const [content, setContent] = useState(parsePostString(postData.text)[0]);
     const [contentError, setContentError] = useState("");
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
 
     const [joinToTournament, setTournament] = useState(false);
 
-    const [creatingPost, setCreating] = useState(false);
-
     const [designProperties, setDesignProperties] = useState<DesignProperty[]>(require("../../resources/json-files/DesignProperties.json"));
     const [propertyWindow, setPropertyWindow] = useState(false);
 
+    const [creatingPost, setCreating] = useState(false);
 
     const validateTitle = () => {
         if (title.length < 5){
@@ -60,42 +58,44 @@ const ChallengePost = ({dialogFunction, challengedPostId, categoryId} : Props) =
             setTitleError(titleCheck);
             return;
         }
-        if (fileList.length == 0){
-            message.error("You need to add your 3D model to challenge this post.");
+        if (joinToTournament && fileList.length != 1){
+            message.error("You must add a 3D Model to your post to joining the tournament.");
             return;
         }
         setCreating(true);
         try{
-        
+
             const fd = new FormData();
-            const tagString = tags.join(", ");
-            const fixedCategory = `${categoryId}`;
+            const isVisual = fileList.length == 1;
+            
+            const fixedCategory = `${category}`;
             let fixedContent = content;
-            const stringLst = [fixedContent];
-            for (let prop of designProperties){
-                if (prop.value != ""){
-                    stringLst.push(`${prop.property} : ${prop.value}`);
+           
+            if (postData.isVisualPost){
+                const stringLst = [fixedContent];
+                for (let prop of designProperties){
+                    if (prop.value != ""){
+                        stringLst.push(`${prop.property} : ${prop.value}`);
+                    }
                 }
+                fixedContent = mergePostString(stringLst);
             }
-            fixedContent = mergePostString(stringLst);
-            fd.append("title", title);
+            
+
             fd.append("text", fixedContent);
-            fd.append("categoryId", fixedCategory);
-            fd.append("isVisualPost", "true");
-            fd.append("challengedPostId", `${challengedPostId}`);
-            fd.append("tags", tagString);   
-            fd.append("file", fileList[0] as FileType);
-            fd.append("joinToTournament", joinToTournament ? "true": "false");
-            await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/posts`, fd, {
+  
+            isVisual && fd.append("file", fileList[0] as FileType);
+
+            await axios.put(`${process.env.REACT_APP_API_URL}/api/v1/posts/${postData.postId}`, fd, {
                 headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,}
             })
-            message.success("Your post is successfully created.");
+            message.success("Your post is successfully edited.");
             setTimeout(() => {
                 window.location.href = `/home/${fixedCategory}`;
             }, 500);
         }
         catch(e){
-            if (e instanceof AxiosError && e.response && e.response.data && e.response.data.message && e.response.status != 500){
+            if (e instanceof AxiosError && e.response && e.response.data && e.response.data.message){
                 message.error(e.response.data.message);
             }
             else{
@@ -108,24 +108,25 @@ const ChallengePost = ({dialogFunction, challengedPostId, categoryId} : Props) =
 
     return (
         <div className='flex flex-col gap-4 p-4'>
-            <p className='font-bold text-lg'>Challenge This Post</p>
-            <TextField label="Title" value={title} error={!!titleError} helperText={titleError} onChange={(e) => {
+            <p className='font-bold text-lg'>Edit Post</p>
+            <TextField label="Title" disabled value={title} error={!!titleError} helperText={titleError} onChange={(e) => {
                 if (e.target.value.length > 128){
                     return;
                 }
+                
                 setTitleError("");
                 setTitle(e.target.value);
             }}/>
             <div className='flex '>
                 <FormControl className='w-4/6'>
                     <InputLabel id="categoryLabel">Category</InputLabel>
-                    <Select disabled label='Category' labelId='categoryLabel' value={category}>
+                    <Select disabled label='Category' labelId='categoryLabel' value={category} onChange={e => setCategory(e.target.value)}>
                         {categories.map((c) => <MenuItem key={c.id} value={c.id}>{c.name}</MenuItem>)}
                     </Select>
                 </FormControl>
                 <div className='w-2/6 flex items-center flex-col'>
                     <p>Join To Tournament</p>
-                    <input onChange={(e)=>setTournament(e.target.checked)} type='checkbox' checked={joinToTournament} className='checkbox'/>
+                    <input disabled onChange={(e)=>setTournament(e.target.checked)} type='checkbox' checked={joinToTournament} className='checkbox'/>
                 </div>
             </div>
             
@@ -138,7 +139,7 @@ const ChallengePost = ({dialogFunction, challengedPostId, categoryId} : Props) =
             }}/>
             <div>
                 <div className='flex gap-2'>
-                    <TextField sx={{width: "50%"}} value={currentTag} onKeyDown={(e) =>
+                    <TextField disabled sx={{width: "50%"}} value={currentTag} onKeyDown={(e) =>
                     {
                         if (e.key === "Enter"){
                             if (currentTag.length > 0){
@@ -155,7 +156,7 @@ const ChallengePost = ({dialogFunction, challengedPostId, categoryId} : Props) =
                     <div className='flex flex-col gap-2 overflow-y-scroll max-h-40 w-1/2 items-end'>
                         {tags.map((tag,index) => <div key={index} className='flex items-center gap-2'>
                             <p>{tag}</p>
-                            <IconButton onClick={() => setTags(prev=>{
+                            <IconButton disabled onClick={() => setTags(prev=>{
                                 const clone = [...prev];
                                 clone.splice(index,1);
                                 return clone;
@@ -165,7 +166,7 @@ const ChallengePost = ({dialogFunction, challengedPostId, categoryId} : Props) =
                     
                 </div>
             </div>
-            <Upload accept='.obj,.dae' fileList={fileList} onRemove={(file) => {
+            <Upload disabled={!postData.isVisualPost} accept='.obj,.dae' fileList={fileList} onRemove={(file) => {
                 const index = fileList.indexOf(file);
                 const newFileList = fileList.slice();
                 newFileList.splice(index, 1);
@@ -190,12 +191,12 @@ const ChallengePost = ({dialogFunction, challengedPostId, categoryId} : Props) =
                 return false;
             }}
             >
-                <Button icon={<UploadOutlined />}>Select File</Button>
+                <Button disabled={!postData.isVisualPost} icon={<UploadOutlined />}>Select File</Button>
             </Upload>
-            <Button onClick={() => setPropertyWindow(true)} disabled={fileList.length == 0} type='primary' className='w-1/2'>Design Properties</Button>
+            <Button onClick={() => setPropertyWindow(true)} disabled={!postData.isVisualPost} type='primary' className='w-1/2'>Design Properties</Button>
             <div className='flex gap-2 mr-0 ml-auto'>
                 <button className='btn btn-outline' onClick={() => dialogFunction(false)}>Cancel</button>
-                <button disabled={creatingPost} onClick={sendPost} className='btn btn-primary' >Challenge Post</button>
+                <button disabled={creatingPost} onClick={sendPost} className='btn btn-primary' >Edit Post</button>
                 {creatingPost && <CircularProgress style={{fontSize: "8px"}}/>}
             </div>
             <Dialog maxWidth="sm" fullWidth open={propertyWindow}>
@@ -225,13 +226,14 @@ const ChallengePost = ({dialogFunction, challengedPostId, categoryId} : Props) =
                         </FormControl>
                     ))}
                     <div className='flex justify-end'>
-                        <button className='btn btn-outline' onClick={() => setPropertyWindow(false)}>Done</button>
+                     <button className='btn btn-outline' onClick={() => setPropertyWindow(false)}>Done</button>
                     </div>
                 </div>
             </Dialog>
+            
         </div>
 
     )
 }
 
-export default ChallengePost
+export default EditPost

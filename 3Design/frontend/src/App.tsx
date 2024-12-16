@@ -9,6 +9,7 @@ import PostPage from './components/PostPage/PostPage';
 import SearchResults from './components/SearchResults/SearchResults';
 import LeaderboardPage from './components/TournamentLeaderboard/LeaderboardPage';
 import ProfilePage from './components/ProfilePage/ProfilePage';
+import TagSearchResults from './components/TagSearchResults/TagSearchResults';
 
 function App() {
   return (
@@ -55,6 +56,18 @@ function App() {
           path="/search"
           element={
             <SearchResults/>
+          }
+        />
+        <Route
+          path="/tagsearch/:query"
+          element={
+            <TagSearchResults/>
+          }
+        />
+        <Route
+          path="/tagsearch"
+          element={
+            <TagSearchResults/>
           }
         />
         <Route

@@ -1,17 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import SideBar from "../SideBar/SideBar";
 import PageHeader from "../PageHeader/PageHeader";
 import styles from "./ProfilePage.module.css"
 import { Achievement, CustomUser, DPost } from '../interfaces'
-import { CircularProgress, Dialog, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from "@mui/material";
+import { CircularProgress, Dialog, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, TextField } from "@mui/material";
 import ProfileDisplayer from "./ProfilePageDialogDisplayer/ProfilePageDialogDisplayer"
 import axios, { AxiosError } from "axios";
-import { message, Skeleton } from "antd";
+import { Avatar, Badge, message, Pagination, Skeleton, Space } from "antd";
 import GalleryPost from "../GalleryPost/Clickable/GalleryPost";
 import DiscussionPost from "../DiscussionPost/Clickable/DiscussionPost";
 import StarsIcon from '@mui/icons-material/Stars';
+import { AddAPhoto, Edit } from "@mui/icons-material";
 
 const ProfilePage = () => {
   
@@ -35,6 +36,12 @@ const ProfilePage = () => {
   const [achievementDialog, setAchievementDialog] = useState(false);
 
   const currentUserId = localStorage.getItem("user_id");
+
+  const [activePage, setActivePage] = useState(1);
+  const pageSize = 5;
+
+  const imageRef = useRef<HTMLInputElement | null>(null);
+  const [changePasswordConfig, setChangePasswordConfig] = useState({dialog: false, newPassword: "", sending:false});
 
   const fetchPosts = async () => {
     setDisplayedPosts(null);
@@ -200,6 +207,72 @@ const ProfilePage = () => {
     }
   }
 
+  const changeProfilePicture = async (e:React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || !e.target.files[0]){
+        return;
+    }
+    const fileExtension = e.target.files[0].name.split(".").pop();
+    if (fileExtension != "png" && fileExtension != "jpg" && fileExtension != "jpeg"){
+        e.target.files = null;
+        message.error("Only png, jpg and jpeg extensions are allowed.");
+        return;
+    }
+    setProfileLoading(true);
+    setProfile(null);
+    try{
+        const fd = new FormData();
+        fd.append("file", e.target.files[0]);
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/users/profile-picture/upload`,
+            fd,
+            {
+            headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`}
+        });
+        message.success("Profile photo successfully changed.");
+        await getProfileInfo();
+    }
+    catch(e){
+        message.error("Unable to change the profile photo.");
+        await getProfileInfo();
+    }
+
+  }
+
+  const validatePassword = () => {
+    if (!changePasswordConfig.newPassword){
+        return "New password is required.";
+    }
+    if (changePasswordConfig.newPassword.length < 6){
+        return "The password has to be at least 6 characters.";
+    }
+    if (!(/[A-Z]/.test(changePasswordConfig.newPassword)) || !(/[a-z]/.test(changePasswordConfig.newPassword)) || !(/\d/.test(changePasswordConfig.newPassword))){
+        return "The password has to have at least 1 uppercase, 1 lowercase and 1 number.";
+    }
+    return "";
+  }
+
+  const changePassword = async () => {
+    const passwordValid = validatePassword();
+    if (!!passwordValid){
+        message.error(passwordValid);
+        return;
+    }
+    try{
+        setChangePasswordConfig(prev => ({...prev, sending: true}));
+        await axios.put(`${process.env.REACT_APP_API_URL}/api/v1/users/${localStorage.getItem("user_id")}/change-password`,
+        null,
+        {headers: {Authorization: `Bearer ${localStorage.getItem("jwt_token")}`},
+            params: {password : changePasswordConfig.newPassword}
+        }
+        );
+        
+        message.success("Password successfully changed.");
+        setChangePasswordConfig({dialog: false, newPassword: "", sending: false});
+    }catch(e){
+        message.error("Something went wrong.");
+        setChangePasswordConfig(prev => ({...prev, sending: false}));
+    }
+  }
+
 
   useEffect(() => {
     getFollowerUserIds();
@@ -218,6 +291,10 @@ const ProfilePage = () => {
   useEffect(()=> {
     fetchPosts(); 
   }, [activeTab])
+
+  const changePage = (x: number) => {
+    setActivePage(x);
+  }
 
 
   if (id == undefined || id == null){
@@ -283,11 +360,22 @@ const ProfilePage = () => {
             <div className="flex flex-col items-center">
               
               {/* Profile Header Details Avatar */}
+              {isCurrentUserProfile ?
+                <div className="ml-5">
+                   <button onClick={() => imageRef.current?.click()} className={styles.ppButton}>
+                    <Avatar style={{width:"100px", height: "100px", position: "relative"}} src={profile.profilePictureUrl || "/default_pp.png"} shape="circle" />
+                   </button>
+                  <AddAPhoto fontSize="small" sx={{position: "relative", bottom: "35px", right:"28px"}}/>
+                  <input accept='.png,.jpg,.jpeg' type='file' style={{display: "none"}} ref={imageRef} onChange={changeProfilePicture}/>
+                  
+                </div>
+              :
               <img
                 src={profile.profilePictureUrl || "/default_pp.png"}
                 alt="Profile Avatar"
                 className={styles.profileHeaderDetailsAvatar}
               />
+              } 
 
               {/* Profile Header Details Nickname */}
               <h1 className="font-bold">{profile.nickName}</h1>
@@ -333,6 +421,16 @@ const ProfilePage = () => {
                 Followers
               </button>
               
+              {isCurrentUserProfile &&
+
+                <button
+                className={styles.profileHeaderButtonsFollowersButton}
+                onClick={() => setChangePasswordConfig(prev => ({...prev, dialog: true}))} 
+                >
+                Change Password
+                </button>             
+              }
+              
             </div>
             
             {/* Dialog section TODO */}
@@ -377,7 +475,7 @@ const ProfilePage = () => {
                     color: activeTab === index ? 'white' : 'black',
                     borderRadius: '5px',
                   }}
-                  onClick={() => setActiveTab(index)}
+                  onClick={() => {setActivePage(1);setActiveTab(index)}}
                 >
                   {content}
                 </button>
@@ -395,11 +493,12 @@ const ProfilePage = () => {
                 (displayedPosts.length == 0 ?
                 <p>There are currently no posts here.</p> :
                 <div className={styles.postContainer}>
-                    {displayedPosts.map((item) => (
+                    {displayedPosts.slice((activePage-1)*pageSize, activePage*pageSize).map((item) => (
                     item.isVisualPost ?
                     <GalleryPost key={item.postId} postData={item}/> :
                     <DiscussionPost key={item.postId} postData={item}/>
                     ))}
+                    <Pagination align="center" current={activePage} pageSize={pageSize} total={displayedPosts.length} onChange={changePage}/>
                 </div>)
                 
                 }
@@ -441,6 +540,24 @@ const ProfilePage = () => {
             <p>No achievements earned.</p>            
             }
            </div>     
+      </Dialog>
+      <Dialog  maxWidth="sm" fullWidth open={changePasswordConfig.dialog} onClose={() => setChangePasswordConfig(prev => ({...prev, dialog: false})) }>
+        <div className='flex flex-col gap-4 p-4'>
+            <div className='flex flex-col gap-4 justify-center'>
+                <p className='font-bold text-lg'>Change Your Password</p>
+                <TextField
+                label="Your New Password"
+                type='password'
+                value={changePasswordConfig.newPassword}
+                onChange={(e) => setChangePasswordConfig(prev => ({...prev, newPassword: e.target.value}))}
+                />
+            </div>
+
+            <div className='flex gap-4 justify-end'>
+                <button onClick={() => setChangePasswordConfig(prev => ({...prev, dialog: false}))} className='btn btn-error'>Cancel</button>
+                <button onClick={changePassword} disabled={changePasswordConfig.sending} className='btn btn-outline'>Confirm</button>
+            </div>
+        </div>
       </Dialog>
     </>
   );

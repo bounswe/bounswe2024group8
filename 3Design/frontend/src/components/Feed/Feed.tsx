@@ -3,14 +3,14 @@ import { Category, DPost, Tournament } from '../interfaces'
 import GalleryPost from '../GalleryPost/Clickable/GalleryPost';
 import styles from "./Feed.module.css"
 import DiscussionPost from '../DiscussionPost/Clickable/DiscussionPost';
-import { Button, message, Skeleton } from 'antd';
+import { Button, message, Pagination, Skeleton } from 'antd';
 import { getCategoryById } from '../tsfunctions';
 import axios from 'axios';
 import TournamentInfo from '../TournamentInfo/TournamentInfo';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 interface Props{
-    category: string,
-    pageNumber: number
+    category: string
 }
 
 interface CategoryInfo{
@@ -18,17 +18,30 @@ interface CategoryInfo{
     isFollowed: boolean
 }
 
-const Feed = ({category, pageNumber}: Props) => {
+const Feed = ({category}: Props) => {
+
+    const [searchParams] = useSearchParams();
+    const feedType = searchParams.get("type") != "discussion";
+    const navigate = useNavigate();
+    const pageSize = 5;
+
+    const passedPageNumber = searchParams.get("p") ?? "";
+    let pageNumber = 1;
+    if (/^\d+$/.test(passedPageNumber)){
+        pageNumber = parseInt(passedPageNumber);
+    }
+
     const [postData, setPostData] = useState<DPost[]>([]);
-    const [feedType, setFeedType] = useState(true);
+
     const [feedLoading, setFeedLoading] = useState(true);
-    const [tabConfig, setTabConfig] = useState([0, 0]);
     
     const [categoryInfo, setCategoryInfo] = useState<CategoryInfo>({category: null, isFollowed: false})
     const [followRequesting, setFollowRequesting] = useState(false);
 
     const [tournamentInfo, setTournamentInfo] = useState<Tournament | null>(null);
     const [tournamentLoading, setTournamentLoading] = useState(true);
+
+    
 
     useEffect(() => {
         fetchServerData();
@@ -47,11 +60,27 @@ const Feed = ({category, pageNumber}: Props) => {
             return;
         }
         setFeedLoading(true);
-        setFeedType(x);
+        if (x){
+            window.location.href = `/home/${category}`;
+            return;
+        }
+        window.location.href = `/home/${category}?type=discussion`;
+    }
+
+    const changePage = (x: number) => {
+        if (feedType){
+            window.location.href = `/home/${category}?p=${x}`;
+            return;
+        }
+        window.location.href = `/home/${category}?type=discussion&p=${x}`;
     }
 
     const renderTabs  = () => {
-        return null;
+        return(
+            <div className='flex justify-center items-center m-5'>
+                <Pagination total={postData.length} current={pageNumber} pageSize={pageSize} onChange={changePage}/>
+            </div>
+        )
     }
 
     const fetchPostData = async () => {
@@ -111,7 +140,6 @@ const Feed = ({category, pageNumber}: Props) => {
                     Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
                 }}
             );
-            console.log(followRes.data);
             setCategoryInfo(followRes.data);
         }
         catch(e){
@@ -174,10 +202,10 @@ const Feed = ({category, pageNumber}: Props) => {
                 <p>There are currently no posts here.</p>
             :
             (feedType ? 
-                    postData.map((item, index) => (
+                    postData.slice((pageNumber-1)*pageSize, pageNumber*pageSize).map((item, index) => (
                         <GalleryPost  key={item.postId} postData={item}/>
                     )) : 
-                    postData.map((item, index) => (
+                    postData.slice((pageNumber-1)*pageSize, pageNumber*pageSize).map((item, index) => (
                         <DiscussionPost  key={item.postId} postData={item}/>
                     ))
             )        

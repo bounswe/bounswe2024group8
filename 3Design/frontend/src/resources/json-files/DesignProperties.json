@@ -1,0 +1,37 @@
+[
+    {
+        "property": "Software Used",
+        "value": "",
+        "options" : []
+    },
+    {
+        "property": "Textures and Materials",
+        "value": "",
+        "options" : []
+    },
+    {
+        "property": "Rendering Engine",
+        "value": "",
+        "options" : ["Cycles", "Eevee", "V-Ray", "Arnold", "Other"]
+    },
+    {
+        "property": "Dimensions/Scale",
+        "value": "",
+        "options" : []
+    },
+    {
+        "property": "Key Features",
+        "value": "",
+        "options" : []
+    },
+    {
+        "property": "Inspiration",
+        "value": "",
+        "options" : []
+    },
+    {
+        "property": "Target Use",
+        "value": "",
+        "options" : ["Prototype", "Art Piece", "Game Asset", "Functional Object", "Other"]
+    }
+]
