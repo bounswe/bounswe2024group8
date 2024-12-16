@@ -100,6 +100,20 @@ public class PostController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("tag/{tag}")
+    public ResponseEntity<List<PostResponse>> searchWithTags(
+            @AuthenticationPrincipal User user,
+            @PathVariable String tag) {
+
+        var result = postService.searchPostsWithTags(user, tag);
+
+        if (result.isEmpty() ) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(result);
+    }
+
     @Operation(summary = "React to a post", description = "Allows the authenticated user to react to a specific post.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Reaction recorded successfully"),
