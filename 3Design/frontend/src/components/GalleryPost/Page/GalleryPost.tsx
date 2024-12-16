@@ -2,8 +2,8 @@ import React, { memo, SetStateAction, useCallback, useEffect, useRef, useState }
 import { DPost, SendAnnotationData, DComment, DisplayedAnnotationData, RecievedAnnotationData } from '../../interfaces'
 import styles from "../GalleryPost.module.css"
 import DViewer from '../../DViewer/DViewer'
-import { ChevronRight,Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined } from '@mui/icons-material'
-import { Dialog, IconButton, Menu, MenuItem, TextField } from '@mui/material'
+import { ChevronRight,Bookmark, BookmarkBorderOutlined, BorderColor, Download, MoreVert, Shield, ThumbDown, ThumbDownOutlined, ThumbUp, ThumbUpOutlined, InsertCommentOutlined, Edit, Delete } from '@mui/icons-material'
+import { CircularProgress, Dialog, IconButton, Menu, MenuItem, TextField } from '@mui/material'
 import { formatInteractions,getCategoryById, parsePostString } from '../../tsfunctions'
 import Comment from '../../Comment/Comment'
 import MockComments from '../../../resources/json-files/Comments.json'
@@ -11,7 +11,8 @@ import ChallengePost from '../../CreatePost/ChallengePost'
 import PostAnnotation from '../../Annotations/PostAnnotation'
 import { grey } from '@mui/material/colors';
 import { message, Switch } from 'antd'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
+import EditPost from '../../CreatePost/EditPost'
 interface Props{
   postData: DPost,
   publishedAnnotationsProps: RecievedAnnotationData[]
@@ -20,7 +21,7 @@ interface Props{
 const GalleryPost = ({postData, publishedAnnotationsProps} : Props) => {
   const [data, setData] = useState<DPost>(postData);
   const [parsedString, setParsedString] = useState<string[]>(parsePostString(postData.text));
-  const [modelAppearence, setModelAppearence] = useState<boolean>(false);
+
   const bodyRef = useRef<HTMLParagraphElement | null>(null);
   const [annotationData, setAnnotationData] = useState<SendAnnotationData>({content: "", endIndex: null, postId: postData.postId, startIndex: null, userId: parseInt(localStorage.getItem("user_id") ?? "-1")});
 
@@ -38,6 +39,11 @@ const GalleryPost = ({postData, publishedAnnotationsProps} : Props) => {
   const [publishedAnnotations, setPublishedAnnotations] = useState<RecievedAnnotationData[]>(publishedAnnotationsProps);
   const [comments, setComments] = useState<DComment[]>([]);
   const [comment, setComment] = useState("");
+
+  const [editDialog, setEditDialog] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [deletingPost, setDeletingPost] = useState(false);
+
   const setDisplayedAnnotation = useCallback((x: DisplayedAnnotationData[]) =>{
     setCurrentAnnotations(x);
   }, []);
@@ -244,6 +250,29 @@ const dislikeClicked = async (event:any) =>{
 }, [comment])
 
 
+const deletePost = async () => {
+  setDeletingPost(true);
+  try{
+    await axios.delete(`${process.env.REACT_APP_API_URL}/api/v1/posts/${data.postId}`, 
+      {headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwt_token")}`
+      }}
+    );
+    message.success("Your post is successfully deleted.");
+    setTimeout(() => {
+        window.location.href = `/home/${data.categoryId}`;
+    }, 500);
+  }catch(e){
+    if (e instanceof AxiosError && e.response && e.response.data && e.response.data.message){
+        message.error(e.response.data.message);
+    }
+    else{
+        message.error("Something went wrong. Your post cannot be deleted.");
+    }
+    setDeletingPost(false);
+  }
+}
+
 const handleBookmark = async (event:any) => {
     event.stopPropagation();
     try{
@@ -353,6 +382,19 @@ const fetchCommentData = async () => {
                           <BorderColor/>
                           Annotate
                       </MenuItem>
+                      {
+                       data.user.id == parseInt(localStorage.getItem("user_id") ?? "-1") && 
+                      <MenuItem onClick={() => setEditDialog(true)} className='gap-2'>
+                          <Edit/>
+                          Edit Post
+                      </MenuItem>}
+
+                      {
+                       data.user.id == parseInt(localStorage.getItem("user_id") ?? "-1") && 
+                      <MenuItem onClick={() => setDeleteDialog(true)} className='gap-2'>
+                          <Delete/>
+                          Delete Post
+                      </MenuItem>}
         
                   </Menu>
               </div>
@@ -496,6 +538,20 @@ const fetchCommentData = async () => {
                 <button onClick={() => setAnnotatedText("")} className='btn btn-error'>Close</button>
                 <button disabled={annotationSending} onClick={postAnnotation} className='btn btn-outline'>Publish</button>
               </div>    
+            </div>
+          </Dialog>
+          <Dialog maxWidth="sm" fullWidth open={editDialog} onClose={() => setEditDialog(false)}>
+              <EditPost dialogFunction={setEditDialog} postData={data}/>
+          </Dialog>    
+          <Dialog open={deleteDialog} onClose={() => setDeleteDialog(false)}> 
+            <div className='flex flex-col gap-4 p-4'>
+              <p className='font-bold text-lg'>Delete Post</p>
+              <p>Are you sure? This post will be deleted permanently.</p>
+              <div className='flex gap-4 justify-end'>
+                <button className='btn btn-outline' onClick={() => setDeleteDialog(false)}>Cancel</button>
+                <button disabled={deletingPost} onClick={deletePost} className='btn btn-error' >Delete Post</button>
+                {deletingPost && <CircularProgress style={{fontSize: "8px"}}/>}
+              </div>
             </div>
           </Dialog>
       </div>

@@ -27,7 +27,7 @@ export interface DPost{
     title: string,
     text: string,
     user: CustomUser,
-    tags: Tag[],
+    tags: string[],
     categoryId: number,
     isVisualPost: boolean,
     //reaction list, bookmark list, comment list
@@ -42,10 +42,6 @@ export interface DPost{
     reactionType: string
 }
 
-export interface Tag{
-    //id: number,
-    value: string
-}
 
 export interface SendAnnotationData{
     postId : number, 
