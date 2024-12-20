@@ -599,29 +599,29 @@ I have contributed to documentation, communication, and process improvement duri
 
 ## [Huseyin Turker Erdem, Group8-Frontend/Devops](https://github.com/bounswe/bounswe2024group8/wiki/Huseyin-Turker-Erdem)
 
-
-- Responsibilities:
-
-- Main Contributions:
-
+### Responsibilities:
+In this milestone, I focused on deployment and developing remaining features in frontend. As frontend was mostly completed on second customer milestone, new features after the feedback needed to be done, such as showing technical details of gallery posts.
 
 - Code-related significant issues:
 
+| Summary | Issue | PR |
+| :-----: | :---: | :-: |
+| Search Page Improvements |[(#427)](https://github.com/bounswe/bounswe2024group8/issues/427) | [PR428](https://github.com/bounswe/bounswe2024group8/pull/428) |
+| Profile Page Improvements |[(#430)](https://github.com/bounswe/bounswe2024group8/issues/430) | [PR432](https://github.com/bounswe/bounswe2024group8/pull/432) |
+| Post Form Structure Implementation |[(#435)](https://github.com/bounswe/bounswe2024group8/issues/435) | [PR435](https://github.com/bounswe/bounswe2024group8/pull/435) |
+| Feed pagination |[(#436)](https://github.com/bounswe/bounswe2024group8/issues/436) | [PR437](https://github.com/bounswe/bounswe2024group8/pull/437) |
+| Edit Post Implementation |[(#451)](https://github.com/bounswe/bounswe2024group8/issues/451) | Directly Commited to our Branch |
+| Delete Post Implementation|[(#452)](https://github.com/bounswe/bounswe2024group8/issues/452) | Directly Commited to our Branch |
+| Tag Search Implementation|[(#453)](https://github.com/bounswe/bounswe2024group8/issues/453) | Directly Commited to our Branch |
+| Annotation Improvements |[(#454)](https://github.com/bounswe/bounswe2024group8/issues/454) | [PR448](https://github.com/bounswe/bounswe2024group8/pull/448) |
 
 
+- Pull Requests: \
+We developed all remaining frontend features together after customer milestone 2, so all the frontend codes were implemented and checked together. \
+I approved these pull requests: #400, #402 \
+I created these pull requests: #428
 
- 
-- Management-related significant issues:
-
-
-  
-
-- Pull Requests:
-
-- Unit Tests:
-
-
-- Additional Information:
+Unit Tests: We created several unit tests for milestone 2. Since we only improved the app and we didn't create any significent components, we didn't create any unit tests for this milestone. This is because the app was already almost finished in milestone 2.
 
 
 # 6 Other Artifacts
